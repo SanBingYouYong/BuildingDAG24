@@ -11,6 +11,7 @@ class DAGParams:
             self.params = {}
 
     def load_params(self, params_file_path: str):
+        # print("111" + params_file_path)
         with open(params_file_path, "r") as f:
             self.params = yaml.safe_load(f)
 

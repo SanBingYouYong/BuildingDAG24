@@ -68,6 +68,8 @@ class DAGDatasetGenerator():
                     sample_image_path = os.path.join(self.dataset_images_folder, f"{sample_id}.png")
                     self.param_renderer.render(sample_image_path)
         self.write_batch_cam_angles(batch_cam_angles)
+        self.write_decoders()
+        self.write_switches()
     
     def write_decoders(self):
         '''
@@ -103,17 +105,25 @@ class DAGDatasetGenerator():
 
 if __name__ == "__main__":
     generator = DAGDatasetGenerator("test_dataset")
-    devices = generator.use_device(0)
-    print(devices)
-    # # check for args
-    # args = sys.argv[1:]
-    # if len(args) > 0:
-    #     num_batches = int(args[0])
-    #     batch_size = int(args[1])
-    #     num_varying_params = int(args[2])
-    #     generator.populate_dataset_wrt_batches(num_batches, batch_size, num_varying_params)
-    # else:
-    #     generator.populate_dataset_wrt_batches(10, 10, 5)
+    # check for args
+    args = sys.argv[5:]
+    if len(args) == 4:
+        num_batches = int(args[0])
+        batch_size = int(args[1])
+        num_varying_params = int(args[2])
+        device = int(args[3])
+        generator.use_device(device)
+        print(f"Using {num_batches} batches, {batch_size} samples per batch, {num_varying_params} varying params")
+        print(f"Using device: {device}")
+        generator.param_renderer.check_devices()
+        generator.populate_dataset_wrt_batches(num_batches, batch_size, num_varying_params)
+    elif len(args) == 0:
+        print("No args received, using default values and CPU")
+        generator.use_device(-1)
+        generator.param_renderer.check_devices()
+        generator.populate_dataset_wrt_batches(10, 10, 5)
+    else:
+        print("Usage: blender -b -P dataset_gen.py <num_batches> <batch_size> <num_varying_params>")
 
     # generator.populate_dataset_wrt_batches(10, 10, 5)
     # generator.write_decoders()

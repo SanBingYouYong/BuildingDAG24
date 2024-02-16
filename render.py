@@ -89,9 +89,17 @@ class DAGRenderer():
         cycles_preferences.compute_device_type = "NONE" if device == -1 else "CUDA"
         # cycles_preferences.refresh_devices()
         # return the activated device
+        # for available_device in devices:
+        #     print(available_device.name, available_device.type, available_device.use)
+        return [device.name for device in devices if device.use]
+    
+    def check_devices(self):
+        preferences = bpy.context.preferences
+        cycles_preferences = preferences.addons["cycles"].preferences
+        cycles_preferences.refresh_devices()
+        devices = cycles_preferences.devices
         for available_device in devices:
             print(available_device.name, available_device.type, available_device.use)
-        return [device.name for device in devices if device.use]
 
     # def use_device(self, device: int):
     #     preferences = bpy.context.preferences
