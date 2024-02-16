@@ -76,16 +76,21 @@ class DAGRenderer():
             bpy.context.scene.cycles.device = "CPU"
             for available_device in devices:
                 if available_device.type == "CPU":
+                    print('activated cpu', available_device.name)
                     available_device.use = True
         else:
             bpy.context.scene.cycles.device = "GPU"
             gpu_counter = 0
             for available_device in devices:
                 if available_device.type == "CUDA" and gpu_counter == device:
+                    print('activated gpu', available_device.name)
                     available_device.use = True
                 gpu_counter += 1
         cycles_preferences.compute_device_type = "NONE" if device == -1 else "CUDA"
+        # cycles_preferences.refresh_devices()
         # return the activated device
+        for available_device in devices:
+            print(available_device.name, available_device.type, available_device.use)
         return [device.name for device in devices if device.use]
 
     # def use_device(self, device: int):
