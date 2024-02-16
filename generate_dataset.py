@@ -5,9 +5,10 @@ import time
 import re
 from tqdm import tqdm
 import signal
+import datetime
 
 # Path to Blender executable
-BLENDER32 = os.environ.get("BLENDER32", "/path/to/blender32/executable")
+BLENDER32 = os.environ.get("BLENDER32")
 
 # Path to dataset.blend and dataset_gen.py
 dataset_blend = "./dataset.blend"
@@ -22,7 +23,7 @@ else:
     sys.exit(1)
 
 # Log file path
-log_file = "./datasets/dataset_gen_log.txt"
+log_file = f"./datasets/dataset_gen_log_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
 
 # Calculate total number of images
 total_images = num_batches * batch_size
@@ -31,7 +32,7 @@ total_images = num_batches * batch_size
 pbar = tqdm(total=total_images, desc="Rendering", unit="image")
 
 # Regular expression pattern to match sentences starting with "Saved: './datasets/test_dataset/images/batch0_sample0.png'"
-saved_pattern = re.compile(r"Saved: '\./datasets/test_dataset/images/batch\d+_sample\d+\.png'")
+# saved_pattern = re.compile(r"Saved: '\./datasets/test_dataset/images/batch\d+_sample\d+\.png'")
 
 # Handler for termination signals
 def signal_handler(sig, frame):
@@ -54,7 +55,7 @@ with open(log_file, "w") as f:
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     for line in process.stdout:
         # Check if the line matches the saved pattern
-        if saved_pattern.match(line):
+        if line.startswith("Saved:"):
             # Update progress bar
             pbar.update(1)
         if not line.startswith("Fra"):
