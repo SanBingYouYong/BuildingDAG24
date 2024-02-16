@@ -10,6 +10,7 @@ from pathlib import Path
 file = Path(__file__).resolve()
 parent = file.parents[1]
 sys.path.append(str(parent))
+sys.path.append(str(file.parents[0]))
 
 from params import DAGParams
 from paramgen import DAGParamGenerator
