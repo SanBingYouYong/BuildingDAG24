@@ -103,7 +103,7 @@ class DAGDatasetGenerator():
 
 if __name__ == "__main__":
     generator = DAGDatasetGenerator("test_dataset")
-    devices = generator.use_device(-1)
+    devices = generator.use_device(0)
     print(devices)
     # # check for args
     # args = sys.argv[1:]
