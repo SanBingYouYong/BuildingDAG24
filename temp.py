@@ -4,4 +4,6 @@ preferences = bpy.context.preferences
 cycles_preferences = preferences.addons["cycles"].preferences
 cycles_preferences.refresh_devices()
 devices = cycles_preferences.devices
-print(devices.items())
+
+for device in devices:
+    print(device.name, device.type, device.use)
