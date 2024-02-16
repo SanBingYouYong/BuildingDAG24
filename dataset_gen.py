@@ -104,6 +104,7 @@ class DAGDatasetGenerator():
 
 
 if __name__ == "__main__":
+    # TODO: check for mysterious "Error: Cannot read file '/mnt/c/ZSY/BuildingDAG/1': No such file or directory"
     # check for args
     args = sys.argv[5:]
     if len(args) == 4:
