@@ -54,6 +54,66 @@ class DAGRenderer():
     def update_lr_angle(self, lr_angle: float):
         self.lr_angle = lr_angle
 
+    def use_device(self, device: int):
+        '''
+        -1: CPU
+        0 or other int: CUDA, and also GPU index
+        '''
+        use_device = "CPU" if device == -1 else "CUDA"
+        
+        preferences = bpy.context.preferences
+        cycles_preferences = preferences.addons["cycles"].preferences
+        cycles_preferences.refresh_devices()
+        devices = cycles_preferences.devices
+        # print(devices.items())
+
+        if not devices:
+            raise RuntimeError("Unsupported device type")
+
+        for available_device in devices:
+            available_device.use = False  # disable all first
+        if use_device == "CPU":
+            bpy.context.scene.cycles.device = "CPU"
+            for available_device in devices:
+                if available_device.type == "CPU":
+                    available_device.use = True
+        else:
+            bpy.context.scene.cycles.device = "GPU"
+            gpu_counter = 0
+            for available_device in devices:
+                if available_device.type == "CUDA" and gpu_counter == device:
+                    available_device.use = True
+                gpu_counter += 1
+        cycles_preferences.compute_device_type = "NONE" if device == -1 else "CUDA"
+        # return the activated device
+        return [device.name for device in devices if device.use]
+
+    # def use_device(self, device: int):
+    #     preferences = bpy.context.preferences
+    #     cycles_preferences = preferences.addons["cycles"].preferences
+    #     cycles_preferences.refresh_devices()
+    #     devices = cycles_preferences.devices
+
+    #     if not devices:
+    #         raise RuntimeError("Unsupported device type")
+        
+    #     use_cpu = device == -1
+    #     device_type = "CPU" if use_cpu else "CUDA"
+
+    #     activated_gpus = []
+    #     for device in devices:
+    #         if device.type == "CPU":
+    #             device.use = use_cpu
+    #         else:
+    #             device.use = not use_cpu
+    #             activated_gpus.append(device.name)
+    #             print('activated gpu', device.name)
+
+    #     cycles_preferences.compute_device_type = device_type
+    #     bpy.context.scene.cycles.device = "GPU"
+
+    #     return activated_gpus
+
 
 if __name__ == "__main__":
     renderer = DAGRenderer()

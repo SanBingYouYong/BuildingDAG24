@@ -93,9 +93,28 @@ class DAGDatasetGenerator():
         with open(batch_cam_angles_path, "w") as f:
             yaml.dump(batch_cam_angles, f)
 
+    def use_device(self, device: int):
+        '''
+        -1: CPU
+        0 or int index: GPU
+        '''
+        self.param_renderer.use_device(device)
+
 
 if __name__ == "__main__":
     generator = DAGDatasetGenerator("test_dataset")
-    generator.populate_dataset_wrt_batches(10, 10, 5)
+    devices = generator.use_device(-1)
+    print(devices)
+    # # check for args
+    # args = sys.argv[1:]
+    # if len(args) > 0:
+    #     num_batches = int(args[0])
+    #     batch_size = int(args[1])
+    #     num_varying_params = int(args[2])
+    #     generator.populate_dataset_wrt_batches(num_batches, batch_size, num_varying_params)
+    # else:
+    #     generator.populate_dataset_wrt_batches(10, 10, 5)
+
+    # generator.populate_dataset_wrt_batches(10, 10, 5)
     # generator.write_decoders()
     # generator.write_switches()
