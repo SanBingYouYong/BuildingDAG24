@@ -1,57 +1,68 @@
 import os
-import numpy as np
-
-# import local modules
 import sys
-from pathlib import Path
-
-file = Path(__file__).resolve()
-parent = file.parents[1]
-sys.path.append(str(parent))
-sys.path.append(str(file.parents[0]))
-
-from tqdm import tqdm
-
-
-# use commandline to call blender in background and execute script
-# $BLENDER32 dataset.blend -b -P dataset_gen.py
 import subprocess
 import time
 import re
+from tqdm import tqdm
+import signal
 
 # Path to Blender executable
-BLENDER32 = os.environ["BLENDER32"]
+BLENDER32 = os.environ.get("BLENDER32", "/path/to/blender32/executable")
 
 # Path to dataset.blend and dataset_gen.py
 dataset_blend = "./dataset.blend"
 dataset_gen_py = "./dataset_gen.py"
 
+# Args
+args = sys.argv[1:]
+if len(args) == 4:
+    num_batches, batch_size, num_varying_params, device = map(int, args)
+else:
+    print("Usage: blender -b -P dataset_gen.py <num_batches> <batch_size> <num_varying_params> <device>")
+    sys.exit(1)
+
 # Log file path
 log_file = "./datasets/dataset_gen_log.txt"
 
+# Calculate total number of images
+total_images = num_batches * batch_size
+
+# Initialize progress bar
+pbar = tqdm(total=total_images, desc="Rendering", unit="image")
+
+# Regular expression pattern to match sentences starting with "Saved: './datasets/test_dataset/images/batch0_sample0.png'"
+saved_pattern = re.compile(r"Saved: '\./datasets/test_dataset/images/batch\d+_sample\d+\.png'")
+
+# Handler for termination signals
+def signal_handler(sig, frame):
+    print("Terminating process...")
+    process.terminate()
+    sys.exit(0)
+
+# Register signal handler
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
+
 # Command to execute
-command = [BLENDER32, dataset_blend, "-b", "-P", dataset_gen_py]
+command = [BLENDER32, dataset_blend, "-b", "-P", dataset_gen_py, str(num_batches), str(batch_size), str(num_varying_params), str(device)]
 
 # Start timer
 start_time = time.time()
-
-# Initialize progress bar
-pbar = tqdm(desc="Rendering", unit="image")
-
-# Regular expression pattern to extract time information
-time_pattern = re.compile(r"Time: (\d+):(\d+\.\d+) \(Saving: (\d+):(\d+\.\d+)\)")
 
 # Execute the command and capture output
 with open(log_file, "w") as f:
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
     for line in process.stdout:
-        # Update progress bar based on output
-        match = time_pattern.search(line)
-        if match:
-            render_time = float(match.group(2))
+        # Check if the line matches the saved pattern
+        if saved_pattern.match(line):
+            # Update progress bar
             pbar.update(1)
-            pbar.set_postfix(render_time=f"{render_time:.2f}s")
-        f.write(line)  # Write the output to the log file
+        if not line.startswith("Fra"):
+            # Write the output to the log file
+            f.write(line)
+        # Check if the process has terminated
+        if process.poll() is not None:
+            break
 
 # Close progress bar
 pbar.close()
@@ -61,4 +72,4 @@ elapsed_time = time.time() - start_time
 
 # Show timer
 print(f"Total execution time: {elapsed_time:.2f} seconds")
-
+print(f"Log file written to: {log_file}")
