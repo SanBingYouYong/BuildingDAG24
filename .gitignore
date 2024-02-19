@@ -8,3 +8,5 @@ encDecModel.pth
 # Ignore Visual Studio Code files
 .vscode/
 
+# ignore logs
+logs/

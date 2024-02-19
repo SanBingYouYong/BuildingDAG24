@@ -22,8 +22,11 @@ else:
     print("Usage: blender -b -P dataset_gen.py <num_batches> <batch_size> <num_varying_params> <device>")
     sys.exit(1)
 
+if not os.path.exists("./logs"):
+    os.mkdir("./logs")
+
 # Log file path
-log_file = f"./datasets/dataset_gen_log_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
+log_file = f"./logs/dataset_gen_log_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
 
 # Calculate total number of images
 total_images = num_batches * batch_size
