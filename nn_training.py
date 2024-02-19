@@ -129,10 +129,12 @@ def test(model: nn.Module, test_loader, criterion: nn.Module):
 
 
 if __name__ == "__main__":
-    dataset_name = "DAGDataset100_100_5"
+    # dataset_name = "DAGDataset100_100_5"
+    dataset_name = "DAGDataset2_2_5"
     dataset = DAGDataset(dataset_name)
     train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
-    train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
+    # train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
+    train_loader, val_loader, test_loader = overfit_dataloaders(train_dataset, val_dataset, test_dataset, batch_size=32)
     encoder = Encoder()
     ranges, parameter_output_mapping = load_ranges(dataset_name)
     decoders = load_decoders(dataset_name, ranges, parameter_output_mapping)
