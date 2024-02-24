@@ -1,6 +1,7 @@
 datasets/
 
 encDecModel.pth
+EncDecModel.pth
 
 # Ignore pycache
 **/__pycache__/
