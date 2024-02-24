@@ -129,6 +129,7 @@ class EncDecsLoss(nn.Module):
         loss = 0.0
         for decoder_name, decoder_output in outputs.items():
             loss += self.decoder_loss(decoder_output, targets[decoder_name])
+        loss /= len(outputs)
         return loss
 
     def classification_loss(self, output, target):
@@ -162,5 +163,6 @@ class EncDecsLoss(nn.Module):
             total_regression_loss += regression_loss
         averaged_classification_loss = total_classification_loss / len(classification_outputs) if len(classification_outputs) > 0 else 0
         averaged_regression_loss = total_regression_loss / len(regression_output) if len(regression_output) > 0 else 0
+        # print(f"Classification Loss: {averaged_classification_loss}, Regression Loss: {averaged_regression_loss}")
         loss = averaged_classification_loss + averaged_regression_loss
         return loss

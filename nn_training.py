@@ -62,7 +62,7 @@ def load_switches(dataset_name: str, datasets_folder: str="./datasets"):
         switches = yaml.safe_load(file)
     return switches
 
-def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth"):
+def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth", loss_save_path="loss.yml"):
     train_losses = []
     val_losses = []
 
@@ -107,10 +107,14 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
 
     print("Finished Training")
 
+    # save the loss
+    with open(loss_save_path, "w") as f:
+        yaml.dump({"train_losses": train_losses, "val_losses": val_losses}, f)
+
     # Save your trained model if needed
     torch.save(model.state_dict(), model_save_path)
 
-def test(model: nn.Module, test_loader, criterion: nn.Module):
+def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path="results.yml"):
     model.eval()
     test_loss = 0.0
     num_batches = len(test_loader)
@@ -125,16 +129,23 @@ def test(model: nn.Module, test_loader, criterion: nn.Module):
 
     print(f"Test Loss: {test_loss / num_batches}")
 
+    # save the results
+    with open(results_save_path, "w") as f:
+        yaml.dump({"outputs": outputs, "targets": targets}, f)
+
     return outputs, targets
 
 
 if __name__ == "__main__":
-    # dataset_name = "DAGDataset100_100_5"
-    dataset_name = "DAGDataset2_2_5"
+    dataset_name = "DAGDataset100_100_5"
+    # dataset_name = "DAGDataset2_1_5"
     dataset = DAGDataset(dataset_name)
     train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
-    # train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
-    train_loader, val_loader, test_loader = overfit_dataloaders(train_dataset, val_dataset, test_dataset, batch_size=32)
+    # train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.5, 0.5, 0)
+    train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
+    # train_loader, val_loader = overfit_dataloaders(train_dataset, val_dataset, batch_size=32)
+    # print lengths for each dataset
+    print(f"Train/Val/Test: {len(train_dataset)}/{len(val_dataset)}/{len(test_dataset)}")
     encoder = Encoder()
     ranges, parameter_output_mapping = load_ranges(dataset_name)
     decoders = load_decoders(dataset_name, ranges, parameter_output_mapping)
@@ -144,5 +155,6 @@ if __name__ == "__main__":
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth")
-    outputs, targets = test(model, test_loader, criterion)
+    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth", loss_save_path="loss.yml")
+    test(model, test_loader, criterion, results_save_path="results.yml")
+
