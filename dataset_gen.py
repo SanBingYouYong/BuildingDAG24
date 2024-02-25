@@ -31,6 +31,7 @@ class DAGDatasetGenerator():
         self.dataset_path = os.path.join(self.dataset_root_path, self.dataset_name)
         self.dataset_images_folder = os.path.join(self.dataset_path, "images")
         self.dataset_params_folder = os.path.join(self.dataset_path, "params")
+        self.dataset_realtime_folder = os.path.join(self.dataset_path, "realtime")
         if mkdir:
             self._mkdirs()
         self.param_generator = DAGParamGenerator()
@@ -41,13 +42,9 @@ class DAGDatasetGenerator():
         os.makedirs(self.dataset_path, exist_ok=True)
         os.makedirs(self.dataset_images_folder, exist_ok=True)
         os.makedirs(self.dataset_params_folder, exist_ok=True)
+        os.makedirs(self.dataset_realtime_folder, exist_ok=True)
 
     def populate_dataset_wrt_batches(self, num_batches: int, batch_size: int=10, num_varying_params: int=5, render: bool=True):
-        # save ranges
-        # ranges_path = os.path.join(self.dataset_path, "ranges.yml")
-        # ranges = self.param_generator.save_ranges()
-        # with open(ranges_path, "w") as f:
-        #     yaml.dump(ranges, f)
         batch_cam_angles = {}
         for i in tqdm(range(num_batches)):
             batch = self.param_generator.generate_batch_params(
@@ -69,9 +66,6 @@ class DAGDatasetGenerator():
                     # render image
                     sample_image_path = os.path.join(self.dataset_images_folder, f"{sample_id}.png")
                     self.param_renderer.render(sample_image_path)
-        # self.write_batch_cam_angles(batch_cam_angles)
-        # self.write_decoders()
-        # self.write_switches()
         self.write_metadata(batch_cam_angles)
     
     def write_metadata(self, batch_cam_angles):
