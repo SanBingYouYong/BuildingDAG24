@@ -44,10 +44,10 @@ class DAGDatasetGenerator():
 
     def populate_dataset_wrt_batches(self, num_batches: int, batch_size: int=10, num_varying_params: int=5, render: bool=True):
         # save ranges
-        ranges_path = os.path.join(self.dataset_path, "ranges.yml")
-        ranges = self.param_generator.save_ranges()
-        with open(ranges_path, "w") as f:
-            yaml.dump(ranges, f)
+        # ranges_path = os.path.join(self.dataset_path, "ranges.yml")
+        # ranges = self.param_generator.save_ranges()
+        # with open(ranges_path, "w") as f:
+        #     yaml.dump(ranges, f)
         batch_cam_angles = {}
         for i in tqdm(range(num_batches)):
             batch = self.param_generator.generate_batch_params(
@@ -69,9 +69,27 @@ class DAGDatasetGenerator():
                     # render image
                     sample_image_path = os.path.join(self.dataset_images_folder, f"{sample_id}.png")
                     self.param_renderer.render(sample_image_path)
-        self.write_batch_cam_angles(batch_cam_angles)
-        self.write_decoders()
-        self.write_switches()
+        # self.write_batch_cam_angles(batch_cam_angles)
+        # self.write_decoders()
+        # self.write_switches()
+        self.write_metadata(batch_cam_angles)
+    
+    def write_metadata(self, batch_cam_angles):
+        '''
+        Writes meta.yml combining original ranges, decoders, switches and batch_cam_angles
+        '''
+        ranges = self.param_generator.save_ranges()
+        decoders = self.param_generator.save_decoders()
+        switches = self.param_generator.save_switches()
+        meta = {
+            "ranges": ranges,
+            "decoders": decoders,
+            "switches": switches,
+            "batch_cam_angles": batch_cam_angles
+        }
+        meta_path = os.path.join(self.dataset_path, "meta.yml")
+        with open(meta_path, "w") as f:
+            yaml.dump(meta, f)
     
     def write_decoders(self):
         '''
