@@ -76,6 +76,7 @@ class DAGDatasetGenerator():
         decoders = self.param_generator.save_decoders()
         switches = self.param_generator.save_switches()
         meta = {
+            "dataset": self.dataset_name,
             "ranges": ranges,
             "decoders": decoders,
             "switches": switches,
