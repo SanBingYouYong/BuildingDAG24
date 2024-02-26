@@ -60,6 +60,13 @@ def load_metadata(dataset_name: str, datasets_folder: str="./datasets"):
     switches = metadata['switches']
     batch_cam_angles = metadata['batch_cam_angles']
     return ranges, parameter_output_mapping, decoders, switches, batch_cam_angles
+
+def load_metadata_for_inference(metadata_file_path: str):
+    with open(metadata_file_path, 'r') as file:
+        metadata = yaml.safe_load(file)
+    ranges, parameter_output_mapping = load_ranges(metadata)
+    decoders = load_decoders(metadata, ranges, parameter_output_mapping)
+    return ranges, parameter_output_mapping, decoders
     
 
 def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, 
