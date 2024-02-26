@@ -1,0 +1,930 @@
+outputs:
+  Building Mass Decoder: !!python/tuple
+  - Bm Base Shape: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDIyNDk0ODM1MnECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDIyNDk0ODM1MnEBYS4QAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAgD8A
+        AAAAAACAPwAAAAAAAIA/AAAAAAAAgD8AAAAAAACAPwAAAAA=
+    - 0
+    - !!python/tuple
+      - 8
+      - 2
+    - !!python/tuple
+      - 2
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  - Bm Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1NDQ0MTExODkyOHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1NDQ0MTExODkyOHEBYS4YAAAAAAAAADNCCT+03AI/dDkFPzNCCT+03AI/dDkFPzNCCT+0
+        3AI/dDkFPzNCCT+03AI/dDkFPzNCCT+03AI/dDkFPzNCCT+03AI/dDkFPzNCCT+03AI/dDkFPzNC
+        CT+03AI/dDkFPw==
+    - 0
+    - !!python/tuple
+      - 8
+      - 3
+    - !!python/tuple
+      - 3
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  Facade Decoder: !!python/tuple
+  - {}
+  - Num Floors: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDAyMTMzODk0NHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDAyMTMzODk0NHEBYS4IAAAAAAAAAMlkAT/JZAE/yWQBP8lkAT/JZAE/yWQBP8lkAT/J
+        ZAE/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Num Windows Each Side: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1NDQ0MTAzNzk4NHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1NDQ0MTAzNzk4NHEBYS4IAAAAAAAAACx+AD8sfgA/LH4APyx+AD8sfgA/LH4APyx+AD8s
+        fgA/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  Floor Ledge Decoder: !!python/tuple
+  - Has Floor Ledge: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDEyMjAxOTM0NHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDEyMjAxOTM0NHEBYS4QAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAACAPwAAAAAA
+        AIA/AAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAgD8=
+    - 0
+    - !!python/tuple
+      - 8
+      - 2
+    - !!python/tuple
+      - 2
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  - Floor Ledge Extrusion X: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1NDQ0MTExOTYzMnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1NDQ0MTExOTYzMnEBYS4IAAAAAAAAAHzmAj985gI/fOYCP3zmAj985gI/fOYCP3zmAj98
+        5gI/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Floor Ledge Extrusion Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE0Nzk0NDI3NzY0OHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE0Nzk0NDI3NzY0OHEBYS4IAAAAAAAAANGZCT/RmQk/0ZkJP9GZCT/RmQk/0ZkJP9GZCT/R
+        mQk/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Floor Ledge Size X: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE0OTk2ODEyNDY3MnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE0OTk2ODEyNDY3MnEBYS4IAAAAAAAAAIKdBz+CnQc/gp0HP4KdBz+CnQc/gp0HP4KdBz+C
+        nQc/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Floor Ledge Size Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDA0OTg0MTAyNHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDA0OTg0MTAyNHEBYS4IAAAAAAAAAKf44j6n+OI+p/jiPqf44j6n+OI+p/jiPqf44j6n
+        +OI+
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  Roof Decoder: !!python/tuple
+  - Rf Base Shape: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MTY2ODkyNzcxMnECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MTY2ODkyNzcxMnEBYS4YAAAAAAAAAAh6/BUAAIA/VbLLEQh6/BUAAIA/VbLLEQh6/BUA
+        AIA/VbLLEQh6/BUAAIA/VbLLEQh6/BUAAIA/VbLLEQh6/BUAAIA/VbLLEQh6/BUAAIA/VbLLEQh6
+        /BUAAIA/VbLLEQ==
+    - 0
+    - !!python/tuple
+      - 8
+      - 3
+    - !!python/tuple
+      - 3
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  - Rf Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDA2NTA5NDk2MHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDA2NTA5NDk2MHEBYS4YAAAAAAAAAOrk8j7HeAc/U8YAP+rk8j7HeAc/U8YAP+rk8j7H
+        eAc/U8YAP+rk8j7HeAc/U8YAP+rk8j7HeAc/U8YAP+rk8j7HeAc/U8YAP+rk8j7HeAc/U8YAP+rk
+        8j7HeAc/U8YAPw==
+    - 0
+    - !!python/tuple
+      - 8
+      - 3
+    - !!python/tuple
+      - 3
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  Window Ledge Decoder: !!python/tuple
+  - Has Window Ledge: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MzkyMzc2MTY5NnECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MzkyMzc2MTY5NnEBYS4QAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAACAPwAAAAAA
+        AIA/AAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAgD8=
+    - 0
+    - !!python/tuple
+      - 8
+      - 2
+    - !!python/tuple
+      - 2
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  - Window Ledge Extrusion X: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE0Nzg0ODM2MTEyMHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE0Nzg0ODM2MTEyMHEBYS4IAAAAAAAAAIHd/z6B3f8+gd3/PoHd/z6B3f8+gd3/PoHd/z6B
+        3f8+
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Window Ledge Extrusion Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDA2NTEwNDQwMHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDA2NTEwNDQwMHEBYS4IAAAAAAAAAHSMET90jBE/dIwRP3SMET90jBE/dIwRP3SMET90
+        jBE/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Window Ledge Shape Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE0Nzk0NDI4Mjc2OHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+        ADE0MDE0Nzk0NDI4Mjc2OHEBYS4YAAAAAAAAAA7Y8z7ahAQ/TWj8Pg7Y8z7ahAQ/TWj8Pg7Y8z7a
+        hAQ/TWj8Pg7Y8z7ahAQ/TWj8Pg7Y8z7ahAQ/TWj8Pg7Y8z7ahAQ/TWj8Pg7Y8z7ahAQ/TWj8Pg7Y
+        8z7ahAQ/TWj8Pg==
+    - 0
+    - !!python/tuple
+      - 8
+      - 3
+    - !!python/tuple
+      - 3
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Window Ledges Height Offset: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDAyMTMwNTIwMHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDAyMTMwNTIwMHEBYS4IAAAAAAAAAAXg/D4F4Pw+BeD8PgXg/D4F4Pw+BeD8PgXg/D4F
+        4Pw+
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  Window Main Decoder: !!python/tuple
+  - {}
+  - Window Shape Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MTI3ODMxMzgwOHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MTI3ODMxMzgwOHEBYS4YAAAAAAAAAB6bBD9ULAQ/EjcAPx6bBD9ULAQ/EjcAPx6bBD9U
+        LAQ/EjcAPx6bBD9ULAQ/EjcAPx6bBD9ULAQ/EjcAPx6bBD9ULAQ/EjcAPx6bBD9ULAQ/EjcAPx6b
+        BD9ULAQ/EjcAPw==
+    - 0
+    - !!python/tuple
+      - 8
+      - 3
+    - !!python/tuple
+      - 3
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Windows Height Offset: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDI3MzQ3NTQ4OHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDI3MzQ3NTQ4OHEBYS4IAAAAAAAAAGbJ9D5myfQ+Zsn0PmbJ9D5myfQ+Zsn0PmbJ9D5m
+        yfQ+
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Windows Left Right Offset: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDM1Mjc2NTc3NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDM1Mjc2NTc3NnEBYS4IAAAAAAAAAAXMFD8FzBQ/BcwUPwXMFD8FzBQ/BcwUPwXMFD8F
+        zBQ/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  Window Panel Decoder: !!python/tuple
+  - Window Divided Horizontal: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE0NzY3NTU2MzI0OHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+        ADE0MDE0NzY3NTU2MzI0OHEBYS4QAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAgD8A
+        AAAAAACAPwAAAAAAAIA/AAAAAAAAgD8AAAAAAACAPwAAAAA=
+    - 0
+    - !!python/tuple
+      - 8
+      - 2
+    - !!python/tuple
+      - 2
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Window Divided Vertical: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1NDQ0MTExOTUyMHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1NDQ0MTExOTUyMHEBYS4QAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAACAPwAAAAAA
+        AIA/AAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAgD8=
+    - 0
+    - !!python/tuple
+      - 8
+      - 2
+    - !!python/tuple
+      - 2
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+  - Window Interpanel Offset Percentage Y: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE0NzY3NTYwODI4OHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE0NzY3NTYwODI4OHEBYS4IAAAAAAAAAJXjAD+V4wA/leMAP5XjAD+V4wA/leMAP5XjAD+V
+        4wA/
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Window Interpanel Offset Percentage Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MTYwNTAxMjQzMnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MTYwNTAxMjQzMnEBYS4IAAAAAAAAANCt8D7QrfA+0K3wPtCt8D7QrfA+0K3wPtCt8D7Q
+        rfA+
+    - 0
+    - !!python/tuple
+      - 8
+      - 1
+    - !!python/tuple
+      - 1
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    Window Panel Area: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDwAAADE0MDE1MDM3NjQ2Njk0NHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+        ADE0MDE1MDM3NjQ2Njk0NHEBYS4YAAAAAAAAAHqo+T7Y3vs+Bs//Pnqo+T7Y3vs+Bs//Pnqo+T7Y
+        3vs+Bs//Pnqo+T7Y3vs+Bs//Pnqo+T7Y3vs+Bs//Pnqo+T7Y3vs+Bs//Pnqo+T7Y3vs+Bs//Pnqo
+        +T7Y3vs+Bs//Pg==
+    - 0
+    - !!python/tuple
+      - 8
+      - 3
+    - !!python/tuple
+      - 3
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+targets:
+  Building Mass Decoder:
+    classification_targets:
+      Bm Base Shape: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE0OTk2ODEzNzM2MHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+          ADE0MDE0OTk2ODEzNzM2MHEBYS4QAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAAAAA
+          AIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8=
+      - 0
+      - !!python/tuple
+        - 8
+        - 2
+      - !!python/tuple
+        - 2
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+    regression_target:
+      Bm Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE0OTk2ODEzODIwOHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+          ADE0MDE0OTk2ODEzODIwOHEBYS4YAAAAAAAAADZHLD+HmiU/8xRZPsOQaj/0vl0/3EIwP6hQcD9s
+          jlA/OWElP7hjAD8B/GQ/iDteP2b2rT7kPCE+tj/EPnOlIj/bIhU/423lPqiEpz4XVJE83O85P6jl
+          kj3XV6M+jfIhPw==
+      - 0
+      - !!python/tuple
+        - 8
+        - 3
+      - !!python/tuple
+        - 3
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+  Facade Decoder:
+    classification_targets: {}
+    regression_target:
+      Num Floors: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE0OTk2ODEzODg0OHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE0OTk2ODEzODg0OHEBYS4IAAAAAAAAAAAAAAAAAIA+AACAPgAAgD4AAEA/AACAPgAAgD8A
+          AAAA
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Num Windows Each Side: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3NDU2MHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3NDU2MHEBYS4IAAAAAAAAAAAAAD8AAEA/AABAPwAAQD8AAAAAAABAPwAAgD8A
+          AIA/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+  Floor Ledge Decoder:
+    classification_targets:
+      Has Floor Ledge: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1NDQ0MTExOTA0MHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1NDQ0MTExOTA0MHEBYS4QAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgD8A
+          AAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8=
+      - 0
+      - !!python/tuple
+        - 8
+        - 2
+      - !!python/tuple
+        - 2
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+    regression_target:
+      Floor Ledge Extrusion X: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3NzIxNnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3NzIxNnEBYS4IAAAAAAAAAATiUT9iklo/nU5bP9Gclz5Hkwc/+/JYPy7ydD5V
+          w1w/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Floor Ledge Extrusion Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3Nzg1NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3Nzg1NnEBYS4IAAAAAAAAANDQdj+y4Dk/VEE1P0DG1z7dThc/zoGaPtdcXD9G
+          VQE/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Floor Ledge Size X: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3NTcyOHECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3NTcyOHEBYS4IAAAAAAAAADMbZz/9kXM/rQB3P6KkSz9i9zo+jy4WP3Kpcz9g
+          SFM/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Floor Ledge Size Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3NjU3NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3NjU3NnEBYS4IAAAAAAAAAItHEz60wfg+JCAoP1R6uT1a9Pw+jXeSPlBrRT+F
+          qQM/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+  Roof Decoder:
+    classification_targets:
+      Rf Base Shape: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3ODQ5NnECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3ODQ5NnEBYS4YAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAA
+          AIA/AAAAAAAAgD8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAA
+          AAAAAIA/AAAAAA==
+      - 0
+      - !!python/tuple
+        - 8
+        - 3
+      - !!python/tuple
+        - 3
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+    regression_target:
+      Rf Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3NjMyMHECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3NjMyMHEBYS4YAAAAAAAAAF+Taj+F4Gg/dk8xPhGDWT410w0+Jt5yPgHGWD4k
+          wio+MypQPlJymz0dxX4/drr0PvX4JT9eTKw+WgRXP+vXWj+cAXU/ctmePSczbj+E3dA+xk5wP2Rj
+          MD/7SaE+yHqWPg==
+      - 0
+      - !!python/tuple
+        - 8
+        - 3
+      - !!python/tuple
+        - 3
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+  Window Ledge Decoder:
+    classification_targets:
+      Has Window Ledge: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3OTQwOHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3OTQwOHEBYS4QAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8A
+          AAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAA=
+      - 0
+      - !!python/tuple
+        - 8
+        - 2
+      - !!python/tuple
+        - 2
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+    regression_target:
+      Window Ledge Extrusion X: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ4MDE3NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ4MDE3NnEBYS4IAAAAAAAAAGQpkD3MYco8HOGCPfOPhz4GikY/VDUIP+vMcD+5
+          Ng8/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Window Ledge Extrusion Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ4MTc5MnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ4MTc5MnEBYS4IAAAAAAAAAOBrmT5SL1Y/3vtkP++8OT/oAmk/sBI+PyS/UT9e
+          YHc+
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Window Ledge Shape Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ3OTc5MnECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ3OTc5MnEBYS4YAAAAAAAAAP3sQz+TfrI9UKQ9PgyWZD9pUGQ/rnPgPsLhWj8p
+          tl8/CC3kPqictT4oJiM/DCZXPzTwOT+bBgQ/gXsxP+AMHD/pAls+I/4eP6br6j4993w/+N7JPllN
+          4D2sacQ+D4RgPw==
+      - 0
+      - !!python/tuple
+        - 8
+        - 3
+      - !!python/tuple
+        - 3
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Window Ledges Height Offset: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ4MjE3NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ4MjE3NnEBYS4IAAAAAAAAAGqkKD+A00Q+zv8dPiEXED/l7V8/o0ZGPnF0XT7K
+          xS8/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+  Window Main Decoder:
+    classification_targets: {}
+    regression_target:
+      Window Shape Size: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0NjA5NnECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0NjA5NnEBYS4YAAAAAAAAACF9HT+QLCM8hQudPTFEaT0HEmA/0beRPfZ6eT9P
+          w14/podEP2bJlj7vTKw+C+EkP8q4iz5t7lQ/+Uv6PsvklD6M8As/akifPtBxkz6f6Gk/msZJP+ys
+          yj6df2Y9p75YPw==
+      - 0
+      - !!python/tuple
+        - 8
+        - 3
+      - !!python/tuple
+        - 3
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Windows Height Offset: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0NTQ1NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0NTQ1NnEBYS4IAAAAAAAAAGhw8j6sk3E/IF1oP5qI5D7btww/lvC4Pk96RD/N
+          YOQ+
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Windows Left Right Offset: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0NDgxNnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0NDgxNnEBYS4IAAAAAAAAAJfNbz9EMUA/LFwuPz7xvD3R3dc+JIokP8SMEj8K
+          XOY+
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+  Window Panel Decoder:
+    classification_targets:
+      Window Divided Horizontal: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ4MTUzNnECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ4MTUzNnEBYS4QAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAA
+          AIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAACAPwAAAAA=
+      - 0
+      - !!python/tuple
+        - 8
+        - 2
+      - !!python/tuple
+        - 2
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Window Divided Vertical: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0NzAwOHECWAYAAABjdWRhOjBxA0sQTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0NzAwOHEBYS4QAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAIA/AAAAAAAAAAAA
+          AIA/AACAPwAAAAAAAIA/AAAAAAAAgD8AAAAAAACAPwAAAAA=
+      - 0
+      - !!python/tuple
+        - 8
+        - 2
+      - !!python/tuple
+        - 2
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+    regression_target:
+      Window Interpanel Offset Percentage Y: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0Nzc3NnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0Nzc3NnEBYS4IAAAAAAAAADpKtD5jn3I/pMV6P85/bD7K9LM+vrERPmHsUT+5
+          ojI/
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Window Interpanel Offset Percentage Z: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0OTM5MnECWAYAAABjdWRhOjBxA0sITnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0OTM5MnEBYS4IAAAAAAAAAC9lIj8A+Js9vc43PNhPhj4JfgU+E+47PlgbVz5p
+          nxo+
+      - 0
+      - !!python/tuple
+        - 8
+      - !!python/tuple
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
+      Window Panel Area: !!python/object/apply:torch._utils._rebuild_tensor_v2
+      - !!python/object/apply:torch.storage._load_from_bytes
+        - !!binary |
+          gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+          AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+          aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+          Z2UKcQFYDwAAADE0MDE1MTYwNzQ0NzM5MnECWAYAAABjdWRhOjBxA0sYTnRxBFEugAJdcQBYDwAA
+          ADE0MDE1MTYwNzQ0NzM5MnEBYS4YAAAAAAAAAJYiaT9wXvA+tHHaPudqLj8Yx3A/Vd5vP45lGz/C
+          gnk/u/d2P0vaUT+gibs8fAUAPzRP8D1xglQ/jvZsP/3Ptz29i2k/7diGPiOkaj9Dzw8/MngdPwoE
+          OD/9Khw9+Z+MPg==
+      - 0
+      - !!python/tuple
+        - 8
+        - 3
+      - !!python/tuple
+        - 3
+        - 1
+      - false
+      - !!python/object/apply:collections.OrderedDict
+        - []
