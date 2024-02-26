@@ -152,7 +152,7 @@ if __name__ == "__main__":
     model = EncoderDecoderModel(encoder, decoders)
     switches = load_switches(dataset_name)
     criterion = EncDecsLoss(decoders, switches)
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.005)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth", loss_save_path="loss.yml")
