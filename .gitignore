@@ -11,3 +11,6 @@ EncDecModel.pth
 
 # ignore logs
 logs/
+
+# ignore models
+models/

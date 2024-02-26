@@ -10,13 +10,15 @@ from torchvision import models, transforms
 
 
 class DAGDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset_name: str, datasets_folder: str="./datasets", transform=None, device=None):
+    def __init__(self, dataset_name: str, 
+                 datasets_folder: str="./datasets", 
+                 transform=None, device=None):
         self.dataset_name = dataset_name
         self.datasets_folder = datasets_folder
         self.dataset_path = os.path.join(self.datasets_folder, self.dataset_name)
         self.images_folder = os.path.join(self.dataset_path, "images")
         self.params_folder = os.path.join(self.dataset_path, "params")
-        self.ranges_file_path = os.path.join(self.dataset_path, "ranges.yml")
+        self.metadata_file_path = os.path.join(self.dataset_path, "meta.yml")
         self.ranges = None
         self.decoders = None
         self.transform = transforms.Compose(
@@ -26,12 +28,11 @@ class DAGDataset(torch.utils.data.Dataset):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else device
 
     def load_data(self):
-        # Load the ranges from the YAML file
-        with open(self.ranges_file_path, 'r') as file:
-            self.ranges = yaml.safe_load(file)
-        # Load the decoders from the YAML file
-        with open(os.path.join(self.dataset_path, "decoders.yml"), 'r') as file:
-            self.decoders = yaml.safe_load(file)
+        # load metadata
+        with open(self.metadata_file_path, 'r') as file:
+            metadata = yaml.safe_load(file)
+        self.ranges = metadata['ranges']
+        self.decoders = metadata['decoders']
         # read images and parameters
         data = []
         for image_name in os.listdir(self.images_folder):

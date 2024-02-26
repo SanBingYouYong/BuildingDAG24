@@ -137,9 +137,13 @@ def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path=
 
     print(f"Test Loss: {test_loss / num_batches}")
 
-    # save the results
-    with open(results_save_path, "w") as f:
-        yaml.dump({"outputs": outputs, "targets": targets}, f)
+    # # Convert tensors to numpy arrays  # TODO: use a similar explicit conversion like in loss calculation
+    # outputs = [tensor.numpy().tolist() for tensor in outputs]
+    # targets = [tensor.numpy().tolist() for tensor in targets]
+
+    # # save the results
+    # with open(results_save_path, "w") as f:
+    #     yaml.dump({"outputs": outputs, "targets": targets}, f)
 
     return outputs, targets
 
@@ -148,26 +152,27 @@ if __name__ == "__main__":
     dataset_name = "DAGDataset100_100_5"
     if not os.path.exists(f"./datasets/{dataset_name}"):
         raise FileNotFoundError(f"Dataset {dataset_name} not found")
+    
+    ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata(dataset_name)
+
     dataset = DAGDataset(dataset_name)
     train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
     train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
     print(f"Train/Val/Test: {len(train_dataset)}/{len(val_dataset)}/{len(test_dataset)}")
 
-    ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata(dataset_name)
-
     encoder = Encoder()
     model = EncoderDecoderModel(encoder, decoders)
 
     criterion = EncDecsLoss(decoders, switches)
-    optimizer = optim.Adam(model.parameters(), lr=0.005)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    os.mkdir("./models", exist_ok=True)
+    os.makedirs("./models", exist_ok=True)
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
-    loss_name = f"./models/loss_{dataset_name}_{timestamp}.yml"
-    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth", loss_save_path="loss.yml")
+    loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
+    train(model, criterion, optimizer, train_loader, val_loader, epochs=5, seed=0, model_save_path=model_name, loss_save_path=loss_name)
     test(model, test_loader, criterion, results_save_path="results.yml")
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
