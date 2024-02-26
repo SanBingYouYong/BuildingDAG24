@@ -255,8 +255,7 @@ def update_background_image_opacity(self, context):
 def update_show_current_shape(self, context):
     # Update the visibility of the current shape
     scene = context.scene
-    selected_domain = scene.geocode_domain_options
-    object_name = f"procedural {selected_domain.lower()}"
+    object_name = "Building"
     if object_name in bpy.data.objects:
         bpy.data.objects[object_name].hide_viewport = not scene.show_current_shape
 
