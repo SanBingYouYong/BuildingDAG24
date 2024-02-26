@@ -2,6 +2,7 @@ import yaml
 import os
 from PIL import Image
 from tqdm import tqdm
+import datetime
 
 import torch
 import torch.nn as nn
@@ -13,11 +14,8 @@ from nn_models import *
 from nn_dataset import *
 
 
-def load_ranges(dataset_name: str, datasets_folder: str="./datasets"):
-    dataset_path = os.path.join(datasets_folder, dataset_name)
-    ranges_file_path = os.path.join(dataset_path, "ranges.yml")
-    with open(ranges_file_path, 'r') as file:
-        ranges = yaml.safe_load(file)
+def load_ranges(metadata: dict):
+    ranges = metadata['ranges']
     # Create a mapping between parameter names and output sizes
     parameter_output_mapping = {}
     for decoder_name, param_specs in ranges.items():
@@ -33,11 +31,8 @@ def load_ranges(dataset_name: str, datasets_folder: str="./datasets"):
             parameter_output_mapping[decoder_name] = 2  # 2 for binary encoding
     return ranges, parameter_output_mapping
 
-def load_decoders(dataset_name: str, ranges: dict, parameter_output_mapping: dict, datasets_folder: str="./datasets"):
-    dataset_path = os.path.join(datasets_folder, dataset_name)
-    decoders_file_path = os.path.join(dataset_path, "decoders.yml")
-    with open(decoders_file_path, 'r') as file:
-        decoders_params = yaml.safe_load(file)
+def load_decoders(metadata: dict, ranges: dict, parameter_output_mapping: dict, decoder_input_size=1024):
+    decoders_params = metadata['decoders']
     decoders = nn.ModuleDict()
     # initialize decoders with corresponding output tails
     for decoder_name, param_names in decoders_params.items():
@@ -52,19 +47,28 @@ def load_decoders(dataset_name: str, ranges: dict, parameter_output_mapping: dic
             else:
                 regression_tails[param_name] = parameter_output_mapping[param_name]
         # add decoder to model
-        decoders[decoder_name] = ParamAwareMultiTailDecoder(1024, classification_tails, regression_tails)
+        decoders[decoder_name] = ParamAwareMultiTailDecoder(decoder_input_size, classification_tails, regression_tails)
     return decoders
 
-def load_switches(dataset_name: str, datasets_folder: str="./datasets"):
+def load_metadata(dataset_name: str, datasets_folder: str="./datasets"):
     dataset_path = os.path.join(datasets_folder, dataset_name)
-    switches_file_path = os.path.join(dataset_path, "switches.yml")
-    with open(switches_file_path, 'r') as file:
-        switches = yaml.safe_load(file)
-    return switches
+    metadata_file_path = os.path.join(dataset_path, "meta.yml")
+    with open(metadata_file_path, 'r') as file:
+        metadata = yaml.safe_load(file)
+    ranges, parameter_output_mapping = load_ranges(metadata)
+    decoders = load_decoders(metadata, ranges, parameter_output_mapping)
+    switches = metadata['switches']
+    batch_cam_angles = metadata['batch_cam_angles']
+    return ranges, parameter_output_mapping, decoders, switches, batch_cam_angles
+    
 
-def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth", loss_save_path="loss.yml"):
+def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, 
+          epochs=25, seed=0, 
+          model_save_path="./models/EncDecModel.pth", 
+          loss_save_path="./models/loss.yml"):
     train_losses = []
     val_losses = []
+    best_val_loss = float('inf')  # Initialize with a very high value
 
     torch.manual_seed(seed)
 
@@ -101,18 +105,22 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
                 loss = criterion(outputs, targets)
                 val_loss += loss.item()
 
-        val_losses.append(val_loss / num_batches_val)
+        val_loss /= num_batches_val
+        val_losses.append(val_loss)
 
         print(f"Epoch {epoch + 1}/{epochs}, Training Loss: {train_losses[-1]}, Validation Loss: {val_losses[-1]}")
 
+        # Save the model if validation loss improves
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), model_save_path)
+
     print("Finished Training")
 
-    # save the loss
+    # Save the loss
     with open(loss_save_path, "w") as f:
         yaml.dump({"train_losses": train_losses, "val_losses": val_losses}, f)
 
-    # Save your trained model if needed
-    torch.save(model.state_dict(), model_save_path)
 
 def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path="results.yml"):
     model.eval()
@@ -138,23 +146,29 @@ def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path=
 
 if __name__ == "__main__":
     dataset_name = "DAGDataset100_100_5"
-    # dataset_name = "DAGDataset2_1_5"
+    if not os.path.exists(f"./datasets/{dataset_name}"):
+        raise FileNotFoundError(f"Dataset {dataset_name} not found")
     dataset = DAGDataset(dataset_name)
     train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
-    # train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.5, 0.5, 0)
     train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
-    # train_loader, val_loader = overfit_dataloaders(train_dataset, val_dataset, batch_size=32)
-    # print lengths for each dataset
     print(f"Train/Val/Test: {len(train_dataset)}/{len(val_dataset)}/{len(test_dataset)}")
+
+    ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata(dataset_name)
+
     encoder = Encoder()
-    ranges, parameter_output_mapping = load_ranges(dataset_name)
-    decoders = load_decoders(dataset_name, ranges, parameter_output_mapping)
     model = EncoderDecoderModel(encoder, decoders)
-    switches = load_switches(dataset_name)
+
     criterion = EncDecsLoss(decoders, switches)
     optimizer = optim.Adam(model.parameters(), lr=0.005)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
+
+    os.mkdir("./models", exist_ok=True)
+    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
+    loss_name = f"./models/loss_{dataset_name}_{timestamp}.yml"
     train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path="EncDecModel.pth", loss_save_path="loss.yml")
     test(model, test_loader, criterion, results_save_path="results.yml")
+    # copy the meta.yml from dataset to models
+    os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
 
