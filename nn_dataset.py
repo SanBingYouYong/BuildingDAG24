@@ -118,7 +118,7 @@ class DAGDataset(torch.utils.data.Dataset):
             # check if is tensor
             for classification_target in decoder_outputs['classification_targets']:
                 if not torch.is_tensor(decoder_outputs['classification_targets'][classification_target]):
-                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.long)
+                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.float32)
             for regression_target in decoder_outputs['regression_target']:
                 if not torch.is_tensor(decoder_outputs['regression_target'][regression_target]):
                     target[decoder_name]['regression_target'][regression_target] = torch.tensor(decoder_outputs['regression_target'][regression_target], dtype=torch.float32)

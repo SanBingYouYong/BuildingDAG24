@@ -10,8 +10,8 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
 
-from nn_models import *
-# from nn_overfit_model import *
+# from nn_models import *
+from nn_overfit_model import *
 from nn_dataset import *
 
 

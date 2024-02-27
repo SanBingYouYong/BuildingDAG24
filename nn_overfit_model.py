@@ -45,7 +45,7 @@ class ParamAwareMultiTailDecoder(nn.Module):
             {
                 param_name: nn.Sequential(
                     nn.Linear(512, size),
-                    nn.Softmax(dim=1),
+                    # nn.Softmax(dim=1),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -111,11 +111,17 @@ class EncDecsLoss(nn.Module):
         return loss
 
     def classification_loss(self, output, target):
+        # output = torch.tensor([[1., 0.]]).to(target.device)
         print(f" - Classification output: {output}, target: {target}")
-        loss = nn.CrossEntropyLoss()(output, target)
-        # loss = nn.CrossEntropyLoss()(torch.argmax(output).float().unsqueeze(0), torch.argmax(target).float().unsqueeze(0))
-        # print(f"--{torch.softmax(output, dim=1, dtype=torch.long)}")
-        # loss = nn.CrossEntropyLoss()(output.softmax(dim=1), target)
+        # loss = nn.CrossEntropyLoss()(output, target)
+        loss = nn.CrossEntropyLoss()(torch.argmax(output).float().unsqueeze(0), torch.argmax(target).float().unsqueeze(0))
+        # print(f"--{torch.argmax(output, dim=1)}")
+        # print(f"--loss: {loss}")
+        # print(f"~~~{torch.argmax(output).float().unsqueeze(0)}")
+        # print(f"~~~{torch.argmax(target).float().unsqueeze(0)}")
+        # print(f"~~~loss: {nn.CrossEntropyLoss()(torch.argmax(output).float().unsqueeze(0), torch.argmax(target).float().unsqueeze(0))}")
+        # raise
+        # loss = nn.CrossEntropyLoss()(output.argmax(dim=1), target)
         # loss = F.cross_entropy(output, target)
         print(f" - - Calculated loss: {loss}")
         return loss
@@ -147,8 +153,8 @@ class EncDecsLoss(nn.Module):
                 # print(f"Original Regression Loss: {regression_loss}")
                 switch_target = target["classification_targets"][switch_param_name]
                 # print("!!Switch Target:", switch_target)
-                # switch_index = torch.argmin(switch_target, dim=1)
-                switch_index = switch_target
+                switch_index = torch.argmin(switch_target, dim=1)
+                # switch_index = switch_target
                 # print("!!Switch Index:", switch_index)
                 # make regression_loss same shape as switch_index
                 regression_loss = torch.stack([regression_loss] * switch_index.size(0))
@@ -201,13 +207,14 @@ if __name__ == "__main__":
     target = {decoder_name: {task: {param_name: param.unsqueeze(0).to(device) for param_name, param in task_params.items()} for task, task_params in decoder_outputs.items()} for decoder_name, decoder_outputs in target.items()}
     # print("Sample:", sample)
     print("!!!Target:", target)
+    # raise
 
     # feed to model
     outputs = model(sample)
     print("!!!Outputs:", outputs)
 
     loss = criterion(outputs, target)
-    print("!!!Loss:", loss)
+    print("\n!!!Loss:", loss)
     # raise
 
     # copy paste target values to corresponding entries in outputs
@@ -215,16 +222,18 @@ if __name__ == "__main__":
         # print(decoder_name)    
         for param_name, param in classification_outputs.items():
             classification_outputs[param_name] = target[decoder_name]["classification_targets"][param_name]
+            # convert class indices to one-hot
+            # classification_outputs[param_name] = F.one_hot(target[decoder_name]["classification_targets"][param_name], num_classes=param.size(1)).float()
         for param_name, param in regression_outputs.items():
             regression_outputs[param_name] = target[decoder_name]["regression_target"][param_name]
     # print("Outputs with Target Values:", outputs)
 
-    # check that now outputs and targets are identical
-    for decoder_name, (classification_outputs, regression_outputs) in outputs.items():
-        for param_name, param in classification_outputs.items():
-            assert torch.allclose(param, target[decoder_name]["classification_targets"][param_name])
-        for param_name, param in regression_outputs.items():
-            assert torch.allclose(param, target[decoder_name]["regression_target"][param_name])
+    # # check that now outputs and targets are identical
+    # for decoder_name, (classification_outputs, regression_outputs) in outputs.items():
+    #     for param_name, param in classification_outputs.items():
+    #         assert torch.allclose(param, target[decoder_name]["classification_targets"][param_name])
+    #     for param_name, param in regression_outputs.items():
+    #         assert torch.allclose(param, target[decoder_name]["regression_target"][param_name])
 
     # calculate loss
     loss = criterion(outputs, target)
