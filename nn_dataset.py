@@ -147,3 +147,18 @@ def overfit_dataloaders(train_dataset, val_dataset, batch_size=32):
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
     # test_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     return train_loader, val_loader
+
+def denormalize(normalized_value, param_spec):
+    print(normalized_value)
+    if param_spec['type'] == 'float' or param_spec['type'] == 'int':
+        converter = float if param_spec['type'] == 'float' else int
+        return converter(normalized_value * (param_spec['max'] - param_spec['min']) + param_spec['min'])
+    elif param_spec['type'] == 'vector':
+        denorm_value = []
+        for i, dim in enumerate(['x', 'y', 'z']):
+            denorm_val = normalized_value[i] * (param_spec[f'{dim}max'] - param_spec[f'{dim}min']) + param_spec[f'{dim}min']
+            denorm_value.append(float(denorm_val))
+        return denorm_value
+    else:
+        raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
+
