@@ -29,6 +29,7 @@ from render import DAGRenderer
 from tqdm import tqdm
 
 from nn_models import EncoderDecoderModel
+from ui_external_inference import inference
 
 
 def resize_and_convert(img_path: str, invert=True) -> None:
@@ -46,29 +47,6 @@ def resize_and_convert(img_path: str, invert=True) -> None:
     binarized_image.save(img_path)
     print(f"PIL saved img to {img_path}")
 
-def inference():
-    # Set the device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    # Load the model
-    model = EncoderDecoderModel()
-    model.load_state_dict(torch.load("model.pth"))
-    model.eval()
-    model.to(device)
-
-    # Load the image
-    image = Image.open("./inference/sketch.png").convert("L")
-    image = image.to(device)
-
-    # Perform inference
-    with torch.no_grad():
-        output = model(image)
-
-    # Save the output
-    with open("./inference/output.yml", "w") as file:
-        yaml.safe_dump(output, file)
-
-    print("Inference complete")
 
 def load_param_to_shape():
     # Load the parameters
@@ -110,7 +88,7 @@ class CaptureAnnotationOperator(bpy.types.Operator):
         # gc_single_image_inference_entrypoint(domain)
         inference()
         # param2obj_entrypoint(domain, obj)
-        load_param_to_shape()
+        # load_param_to_shape()
 
         # bring it back in
         obj.hide_viewport = False
