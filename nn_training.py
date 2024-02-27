@@ -10,7 +10,8 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
 
-from nn_models import *
+# from nn_models import *
+from nn_overfit_model import *
 from nn_dataset import *
 
 
@@ -88,6 +89,9 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
         for i, data in progress_bar:
             inputs, targets = data
 
+            # print(targets)
+            # raise
+
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
@@ -123,6 +127,7 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
             torch.save(model.state_dict(), model_save_path)
 
     print("Finished Training")
+    print(f"Best Validation Loss: {best_val_loss}; at epoch {val_losses.index(best_val_loss) + 1}")
 
     # Save the loss
     with open(loss_save_path, "w") as f:
@@ -156,22 +161,27 @@ def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path=
 
 
 if __name__ == "__main__":
-    dataset_name = "DAGDataset100_100_5"
+    dataset_name = "DAGDataset2_1_5"
     if not os.path.exists(f"./datasets/{dataset_name}"):
         raise FileNotFoundError(f"Dataset {dataset_name} not found")
     
     ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata(dataset_name)
 
     dataset = DAGDataset(dataset_name)
-    train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
-    train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
+
+    # train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
+    # train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
+    
+    train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.5, 0.5, 0)
+    train_loader, val_loader = overfit_dataloaders(train_dataset, val_dataset, batch_size=32)
+    
     print(f"Train/Val/Test: {len(train_dataset)}/{len(val_dataset)}/{len(test_dataset)}")
 
     encoder = Encoder()
     model = EncoderDecoderModel(encoder, decoders)
 
     criterion = EncDecsLoss(decoders, switches)
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.005)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -179,8 +189,8 @@ if __name__ == "__main__":
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
     loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
-    train(model, criterion, optimizer, train_loader, val_loader, epochs=5, seed=0, model_save_path=model_name, loss_save_path=loss_name)
-    test(model, test_loader, criterion, results_save_path="results.yml")
+    train(model, criterion, optimizer, train_loader, val_loader, epochs=100, seed=0, model_save_path=model_name, loss_save_path=loss_name)
+    # test(model, test_loader, criterion, results_save_path="results.yml")
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
 

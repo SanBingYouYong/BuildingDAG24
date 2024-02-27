@@ -71,6 +71,7 @@ class DAGDataset(torch.utils.data.Dataset):
                 processed_param[param_name] = self.normalize(param[param_name], param_spec)
             elif param_spec['type'] == 'states' or param_spec['type'] == 'bool':
                 processed_param[param_name] = self.one_hot(param[param_name], param_spec)
+                # processed_param[param_name] = self.to_class_indices(param[param_name], param_spec)
             else:
                 raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
         return processed_param
@@ -90,6 +91,14 @@ class DAGDataset(torch.utils.data.Dataset):
         elif param_spec['type'] == 'bool':
             # make bools onehot too to make it consistent
             return [1, 0] if value else [0, 1]
+        else:
+            raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
+    
+    def to_class_indices(self, value, param_spec):
+        if param_spec['type'] == 'states':
+            return param_spec['values'].index(value)
+        elif param_spec['type'] == 'bool':
+            return 1 if value else 0
         else:
             raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
 
