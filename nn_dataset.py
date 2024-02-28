@@ -70,8 +70,8 @@ class DAGDataset(torch.utils.data.Dataset):
             if param_spec['type'] == 'float' or param_spec['type'] == 'int' or param_spec['type'] == 'vector':
                 processed_param[param_name] = self.normalize(param[param_name], param_spec)
             elif param_spec['type'] == 'states' or param_spec['type'] == 'bool':
-                processed_param[param_name] = self.one_hot(param[param_name], param_spec)
-                # processed_param[param_name] = self.to_class_indices(param[param_name], param_spec)
+                # processed_param[param_name] = self.one_hot(param[param_name], param_spec)
+                processed_param[param_name] = self.to_class_indices(param[param_name], param_spec)
             else:
                 raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
         return processed_param
@@ -118,7 +118,7 @@ class DAGDataset(torch.utils.data.Dataset):
             # check if is tensor
             for classification_target in decoder_outputs['classification_targets']:
                 if not torch.is_tensor(decoder_outputs['classification_targets'][classification_target]):
-                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.float32)
+                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.long)
             for regression_target in decoder_outputs['regression_target']:
                 if not torch.is_tensor(decoder_outputs['regression_target'][regression_target]):
                     target[decoder_name]['regression_target'][regression_target] = torch.tensor(decoder_outputs['regression_target'][regression_target], dtype=torch.float32)

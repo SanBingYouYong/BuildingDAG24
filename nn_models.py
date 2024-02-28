@@ -39,12 +39,12 @@ class ParamAwareMultiTailDecoder(nn.Module):
         super(ParamAwareMultiTailDecoder, self).__init__()
         self.fc1 = nn.Linear(input_size, 512)
         self.relu1 = nn.ReLU()
-        # self.dropout1 = nn.Dropout(p=dropout_prob)
+        self.dropout1 = nn.Dropout(p=dropout_prob)
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
                     nn.Linear(512, size),
-                    nn.Softmax(dim=1),
+                    # nn.Softmax(dim=1),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -55,10 +55,10 @@ class ParamAwareMultiTailDecoder(nn.Module):
                 param_name: nn.Sequential(
                     nn.Linear(512, 256),
                     nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Dropout(p=dropout_prob),
                     nn.Linear(256, 128),
                     nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Dropout(p=dropout_prob),
                     nn.Linear(128, size),
                 )
                 for param_name, size in regression_params.items()
@@ -108,7 +108,7 @@ class EncDecsLoss(nn.Module):
         return loss
 
     def classification_loss(self, output, target):
-        loss = nn.CrossEntropyLoss()(torch.argmax(output).float().unsqueeze(0), torch.argmax(target).float().unsqueeze(0))
+        loss = nn.CrossEntropyLoss()(output, target)
         return loss
 
     def regression_loss(self, output, target):
@@ -131,8 +131,8 @@ class EncDecsLoss(nn.Module):
             switch_param_name = self.switches_mapping["Reversed Mapping"].get(param_name)
             if switch_param_name:
                 switch_target = target["classification_targets"][switch_param_name]
-                switch_index = torch.argmin(switch_target, dim=1)
-                # switch_index = switch_target
+                # switch_index = torch.argmin(switch_target, dim=1)
+                switch_index = switch_target
                 # make regression_loss same shape as switch_index
                 regression_loss = torch.stack([regression_loss] * switch_index.size(0))
                 regression_loss *= switch_index
