@@ -61,12 +61,17 @@ def load_metadata(dataset_name: str, datasets_folder: str="./datasets"):
     batch_cam_angles = metadata['batch_cam_angles']
     return ranges, parameter_output_mapping, decoders, switches, batch_cam_angles
 
-def load_metadata_for_inference(metadata_file_path: str):
+def load_metadata_for_inference(metadata_file_path: str, need_full: bool=False):
     with open(metadata_file_path, 'r') as file:
         metadata = yaml.safe_load(file)
     ranges, parameter_output_mapping = load_ranges(metadata)
     decoders = load_decoders(metadata, ranges, parameter_output_mapping)
-    return ranges, parameter_output_mapping, decoders
+    if not need_full:
+        return ranges, parameter_output_mapping, decoders
+    else:
+        switches = metadata['switches']
+        batch_cam_angles = metadata['batch_cam_angles']
+        return ranges, parameter_output_mapping, decoders, switches, batch_cam_angles
     
 
 def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, 
@@ -112,6 +117,7 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
                 inputs, targets = data
 
                 outputs = model(inputs)
+                # loss = criterion(outputs, targets, print_in_val=False)
                 loss = criterion(outputs, targets)
                 val_loss += loss.item()
 
@@ -133,7 +139,55 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
         yaml.dump({"train_losses": train_losses, "val_losses": val_losses}, f)
 
 
-def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path="results.yml"):
+def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
+    parsed_outputs = {}
+    for decoder_name, decoder_outputs in outputs.items():
+        # print(f"Decoder: {decoder_name}")
+        classification_outputs, regression_output = decoder_outputs
+        classification_targets = targets[decoder_name]['classification_targets']
+        regression_targets = targets[decoder_name]['regression_target']
+        for param_name, pred in classification_outputs.items():
+            tar = classification_targets[param_name]
+            parsed_pred = []
+            # for p in pred:
+            for i in range(len(pred)):
+                p = pred[i]
+                t = tar[i]
+                # pred = pred[idx]
+                # print(f"Classification: {param_name}")
+                # print(p)
+                param_type = ranges[param_name]["type"]
+                # print(f"Type: {param_type}")
+                if param_type == "bool":
+                    p = bool(torch.argmax(p) == 0)
+                    t = bool(torch.argmax(t) == 0)
+                elif param_type == "states":
+                    p = int(torch.argmax(p))
+                    t = int(torch.argmax(t))
+                parsed_pred.append([p, t])
+            parsed_outputs[param_name] = parsed_pred
+        for param_name, pred in regression_output.items():
+            reg = regression_targets[param_name]
+            parsed_pred = []
+            # for p in pred:
+            for i in range(len(pred)):
+                p = pred[i]
+                t = reg[i]
+                # pred = pred[idx]
+                # print(f"Regression: {param_name}")
+                # print(p)
+                param_type = ranges[param_name]["type"]
+                # print(f"Type: {param_type}")
+                p = denormalize(p, ranges[param_name])
+                t = de_tensor(t)
+                parsed_pred.append([p, t])
+            parsed_outputs[param_name] = parsed_pred
+    return parsed_outputs
+
+def test(model: nn.Module, test_loader, criterion: nn.Module, ranges, results_save_path="results.yml"):
+    '''
+    Saves the last batch of test results to a file. 
+    '''
     model.eval()
     test_loss = 0.0
     num_batches = len(test_loader)
@@ -148,19 +202,22 @@ def test(model: nn.Module, test_loader, criterion: nn.Module, results_save_path=
 
     print(f"Test Loss: {test_loss / num_batches}")
 
-    # # Convert tensors to numpy arrays  # TODO: use a similar explicit conversion like in loss calculation
-    # outputs = [tensor.numpy().tolist() for tensor in outputs]
-    # targets = [tensor.numpy().tolist() for tensor in targets]
+    # Convert tensors to numpy arrays  # TODO: use a similar explicit conversion like in loss calculation
+    outputs = parse_outputs(outputs, ranges, targets)
+    # targets = parse_targets(targets)
 
     # # save the results
-    # with open(results_save_path, "w") as f:
-    #     yaml.dump({"outputs": outputs, "targets": targets}, f)
+    with open(results_save_path, "w") as f:
+        yaml.dump({"outputs": outputs}, f)
+    # import json
+    # with open(results_save_path[:-4]+".json", "w") as f:
+    #     json.dump({"outputs": outputs, "targets": targets}, f)
 
     return outputs, targets
 
 
 if __name__ == "__main__":
-    dataset_name = "DAGDataset2_1_5"
+    dataset_name = "DAGDataset100_100_5"
     if not os.path.exists(f"./datasets/{dataset_name}"):
         raise FileNotFoundError(f"Dataset {dataset_name} not found")
     
@@ -168,11 +225,11 @@ if __name__ == "__main__":
 
     dataset = DAGDataset(dataset_name)
 
-    # train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
-    # train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=32)
+    train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
+    train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=128)
     
-    train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.5, 0.5, 0)
-    train_loader, val_loader = overfit_dataloaders(train_dataset, val_dataset, batch_size=32)
+    # train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.5, 0.5, 0)
+    # train_loader, val_loader = overfit_dataloaders(train_dataset, val_dataset, batch_size=32)
     
     print(f"Train/Val/Test: {len(train_dataset)}/{len(val_dataset)}/{len(test_dataset)}")
 
@@ -180,7 +237,7 @@ if __name__ == "__main__":
     model = EncoderDecoderModel(encoder, decoders)
 
     criterion = EncDecsLoss(decoders, switches)
-    optimizer = optim.Adam(model.parameters(), lr=0.005)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
@@ -188,8 +245,8 @@ if __name__ == "__main__":
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
     loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
-    train(model, criterion, optimizer, train_loader, val_loader, epochs=100, seed=0, model_save_path=model_name, loss_save_path=loss_name)
-    # test(model, test_loader, criterion, results_save_path="results.yml")
+    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path=model_name, loss_save_path=loss_name)
+    test(model, test_loader, criterion, ranges, results_save_path="results.yml")
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
 
