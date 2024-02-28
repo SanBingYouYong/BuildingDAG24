@@ -29,6 +29,7 @@ from render import DAGRenderer
 from tqdm import tqdm
 
 from nn_models import EncoderDecoderModel
+from ui_external_inference import inference
 
 
 def resize_and_convert(img_path: str, invert=True) -> None:
@@ -46,45 +47,10 @@ def resize_and_convert(img_path: str, invert=True) -> None:
     binarized_image.save(img_path)
     print(f"PIL saved img to {img_path}")
 
-def inference():
-    # Set the device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    # Load the model
-    model = EncoderDecoderModel()
-    model.load_state_dict(torch.load("model.pth"))
-    model.eval()
-    model.to(device)
-
-    # Load the image
-    image = Image.open("./inference/sketch.png").convert("L")
-    image = image.to(device)
-
-    # Perform inference
-    with torch.no_grad():
-        output = model(image)
-
-    # Save the output
-    with open("./inference/output.yml", "w") as file:
-        yaml.safe_dump(output, file)
-
-    print("Inference complete")
 
 def load_param_to_shape():
-    # Load the parameters
-    with open("params.yml", "r") as file:
-        params = yaml.safe_load(file)
-
-    # Load the shape
-    shape = DAGRenderer.load_shape("shape.obj")
-
-    # Apply the parameters to the shape
-    shape = DAGRenderer.apply_params(shape, params)
-
-    # Save the shape
-    shape.save("shape.obj")
-
-    print("Parameters applied to shape")
+    loader = DAGParamLoader()
+    loader.load_dag_params("./inference/output.yml")
 
 class CaptureAnnotationOperator(bpy.types.Operator):
     bl_idname = "object.capture_annotation_operator"
@@ -108,7 +74,7 @@ class CaptureAnnotationOperator(bpy.types.Operator):
         resize_and_convert(img_path)
 
         # gc_single_image_inference_entrypoint(domain)
-        inference()
+        # inference()
         # param2obj_entrypoint(domain, obj)
         load_param_to_shape()
 
@@ -156,16 +122,14 @@ class ImageInferenceOperator(bpy.types.Operator):
         print("You've called Image Inference.")
         # copy paste background image to corresponding dataset of domain
         scene = context.scene
-        domain = scene.geocode_domain_options
-        img_path = None
-        obj = None
+        img_path = "./inference/sketch.png"
         # translate background image path to path that shutil recognise
         img_path = bpy.path.abspath(img_path)
         inf_img_path = bpy.path.abspath(scene.background_image_path)
         shutil.copyfile(inf_img_path, img_path)
         resize_and_convert(img_path, invert=not scene.proper_background_image)
         # gc_single_image_inference_entrypoint(domain)
-        inference()
+        # inference()
         # param2obj_entrypoint(domain, obj)
         load_param_to_shape()
         return {"FINISHED"}
