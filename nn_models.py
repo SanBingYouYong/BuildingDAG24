@@ -40,10 +40,16 @@ class ParamAwareMultiTailDecoder(nn.Module):
         self.fc1 = nn.Linear(input_size, 1024)
         self.relu1 = nn.ReLU()
         self.dropout1 = nn.Dropout(p=dropout_prob)
+        # self.fc2 = nn.Linear(1024, 1024)
+        # self.relu2 = nn.ReLU()
+        # self.dropout2 = nn.Dropout(p=dropout_prob)
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
                     nn.Linear(1024, size),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
+                    # nn.Linear(512, size),
                     # nn.Softmax(dim=1),
                 )
                 for param_name, size in classification_params.items()
@@ -53,9 +59,15 @@ class ParamAwareMultiTailDecoder(nn.Module):
         self.regression_tail = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
+                    # nn.Linear(1024, 1024),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
                     nn.Linear(1024, 512),
                     nn.ReLU(),
                     nn.Dropout(p=dropout_prob),
+                    # nn.Linear(512, 512),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
                     nn.Linear(512, 256),
                     nn.ReLU(),
                     nn.Dropout(p=dropout_prob),
@@ -71,7 +83,10 @@ class ParamAwareMultiTailDecoder(nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = self.relu1(x)
-        # x = self.dropout1(x)
+        x = self.dropout1(x)
+        # x = self.fc2(x)
+        # x = self.relu2(x)
+        # x = self.dropout2(x)
         classification_outputs = {
             param_name: tail(x) for param_name, tail in self.classification_tails.items()
         } if self.classification_tails else {}
@@ -98,10 +113,11 @@ class EncoderDecoderModel(nn.Module):
 # Define loss function and optimizer
 # for regression, use MSELoss (or L1), for classification, use CrossEntropyLoss
 class EncDecsLoss(nn.Module):
-    def __init__(self, decoders, switches_mapping: dict):
+    def __init__(self, decoders, switches_mapping: dict, l1_lambda=0.01):
         super(EncDecsLoss, self).__init__()
         self.decoders = decoders
         self.switches_mapping = switches_mapping
+        self.l1_lambda = l1_lambda
 
     # def forward(self, outputs, targets, print_in_val=False):
     def forward(self, outputs, targets):
@@ -113,6 +129,18 @@ class EncDecsLoss(nn.Module):
         loss /= len(outputs)
         # if print_in_val:
         #     print(f"Average Loss: {loss}")
+         # L1 Regularization
+        l1_reg = None
+        total_params = 0
+        for param in self.parameters():
+            total_params += param.numel()
+            if l1_reg is None:
+                l1_reg = param.norm(2)
+            else:
+                l1_reg = l1_reg + param.norm(2)
+        # Average the L1 regularization term
+        l1_reg /= total_params
+        loss += self.l1_lambda * l1_reg
         return loss
 
     def classification_loss(self, output, target):
