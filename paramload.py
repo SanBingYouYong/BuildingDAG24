@@ -58,4 +58,4 @@ class DAGParamLoader():
 
 if __name__ == "__main__":
     loader = DAGParamLoader()
-    loader.load_dag_params("te.yaml")
+    loader.load_dag_params("./inference/output.yml")

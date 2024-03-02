@@ -10,13 +10,15 @@ from torchvision import models, transforms
 
 
 class DAGDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset_name: str, datasets_folder: str="./datasets", transform=None, device=None):
+    def __init__(self, dataset_name: str, 
+                 datasets_folder: str="./datasets", 
+                 transform=None, device=None):
         self.dataset_name = dataset_name
         self.datasets_folder = datasets_folder
         self.dataset_path = os.path.join(self.datasets_folder, self.dataset_name)
         self.images_folder = os.path.join(self.dataset_path, "images")
         self.params_folder = os.path.join(self.dataset_path, "params")
-        self.ranges_file_path = os.path.join(self.dataset_path, "ranges.yml")
+        self.metadata_file_path = os.path.join(self.dataset_path, "meta.yml")
         self.ranges = None
         self.decoders = None
         self.transform = transforms.Compose(
@@ -26,12 +28,11 @@ class DAGDataset(torch.utils.data.Dataset):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if device is None else device
 
     def load_data(self):
-        # Load the ranges from the YAML file
-        with open(self.ranges_file_path, 'r') as file:
-            self.ranges = yaml.safe_load(file)
-        # Load the decoders from the YAML file
-        with open(os.path.join(self.dataset_path, "decoders.yml"), 'r') as file:
-            self.decoders = yaml.safe_load(file)
+        # load metadata
+        with open(self.metadata_file_path, 'r') as file:
+            metadata = yaml.safe_load(file)
+        self.ranges = metadata['ranges']
+        self.decoders = metadata['decoders']
         # read images and parameters
         data = []
         for image_name in os.listdir(self.images_folder):
@@ -69,7 +70,8 @@ class DAGDataset(torch.utils.data.Dataset):
             if param_spec['type'] == 'float' or param_spec['type'] == 'int' or param_spec['type'] == 'vector':
                 processed_param[param_name] = self.normalize(param[param_name], param_spec)
             elif param_spec['type'] == 'states' or param_spec['type'] == 'bool':
-                processed_param[param_name] = self.one_hot(param[param_name], param_spec)
+                # processed_param[param_name] = self.one_hot(param[param_name], param_spec)
+                processed_param[param_name] = self.to_class_indices(param[param_name], param_spec)
             else:
                 raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
         return processed_param
@@ -91,6 +93,14 @@ class DAGDataset(torch.utils.data.Dataset):
             return [1, 0] if value else [0, 1]
         else:
             raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
+    
+    def to_class_indices(self, value, param_spec):
+        if param_spec['type'] == 'states':
+            return param_spec['values'].index(value)
+        elif param_spec['type'] == 'bool':
+            return 1 if value else 0
+        else:
+            raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
 
 
     def __len__(self):
@@ -108,7 +118,7 @@ class DAGDataset(torch.utils.data.Dataset):
             # check if is tensor
             for classification_target in decoder_outputs['classification_targets']:
                 if not torch.is_tensor(decoder_outputs['classification_targets'][classification_target]):
-                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.float32)
+                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.long)
             for regression_target in decoder_outputs['regression_target']:
                 if not torch.is_tensor(decoder_outputs['regression_target'][regression_target]):
                     target[decoder_name]['regression_target'][regression_target] = torch.tensor(decoder_outputs['regression_target'][regression_target], dtype=torch.float32)
@@ -137,3 +147,29 @@ def overfit_dataloaders(train_dataset, val_dataset, batch_size=32):
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
     # test_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     return train_loader, val_loader
+
+def denormalize(normalized_value, param_spec):
+    # print(normalized_value)
+    if param_spec['type'] == 'float' or param_spec['type'] == 'int':
+        converter = float if param_spec['type'] == 'float' else int
+        return converter(normalized_value * (param_spec['max'] - param_spec['min']) + param_spec['min'])
+    elif param_spec['type'] == 'vector':
+        denorm_value = []
+        for i, dim in enumerate(['x', 'y', 'z']):
+            denorm_val = normalized_value[i] * (param_spec[f'{dim}max'] - param_spec[f'{dim}min']) + param_spec[f'{dim}min']
+            denorm_value.append(float(denorm_val))
+        return denorm_value
+    else:
+        raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
+
+def de_tensor(value):
+    if torch.is_tensor(value):
+        if value.dim() == 0:
+            return value.item()
+        elif value.dim() == 1:
+            return [de_tensor(v) for v in value]
+        else:
+            raise ValueError(f"Unsupported tensor dimension: {value.dim()}")
+    else:
+        return value
+

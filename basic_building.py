@@ -8,12 +8,10 @@ file = Path(__file__).resolve()
 parent = file.parents[1]
 sys.path.append(str(parent))
 
-from shape_primitives import gs_cube, gs_cylinder, gs_sphere, gs_sphere_scaled
 from building_mass import building_mass
 from roof import roof
-from window import fixed_window
 from window_with_ledge import window_with_ledge
-from ledge import cubed_window_ledge, cubed_floor_ledge_for_extrusion
+from ledge import cubed_floor_ledge_for_extrusion
 
 
 @gs.tree("Building Window Instantiator")
