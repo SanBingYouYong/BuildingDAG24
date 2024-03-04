@@ -153,8 +153,8 @@ class EncDecsLoss(nn.Module):
                 # print(f"Original Regression Loss: {regression_loss}")
                 switch_target = target["classification_targets"][switch_param_name]
                 # print("!!Switch Target:", switch_target)
-                switch_index = torch.argmin(switch_target, dim=1)
-                # switch_index = switch_target
+                # switch_index = torch.argmin(switch_target, dim=1)
+                switch_index = switch_target
                 # print("!!Switch Index:", switch_index)
                 # make regression_loss same shape as switch_index
                 regression_loss = torch.stack([regression_loss] * switch_index.size(0))
