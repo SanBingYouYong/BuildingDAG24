@@ -74,7 +74,7 @@ class CaptureAnnotationOperator(bpy.types.Operator):
         resize_and_convert(img_path)
 
         # gc_single_image_inference_entrypoint(domain)
-        # inference()
+        inference()
         # param2obj_entrypoint(domain, obj)
         load_param_to_shape()
 
@@ -129,7 +129,7 @@ class ImageInferenceOperator(bpy.types.Operator):
         shutil.copyfile(inf_img_path, img_path)
         resize_and_convert(img_path, invert=not scene.proper_background_image)
         # gc_single_image_inference_entrypoint(domain)
-        # inference()
+        inference()
         # param2obj_entrypoint(domain, obj)
         load_param_to_shape()
         return {"FINISHED"}
@@ -155,7 +155,8 @@ class GeoCodeInterfacePanel(bpy.types.Panel):
         box.label(text="View")
         # Toggle to show/hide the current shape
         box.prop(scene, "show_current_shape", text="Show Current Shape")
-        box.prop(scene, "slider_value", text="View Angle")
+        box.prop(scene, "slider_value", text="Horizontal View Angle (left/right)")
+        box.prop(scene, "slider_value_updown", text="Vertical View Angle (up/down)")
         # switch to camera view
         box.operator("object.toggle_camera_view_operator", text="Toggle Camera View")
         box.operator("object.clear_all_annotation_operator")
@@ -185,6 +186,21 @@ def update_slider_value(self, context):
         scene.slider_value * 3.1415926 / 180.0
     )
     print("updated camera rotation")
+
+def update_slider_value_combined(self, context):
+    print("Combined update on camera rotation")
+    scene = context.scene
+    new_lr_angle = scene.slider_value
+    new_down_angle = scene.slider_value_updown
+    # sin(h/2) = angle
+    height = 2 * np.arcsin(np.deg2rad(new_down_angle))
+    # cos(h/2) = radius
+    radius = 2 * np.arccos(np.deg2rad(new_down_angle))
+    camera_track = bpy.data.objects["CameraTrack"]
+    camera_track.rotation_euler[2] = np.deg2rad(new_lr_angle)
+    camera_track.location[2] = height
+    track_radius_scaler = radius / 2
+    camera_track.scale = (track_radius_scaler, track_radius_scaler, track_radius_scaler)
 
 
 def update_camera_background_image(context):
@@ -240,7 +256,10 @@ def register():
     # )
 
     bpy.types.Scene.slider_value = bpy.props.FloatProperty(
-        name="View Angle", default=0.0, min=0.0, max=90.0, update=update_slider_value
+        name="View Angle (horizontal)", default=0.0, min=0.0, max=90.0, update=update_slider_value_combined
+    )
+    bpy.types.Scene.slider_value_updown = bpy.props.FloatProperty(
+        name="View Angle (vertical)", default=30.0, min=0.0, max=50.0, update=update_slider_value_combined
     )
     bpy.types.Scene.background_image_path = bpy.props.StringProperty(
         name="Background Image Path",
