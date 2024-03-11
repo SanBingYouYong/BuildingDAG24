@@ -130,7 +130,47 @@ class DAGDataset(torch.utils.data.Dataset):
         return sample, target
 
 
+class DAGDatasetSingleDecoder(DAGDataset):
+    def __init__(self, decoder_name: str,
+                 dataset_name: str, 
+                 datasets_folder: str="./datasets", 
+                 transform=None, device=None):
+        self.decoder_name = decoder_name
+        super().__init__(dataset_name, datasets_folder, transform, device)
+
+    def __getitem__(self, idx):
+        sample, target = self.data[idx]
+        sample = Image.open(sample).convert('L')
+
+        if self.transform:
+            sample = self.transform(sample)
+
+        # get only interested decoder
+        target = {
+            self.decoder_name: target[self.decoder_name]
+        }
+
+        # convert target's values to tensor
+        for decoder_name, decoder_outputs in target.items():
+            # check if is tensor
+            for classification_target in decoder_outputs['classification_targets']:
+                if not torch.is_tensor(decoder_outputs['classification_targets'][classification_target]):
+                    target[decoder_name]['classification_targets'][classification_target] = torch.tensor(decoder_outputs['classification_targets'][classification_target], dtype=torch.long)
+            for regression_target in decoder_outputs['regression_target']:
+                if not torch.is_tensor(decoder_outputs['regression_target'][regression_target]):
+                    target[decoder_name]['regression_target'][regression_target] = torch.tensor(decoder_outputs['regression_target'][regression_target], dtype=torch.float32)
+
+        # move to device
+        sample = sample.to(self.device)
+        target = {decoder_name: {task: {param_name: param.to(self.device) for param_name, param in task_params.items()} for task, task_params in decoder_outputs.items()} for decoder_name, decoder_outputs in target.items()}
+
+        return sample, target
+
+
 def split_dataset(dataset: DAGDataset, train_ratio: float=0.8, val_ratio: float=0.1, test_ratio: float=0.1):
+    '''
+    test_ratio is ignored. 
+    '''
     train_size = int(train_ratio * len(dataset))
     val_size = int(val_ratio * len(dataset))
     test_size = len(dataset) - train_size - val_size
