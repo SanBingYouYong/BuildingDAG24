@@ -171,13 +171,13 @@ class DAGParamGenerator():
                                      0.5, 1.0, 
                                      0.5, 1.0, 
                                      0.5, 1.0)  # bm size seems to need more refinement
-        self.num_floors = DParamInt("Num Floors", 1, 5)
+        self.num_floors = DParamInt("Num Floors", 1, 3)
         self.rf_base_shape = DParamStates("Rf Base Shape", [0, 1, 2])
         self.rf_size = DParamVectorF("Rf Size", 
                                      0.5, 1.0, 
                                      0.5, 1.0, 
                                      0.5, 1.0)
-        self.num_windows_each_side = DParamInt("Num Windows Each Side", 1, 5)  
+        self.num_windows_each_side = DParamInt("Num Windows Each Side", 1, 3)  
         self.windows_left_right_offset = DParamFloat("Windows Left Right Offset", -1.0, 1.0)
         self.windows_height_offset = DParamFloat("Windows Height Offset", -1.0, 1.0)
         self.window_shape_size = DParamVectorF("Window Shape Size", 
@@ -201,8 +201,8 @@ class DAGParamGenerator():
         self.window_ledge_extrusion_z = DParamFloat("Window Ledge Extrusion Z", 0.0, 1.0)
         self.window_ledges_height_offset = DParamFloat("Window Ledges Height Offset", 0.0, 1.0)
         self.has_floor_ledge = DParamBool("Has Floor Ledge", [True, False])
-        self.floor_ledge_size_x = DParamFloat("Floor Ledge Size X", 0.1, 1.0)
-        self.floor_ledge_size_z = DParamFloat("Floor Ledge Size Z", 0.1, 1.0)
+        self.floor_ledge_size_x = DParamFloat("Floor Ledge Size X", 0.5, 1.0)
+        self.floor_ledge_size_z = DParamFloat("Floor Ledge Size Z", 0.5, 1.0)
         self.floor_ledge_extrusion_x = DParamFloat("Floor Ledge Extrusion X", 0.0, 1.0)
         self.floor_ledge_extrusion_z = DParamFloat("Floor Ledge Extrusion Z", 0.0, 1.0)
 
