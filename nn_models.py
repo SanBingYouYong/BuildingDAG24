@@ -65,16 +65,16 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     nn.Linear(1024, 512),
                     nn.ReLU(),
                     nn.Dropout(p=dropout_prob),
-                    # nn.Linear(512, 512),
-                    # nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
-                    nn.Linear(512, 256),
-                    nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
-                    nn.Linear(256, 128),
-                    nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
-                    nn.Linear(128, size),
+                    nn.Linear(512, 512), #
+                    nn.ReLU(), #
+                    nn.Dropout(p=dropout_prob), #
+                    nn.Linear(512, 256), #
+                    nn.ReLU(), #
+                    nn.Dropout(p=dropout_prob), #
+                    nn.Linear(256, 128), #
+                    nn.ReLU(), #
+                    nn.Dropout(p=dropout_prob), #
+                    nn.Linear(128, size), #
                 )
                 for param_name, size in regression_params.items()
             }
@@ -113,11 +113,12 @@ class EncoderDecoderModel(nn.Module):
 # Define loss function and optimizer
 # for regression, use MSELoss (or L1), for classification, use CrossEntropyLoss
 class EncDecsLoss(nn.Module):
-    def __init__(self, decoders, switches_mapping: dict, l1_lambda=0.01):
+    def __init__(self, decoders, switches_mapping: dict, lx_lambda=0.01, lx_regularizor=1):
         super(EncDecsLoss, self).__init__()
         self.decoders = decoders
         self.switches_mapping = switches_mapping
-        self.l1_lambda = l1_lambda
+        self.lx_lambda = lx_lambda
+        self.lx = lx_regularizor
 
     # def forward(self, outputs, targets, print_in_val=False):
     def forward(self, outputs, targets):
@@ -129,18 +130,18 @@ class EncDecsLoss(nn.Module):
         loss /= len(outputs)
         # if print_in_val:
         #     print(f"Average Loss: {loss}")
-         # L1 Regularization
-        l1_reg = None
+         # L1 Regularization update: l_x
+        lx_reg = None
         total_params = 0
         for param in self.parameters():
             total_params += param.numel()
-            if l1_reg is None:
-                l1_reg = param.norm(2)
+            if lx_reg is None:
+                lx_reg = param.norm(self.lx)
             else:
-                l1_reg = l1_reg + param.norm(2)
+                lx_reg = lx_reg + param.norm(self.lx)
         # Average the L1 regularization term
-        l1_reg /= total_params
-        loss += self.l1_lambda * l1_reg
+        lx_reg /= total_params
+        loss += self.lx_lambda * lx_reg
         return loss
 
     def classification_loss(self, output, target):
@@ -149,6 +150,9 @@ class EncDecsLoss(nn.Module):
 
     def regression_loss(self, output, target):
         # return nn.MSELoss()(output, target)
+        # check for shape [x, 1] and [x]
+        if len(output.size()) == 2 and len(target.size()) == 1:
+            target = target.unsqueeze(1)
         return nn.L1Loss()(output, target)
 
     def decoder_loss(self, decoder_output, target, print_in_val=False):
