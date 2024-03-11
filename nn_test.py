@@ -12,28 +12,34 @@ from torchvision import models, transforms
 
 from nn_models import *
 from nn_dataset import *
-from nn_training import *
+# from nn_training import *
+from nn_training_single import *
 
 
 if __name__ == "__main__":
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    torch.manual_seed(0)
+
     dataset_name = "DAGDataset100_100_5"
     if not os.path.exists(f"./datasets/{dataset_name}"):
         raise FileNotFoundError(f"Dataset {dataset_name} not found")
+
+    decoder = "Building Mass Decoder"
+    model_name = "model_DAGDataset100_100_5_20240311154435"
     # Load metadata
-    ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata_for_inference("./models/model_DAGDataset100_100_5_20240228151212_meta.yml", need_full=True)
+    ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata_for_inference(f"./models/{model_name}_meta.yml", need_full=True, decoder=decoder)
 
     # Load the dataset
-    dataset = DAGDataset(dataset_name)
+    dataset = DAGDatasetSingleDecoder(decoder, dataset_name)
     train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
     train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=128)
 
     # Load the model
     encoder = Encoder()
     model = EncoderDecoderModel(encoder, decoders)
-    model.load_state_dict(torch.load("./models/model_DAGDataset100_100_5_20240228151212.pth", map_location=device
+    model.load_state_dict(torch.load(f"./models/{model_name}.pth", map_location=device
     ))
     model.eval()
     model.to(device)

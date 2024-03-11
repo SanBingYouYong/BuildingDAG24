@@ -11,6 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
 
 from nn_models import *
+# from nn_models_small import *
 from nn_dataset import *
 
 
@@ -75,14 +76,18 @@ def load_metadata_for_inference(metadata_file_path: str, need_full: bool=False):
     
 
 def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_loader, 
-          epochs=25, seed=0, 
+          epochs=25, seed=-1, 
           model_save_path="./models/EncDecModel.pth", 
           loss_save_path="./models/loss.yml"):
+    '''
+    seed is manually set at main. -1 for no reset, others for seed
+    '''
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')  # Initialize with a very high value
 
-    torch.manual_seed(seed)
+    if seed != -1:
+        torch.manual_seed(seed)
 
     for epoch in range(epochs):
         model.train()
@@ -203,8 +208,7 @@ def test(model: nn.Module, test_loader, criterion: nn.Module, ranges, results_sa
     print(f"Test Loss: {test_loss / num_batches}")
 
     # Convert tensors to numpy arrays  # TODO: use a similar explicit conversion like in loss calculation
-    outputs = parse_outputs(outputs, ranges, targets)
-    # targets = parse_targets(targets)
+    outputs = parse_outputs(outputs, ranges, targets)  # note: outputs contains prediction and targets in tuples already
 
     # # save the results
     with open(results_save_path, "w") as f:
@@ -223,6 +227,8 @@ if __name__ == "__main__":
     
     ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata(dataset_name)
 
+    torch.manual_seed(0)
+
     dataset = DAGDataset(dataset_name)
 
     train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
@@ -236,7 +242,7 @@ if __name__ == "__main__":
     encoder = Encoder()
     model = EncoderDecoderModel(encoder, decoders)
 
-    criterion = EncDecsLoss(decoders, switches)
+    criterion = EncDecsLoss(decoders, switches, lx_regularizor=1)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -245,7 +251,7 @@ if __name__ == "__main__":
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
     loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
-    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=0, model_save_path=model_name, loss_save_path=loss_name)
+    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=-1, model_save_path=model_name, loss_save_path=loss_name)
     test(model, test_loader, criterion, ranges, results_save_path="results.yml")
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
