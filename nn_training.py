@@ -242,7 +242,7 @@ if __name__ == "__main__":
     encoder = Encoder()
     model = EncoderDecoderModel(encoder, decoders)
 
-    criterion = EncDecsLoss(decoders, switches, lx_regularizor=1)
+    criterion = EncDecsLoss(decoders, switches, lx_regularizor=2)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
