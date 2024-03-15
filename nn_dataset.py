@@ -191,8 +191,12 @@ def overfit_dataloaders(train_dataset, val_dataset, batch_size=32):
 def denormalize(normalized_value, param_spec):
     # print(normalized_value)
     if param_spec['type'] == 'float' or param_spec['type'] == 'int':
-        converter = float if param_spec['type'] == 'float' else int
+        converter = float if param_spec['type'] == 'float' else lambda x: round(float(x))
         return converter(normalized_value * (param_spec['max'] - param_spec['min']) + param_spec['min'])
+    elif param_spec['type'] == 'states':
+        return int(torch.argmax(normalized_value))
+    elif param_spec['type'] == 'bool':
+        return bool(torch.argmax(normalized_value) == 0)
     elif param_spec['type'] == 'vector':
         denorm_value = []
         for i, dim in enumerate(['x', 'y', 'z']):

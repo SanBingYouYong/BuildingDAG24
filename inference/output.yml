@@ -1,39 +1,39 @@
-Bm Base Shape: 0
+Bm Base Shape: 1
 Bm Size:
-- 0.6653708815574646
-- 0.7480640411376953
-- 0.701827883720398
-Floor Ledge Extrusion X: 0.49754244089126587
-Floor Ledge Extrusion Z: 0.50810706615448
-Floor Ledge Size X: 0.5643070340156555
-Floor Ledge Size Z: 0.46644413471221924
+- 0.7992050647735596
+- 0.6967111825942993
+- 0.8664751648902893
+Floor Ledge Extrusion X: 0.5095657706260681
+Floor Ledge Extrusion Z: 0.45938676595687866
+Floor Ledge Size X: 0.6735209226608276
+Floor Ledge Size Z: 0.7836658954620361
 Has Floor Ledge: false
-Has Window Ledge: false
-Num Floors: 2
+Has Window Ledge: true
+Num Floors: 1
 Num Windows Each Side: 2
-Rf Base Shape: 0
+Rf Base Shape: 1
 Rf Size:
-- 0.7296077013015747
-- 0.7297414541244507
-- 0.6932231187820435
-Window Divided Horizontal: false
+- 0.7585675120353699
+- 0.8402789831161499
+- 0.8307493925094604
+Window Divided Horizontal: true
 Window Divided Vertical: true
-Window Interpanel Offset Percentage Y: 0.4907413423061371
-Window Interpanel Offset Percentage Z: 0.4381862282752991
-Window Ledge Extrusion X: 0.4875349700450897
-Window Ledge Extrusion Z: 0.5410362482070923
+Window Interpanel Offset Percentage Y: 0.5179834365844727
+Window Interpanel Offset Percentage Z: 0.3365631401538849
+Window Ledge Extrusion X: 0.454946905374527
+Window Ledge Extrusion Z: 0.3544880747795105
 Window Ledge Shape Size:
-- 0.7816336750984192
-- 0.7515513896942139
-- 0.7131243348121643
-Window Ledges Height Offset: 0.4734984040260315
+- 0.8079979419708252
+- 0.699621856212616
+- 0.8263949155807495
+Window Ledges Height Offset: 0.7965990304946899
 Window Panel Area:
-- 0.7162137627601624
-- 0.6484772562980652
-- 0.7132260799407959
+- 0.6600198745727539
+- 0.6736418008804321
+- 0.6691302061080933
 Window Shape Size:
-- 0.6884127855300903
-- 0.7032148838043213
-- 0.648979663848877
-Windows Height Offset: 0.010364174842834473
-Windows Left Right Offset: 0.05932331085205078
+- 0.8257081508636475
+- 0.711275577545166
+- 0.6937037706375122
+Windows Height Offset: 0.060410141944885254
+Windows Left Right Offset: 0.03695046901702881
