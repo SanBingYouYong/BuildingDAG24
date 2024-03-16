@@ -1,7 +1,7 @@
 import yaml
 import matplotlib.pyplot as plt
 
-loss_log_path = "./models/model_DAGDataset100_100_5_20240311180546_loss.yml"
+loss_log_path = "./models/model_DAGDataset100_100_5_20240316112425_loss.yml"
 
 with open(loss_log_path, 'r') as file:
     loss_log = yaml.safe_load(file)

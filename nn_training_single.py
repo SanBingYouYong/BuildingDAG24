@@ -200,7 +200,7 @@ def test(model: nn.Module, test_loader, criterion: nn.Module, ranges, results_sa
     num_batches = len(test_loader)
 
     with torch.no_grad():
-        for i, data in enumerate(test_loader):
+        for i, data in enumerate(test_loader):  # tqdm?
             inputs, targets = data
 
             outputs = model(inputs)
@@ -262,8 +262,8 @@ if __name__ == "__main__":
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
     loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
-    train(model, criterion, optimizer, train_loader, val_loader, epochs=25, seed=-1, model_save_path=model_name, loss_save_path=loss_name)
-    test(model, test_loader, criterion, ranges, results_save_path="results.yml")
+    train(model, criterion, optimizer, train_loader, val_loader, epochs=100, seed=-1, model_save_path=model_name, loss_save_path=loss_name)
+    # test(model, test_loader, criterion, ranges, results_save_path="results.yml")  # load best weights, see nn_test.py
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
 
