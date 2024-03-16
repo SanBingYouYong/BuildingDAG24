@@ -53,10 +53,7 @@ def inference():
             print(pred)
             param_type = ranges[param_name]["type"]
             print(f"Type: {param_type}")
-            if param_type == "bool":
-                pred = bool(torch.argmax(pred, dim=1) == 0)
-            elif param_type == "states":
-                pred = int(torch.argmax(pred, dim=1))
+            pred = denormalize(pred[0], ranges[param_name])
             parsed_outputs[param_name] = pred
         for param_name, pred in regression_output.items():
             print(f"Regression: {param_name}")
