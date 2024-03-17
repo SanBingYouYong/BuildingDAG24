@@ -153,36 +153,46 @@ def test(model, test_dataloader, device, save_path='./models/single_encdec_test_
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
             _, predicted = torch.max(outputs, 1)
-            predictions.extend(predicted.cpu().numpy())
-            ground_truth.extend(labels.cpu().numpy())
+            predictions.extend(predicted.cpu().numpy().tolist())
+            ground_truth.extend(labels.cpu().numpy().tolist())
+    
+    # pair them
+    results = [
+        [predictions[i], ground_truth[i]] for i in range(len(predictions))
+    ]
     
     # Save results
     with open(save_path, 'w') as f:
-        yaml.dump({"predictions": predictions, "ground_truth": ground_truth}, f)
+        # yaml.dump({"predictions": predictions, "ground_truth": ground_truth}, f)
+        yaml.dump({"results": results}, f)
 
     print(f"Test results saved to {save_path}")
 
 
-# Instantiate model, dataset, dataloader, optimizer, and criterion
+if __name__ == "__main__":
+    # Instantiate model, dataset, dataloader, optimizer, and criterion
 
-# Assuming you have defined your model, dataset, optimizer, and criterion
-model = SingleEncoderDecoderModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-dataset = SingleTaskDataset(task_param_name='Bm Base Shape', dataset_name='DAGDataset100_100_5')
+    # Assuming you have defined your model, dataset, optimizer, and criterion
+    model = SingleEncoderDecoderModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    dataset = SingleTaskDataset(task_param_name='Bm Base Shape', dataset_name='DAGDataset100_100_5')
 
-# Define the size of training and validation datasets
-train_size = int(0.8 * len(dataset))  # 80% for training
-val_size = len(dataset) - train_size  # Remaining for validation
+    # Split the dataset into training, validation, and test subsets
+    train_size = int(0.8 * len(dataset))  # 80% for training
+    val_size = test_size = (len(dataset) - train_size) // 2  # Remaining 10% each for validation and test
 
-# Split the dataset into training and validation subsets
-train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+    train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
 
-# Create data loaders for training and validation
-train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    # Create data loaders for training, validation, and test
+    train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    criterion = nn.CrossEntropyLoss()
 
-# Train the model
-train(model, train_dataloader, val_dataloader, optimizer, criterion, device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    # Train the model
+    train(model, train_dataloader, val_dataloader, optimizer, criterion, device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+
+    # Test the model
+    test(model, test_dataloader, torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
