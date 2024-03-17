@@ -10,7 +10,7 @@ import yaml
 from PIL import Image
 from tqdm import tqdm
 
-from nn_manual_single_test import SingleEncoderDecoderModel, SingleTaskDataset, test
+from nt_manual_single_model import SingleEncoderDecoderModel, SingleTaskDataset, test
 
 # load weights to model
 model = SingleEncoderDecoderModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))

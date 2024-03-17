@@ -5,7 +5,7 @@ results_path = "results.yml"
 with open(results_path, "r") as file:
     results = yaml.safe_load(file)["outputs"]
 
-category = "Bm Base Shape"
+category = "Num Windows Each Side"
 print(f"Category: {category}")
 # calculate accuracy
 correct = 0

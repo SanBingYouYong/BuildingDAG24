@@ -32,7 +32,7 @@ def load_ranges(metadata: dict):
             parameter_output_mapping[decoder_name] = 2  # 2 for binary encoding
     return ranges, parameter_output_mapping
 
-def load_decoders(metadata: dict, ranges: dict, parameter_output_mapping: dict, decoder_input_size=1024):
+def load_decoders(metadata: dict, ranges: dict, parameter_output_mapping: dict, decoder_input_size=4096):
     decoders_params = metadata['decoders']
     decoders = nn.ModuleDict()
     # initialize decoders with corresponding output tails
@@ -184,7 +184,8 @@ def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
                 param_type = ranges[param_name]["type"]
                 # print(f"Type: {param_type}")
                 p = denormalize(p, ranges[param_name])
-                t = de_tensor(t)
+                # t = de_tensor(t)
+                t = denormalize(t, ranges[param_name])
                 parsed_pred.append([p, t])
             parsed_outputs[param_name] = parsed_pred
     return parsed_outputs
