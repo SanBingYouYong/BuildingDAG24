@@ -16,10 +16,10 @@ from nn_acc import acc_discrete
 def pipeline(dataset_name: str="DAGDataset100_100_5", 
              single_decoder: str=None,
              epochs: int=10,
-             batch_size: int=32,
+             batch_size: int=4,
              lr: float=0.001,
              lx_regularizor: int=2,
-             seed: int=0, 
+             seed: int=-1, 
              results_num: int=5):
     '''
     Train, test with best weights, visualize curves, print out results pairs, calcuulate acc for discrete.
@@ -34,17 +34,19 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
     print(f"Dataset: {dataset_name}")
     dataset = DAGDatasetSingleDecoder(single_decoder, dataset_name) if single_decoder else DAGDataset(dataset_name)
-    train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.8, 0.1, 0.1)
+    train_dataset, val_dataset, test_dataset = split_dataset(dataset, 0.7, 0.2, 0.1)
     train_loader, val_loader, test_loader = create_dataloaders_of(train_dataset, val_dataset, test_dataset, batch_size=batch_size)
     print(f"Train/Val/Test: {len(train_dataset)}/{len(val_dataset)}/{len(test_dataset)}")
 
-    encoder = Encoder()
-    print(f"Loaded Encoder")
+    # encoder = Encoder()
+    # print(f"Loaded Encoder")
     ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata(dataset_name, single_decoder=single_decoder)
-    print(f"Loaded {len(decoders)} decoders")
-    model = EncoderDecoderModel(encoder, decoders)
+    # print(f"Loaded {len(decoders)} decoders")
+    # model = EncoderDecoderModel(encoder, decoders)
+    model = ManualEncoderDecoderModelBM()
 
-    criterion = EncDecsLoss(decoders, switches, lx_regularizor=lx_regularizor)
+    # criterion = EncDecsLoss(decoders, switches, lx_regularizor=lx_regularizor)
+    criterion = custom_loss
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
@@ -75,6 +77,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
 
 if __name__ == "__main__":
+    torch.manual_seed(0)
     dataset_name = "DAGDataset100_100_5"
     single_decoder = "Building Mass Decoder"
     # single_decoder = None

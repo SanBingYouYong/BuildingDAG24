@@ -50,14 +50,14 @@ class ParamAwareMultiTailDecoder(nn.Module):
                 param_name: nn.Sequential(
                     nn.Linear(input_size, 512),
                     nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
-                    nn.Linear(512, 256),
-                    nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
-                    nn.Linear(256, 128),
-                    nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
-                    nn.Linear(128, size),
+                    # nn.Dropout(p=dropout_prob),
+                    # nn.Linear(512, 256),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
+                    # nn.Linear(256, 128),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
+                    nn.Linear(512, size),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -71,7 +71,7 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Dropout(p=dropout_prob),
                     nn.Linear(input_size, 512),
                     nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
+                    # nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 512), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
@@ -94,12 +94,12 @@ class ParamAwareMultiTailDecoder(nn.Module):
         # x = self.fc2(x)
         # x = self.relu2(x)
         # x = self.dropout2(x)
-        classification_outputs = {
+        classification_outputs = nn.ModuleDict({
             param_name: tail(x) for param_name, tail in self.classification_tails.items()
-        } if self.classification_tails else {}
-        regression_output = {
+        }) if self.classification_tails else {}
+        regression_output = nn.ModuleDict({
             param_name: tail(x) for param_name, tail in self.regression_tail.items()
-        } if self.regression_tail else {}
+        }) if self.regression_tail else {}
         return classification_outputs, regression_output
 
 
@@ -115,10 +115,68 @@ class EncoderDecoderModel(nn.Module):
         return decoder_outputs  # note that the multi-tail decoder returns a list of outputs
 
 
+class ManualEncoderDecoderModelBM(nn.Module):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
+        self.relu1 = nn.ReLU()
+        self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.relu2 = nn.ReLU()
+        self.maxpool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.flatten = nn.Flatten()
+        self.fc1 = nn.Linear(64 * 128 * 128, 1024)
+        self.relu3 = nn.ReLU()
+
+        self.cls_fc1 = nn.Linear(1024, 512)
+        self.cls_relu1 = nn.ReLU()
+        self.cls_fc2 = nn.Linear(512, 2)
+
+        self.reg_fc1 = nn.Linear(1024, 512)
+        self.reg_relu1 = nn.ReLU()
+        self.reg_fc2 = nn.Linear(512, 3)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.relu1(x)
+        x = self.maxpool1(x)
+        x = self.conv2(x)
+        x = self.relu2(x)
+        x = self.maxpool2(x)
+        x = self.flatten(x)
+        x = self.fc1(x)
+        x = self.relu3(x)
+
+        cls_x = self.cls_fc1(x)
+        cls_x = self.cls_relu1(cls_x)
+        cls_x = self.cls_fc2(cls_x)
+
+        reg_x = self.reg_fc1(x)
+        reg_x = self.reg_relu1(reg_x)
+        reg_x = self.reg_fc2(reg_x)
+
+        return {"Building Mass Decoder": ({"Bm Base Shape": cls_x}, {"Bm Size": reg_x})}
+
+
+def custom_loss(outputs, targets):
+    # classification: 
+    classification_loss = F.cross_entropy(
+        outputs["Building Mass Decoder"][0]["Bm Base Shape"], targets["Building Mass Decoder"]["classification_targets"]["Bm Base Shape"]
+    )
+    # regression:
+    regression_loss = F.l1_loss(
+        outputs["Building Mass Decoder"][1]["Bm Size"], targets["Building Mass Decoder"]["regression_target"]["Bm Size"]
+    )
+    return 1 * classification_loss + 1 * regression_loss
+
+
 # Define loss function and optimizer
 # for regression, use MSELoss (or L1), for classification, use CrossEntropyLoss
 class EncDecsLoss(nn.Module):
     def __init__(self, decoders, switches_mapping: dict, lx_lambda=0.01, lx_regularizor=1):
+        '''
+        lx is disabled for now. -1 for no
+        '''
         super(EncDecsLoss, self).__init__()
         self.decoders = decoders
         self.switches_mapping = switches_mapping
@@ -130,8 +188,10 @@ class EncDecsLoss(nn.Module):
         loss = 0.0
         for decoder_name, decoder_output in outputs.items():
             loss += self.decoder_loss(decoder_output, targets[decoder_name])
+        if self.lx == -1:
+            return loss
         lx_reg = 0
-        for param in self.parameters():
+        for param in self.parameters():  # TODO: test what is this for loop iterating over
             lx_reg += param.norm(self.lx)
         loss += self.lx_lambda * lx_reg
         return loss
@@ -148,7 +208,8 @@ class EncDecsLoss(nn.Module):
             target = target.unsqueeze(1)
         # return nn.L1Loss()(output, target)
         # return nn.MSELoss()(output, target)
-        return F.mse_loss(output, target)
+        loss = F.l1_loss(output, target)
+        return loss
 
     def decoder_loss_0(self, decoder_output, target, print_in_val=False):
         classification_outputs = decoder_output[0]  # note that model outputs a tuple of list instead of dict of list

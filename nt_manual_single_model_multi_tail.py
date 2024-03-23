@@ -129,16 +129,39 @@ def train(model, train_dataloader, val_dataloader, optimizer, criterion, device,
             running_loss += loss.item()
             progress_bar.set_description(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss / (i+1):.4f}")
 
+        # # Validation
+        # val_loss = validate(model, val_dataloader, device)  # Implement validate method separately
+        # unified_val_loss = (val_loss[0] + val_loss[1]) / 2
         # Validation
-        val_loss = validate(model, val_dataloader, device)  # Implement validate method separately
-        unified_val_loss = (val_loss[0] + val_loss[1]) / 2
+        model.eval()
+        val_loss = 0.0
+        num_batches_val = len(val_dataloader)
+
+        with torch.no_grad():
+            for i, data in enumerate(val_dataloader):
+                inputs = inputs.to(device)
+                classification_labels = classification_labels.to(device)
+                regression_labels = regression_labels.to(device)
+
+                # Forward pass
+                classification_outputs, regression_outputs = model(inputs)
+
+                # outputs = model(inputs)
+                # loss = criterion(outputs, targets)
+                loss = criterion(classification_outputs, regression_outputs, classification_labels, regression_labels)
+                val_loss += loss.item()
+
+        val_loss /= num_batches_val
+        # val_losses.append(val_loss)
         
         # Logging
-        print(f"Epoch {epoch+1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: classification: {val_loss[0]:.4f}, regression: {val_loss[1]:.4f}; average val loss: {unified_val_loss:.4f}")
+        # print(f"Epoch {epoch+1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: classification: {val_loss[0]:.4f}, regression: {val_loss[1]:.4f}; average val loss: {unified_val_loss:.4f}")
+        print(f"Epoch {epoch + 1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: {val_loss}")
         
+
         # Save best model
-        if unified_val_loss < best_val_loss:
-            best_val_loss = unified_val_loss
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
             best_epoch = epoch
             torch.save(model.state_dict(), save_path)
 
@@ -228,7 +251,8 @@ def custom_loss(classification_output, regression_output, classification_target,
     classification_loss = F.cross_entropy(classification_output, classification_target)
     
     # Regression loss
-    regression_loss = F.mse_loss(regression_output, regression_target)
+    # regression_loss = F.mse_loss(regression_output, regression_target)
+    regression_loss = F.l1_loss(regression_output, regression_target)
     
     # Combine the losses
     loss = classification_weight * classification_loss + regression_weight * regression_loss
@@ -238,11 +262,11 @@ def custom_loss(classification_output, regression_output, classification_target,
 
 
 if __name__ == "__main__":
+    torch.manual_seed(0)
     # Instantiate model, dataset, dataloader, optimizer, and criterion
-
     # Assuming you have defined your model, dataset, optimizer, and criterion
     model = SingleEncoderDecoderModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-    dataset = SingleTaskDataset(task_param_names=['Bm Base Shape', 'Bm Size'], dataset_name='DAGDataset100_100_5')
+    dataset = SingleTaskDataset(task_param_names=['Bm Base Shape', 'Bm Size'], dataset_name='DAGDataset10_10_5')
 
     # Split the dataset into training, validation, and test subsets
     train_size = int(0.8 * len(dataset))  # 80% for training
@@ -252,8 +276,8 @@ if __name__ == "__main__":
 
     # Create data loaders for training, validation, and test
     train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=False)
-    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()

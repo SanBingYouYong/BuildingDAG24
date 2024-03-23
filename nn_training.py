@@ -105,6 +105,11 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
             inputs, targets = data
             optimizer.zero_grad()
             outputs = model(inputs)
+            # print(outputs["Building Mass Decoder"][0]["Bm Base Shape"][0])
+            # print(outputs["Building Mass Decoder"][1]["Bm Size"][0])
+            # print(targets["Building Mass Decoder"]["classification_targets"]["Bm Base Shape"][0])
+            # print(targets["Building Mass Decoder"]["regression_target"]["Bm Size"][0])
+            # raise
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
