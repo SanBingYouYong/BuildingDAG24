@@ -20,7 +20,7 @@ from nn_acc import DISCRETE_VARIABLES, acc_discrete
 
 def pipeline(dataset_name: str="DAGDataset100_100_5", 
              single_decoder: str=None,
-             epochs: int=1,
+             epochs: int=10,
              batch_size: int=32,
              lr: float=0.001,
              lx_regularizor: int=2,

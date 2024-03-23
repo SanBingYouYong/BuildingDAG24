@@ -19,7 +19,7 @@ def visualize_loss(loss_path: str, curve_path: str=None):
     plt.legend()
 
     # Set y-axis limits to +1 of second epoch loss
-    ylim_value = val_losses[1] + 1
+    ylim_value = val_losses[1] + 1 if len(val_losses) > 1 else val_losses[0]
     plt.ylim(0, ylim_value)
 
     pdf_path = curve_path if curve_path else loss_path.replace('.yml', '.pdf')
