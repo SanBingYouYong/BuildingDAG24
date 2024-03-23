@@ -20,7 +20,7 @@ from nn_acc import DISCRETE_VARIABLES, acc_discrete
 
 def pipeline(dataset_name: str="DAGDataset100_100_5", 
              single_decoder: str=None,
-             epochs: int=10,
+             epochs: int=1,
              batch_size: int=32,
              lr: float=0.001,
              lx_regularizor: int=2,
@@ -58,7 +58,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
     loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
     train(model, criterion, optimizer, train_loader, val_loader, epochs=epochs, seed=-1, model_save_path=model_name, loss_save_path=loss_name)
-    outputs, _ = test(model, model_name, test_loader, criterion, ranges, results_save_path="results.yml")
+    test_res = test(model, model_name, test_loader, criterion, ranges, results_save_path="results.yml")
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
 
@@ -66,8 +66,8 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     visualize_loss(loss_name)
 
     # print out some results
-    for param_name in outputs:
-        retrieve = outputs[param_name][:results_num]
+    for param_name in test_res:
+        retrieve = test_res[param_name][:results_num]
         print(f"Parameter: {param_name}")
         for i, (pred, target) in enumerate(retrieve):
             print(f" - Prediction: {pred}, Target: {target}")
@@ -80,6 +80,6 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
 
 if __name__ == "__main__":
-    dataset_name = "DAGDataset10_10_5"
-    single_decoder = None
+    dataset_name = "DAGDataset100_100_5"
+    single_decoder = "Building Mass Decoder"
     pipeline(dataset_name, single_decoder)

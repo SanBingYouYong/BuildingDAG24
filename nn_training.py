@@ -177,13 +177,15 @@ def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
 
 def test(model: nn.Module, best_weight_path: str, test_loader, criterion: nn.Module, ranges, results_save_path="results.yml"):
     '''
-    Saves the last batch of test results to a file. 
+    Saves test results to a file. 
     '''
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.load_state_dict(torch.load(best_weight_path, map_location=device))
     model.eval()
     test_loss = 0.0
     num_batches = len(test_loader)
+
+    results = {}
 
     with torch.no_grad():
         for i, data in enumerate(test_loader):
@@ -193,15 +195,20 @@ def test(model: nn.Module, best_weight_path: str, test_loader, criterion: nn.Mod
             loss = criterion(outputs, targets)
             test_loss += loss.item()
 
-    print(f"Test Loss: {test_loss / num_batches}")
+            parsed_res = parse_outputs(outputs, ranges, targets)  # contains pred and tar
 
-    # Convert tensors to numpy arrays  # TODO: use a similar explicit conversion like in loss calculation
-    outputs = parse_outputs(outputs, ranges, targets)  # note: outputs contains prediction and targets in tuples already
+            # accumulate the last batch of results
+            for param_name, parsed_pred in parsed_res.items():
+                if param_name not in results:
+                    results[param_name] = []
+                results[param_name] += parsed_pred
+
+    print(f"Test Loss: {test_loss / num_batches}")
 
     # save the results
     with open(results_save_path, "w") as f:
-        yaml.dump({"outputs": outputs}, f)
-    return outputs, targets
+        yaml.dump({"results": results}, f)
+    return results
 
 
 if __name__ == "__main__":

@@ -15,9 +15,11 @@ DISCRETE_VARIABLES = [
 def acc_discrete(results_path: str="results.yml"):
     print(f"Calculating accuracies for discrete variables in {results_path}")
     with open(results_path, "r") as file:
-        results = yaml.safe_load(file)["outputs"]
+        results = yaml.safe_load(file)["results"]
 
     for category in DISCRETE_VARIABLES:
+        if category not in results:
+            continue
         print(f"Category: {category}")
         # calculate accuracy
         correct = 0
