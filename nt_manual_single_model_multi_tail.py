@@ -24,13 +24,14 @@ class SingleEncoderDecoderModel(nn.Module):
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         # self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
         self.flatten = nn.Flatten()
+        self.linear1 = nn.Linear(64*128*128, 1024)  # TODO: relu or not? 
         
         # Decoder layers for classification
-        self.fc_class1 = nn.Linear(64*128*128, 512)
+        self.fc_class1 = nn.Linear(1024, 512)
         self.fc_class2 = nn.Linear(512, 2)  # Bm Base Shape
         
         # Decoder layers for regression
-        self.fc_reg1 = nn.Linear(64*128*128, 512)
+        self.fc_reg1 = nn.Linear(1024, 512)
         self.fc_reg2 = nn.Linear(512, 3)  # Bm Size
         
     def forward(self, x):
@@ -41,6 +42,8 @@ class SingleEncoderDecoderModel(nn.Module):
         x = F.max_pool2d(x, kernel_size=2, stride=2)
         # x = F.relu(self.conv3(x))
         x = self.flatten(x)
+        x = F.relu(self.linear1(x))
+        # x = self.linear1(x)  # test without relu: results: overfits without relu
         
         # Decoder for classification
         x_class = F.relu(self.fc_class1(x))

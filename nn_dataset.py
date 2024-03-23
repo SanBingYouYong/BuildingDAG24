@@ -8,6 +8,8 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
 
+from tqdm import tqdm
+
 
 class DAGDataset(torch.utils.data.Dataset):
     def __init__(self, dataset_name: str, 
@@ -35,15 +37,18 @@ class DAGDataset(torch.utils.data.Dataset):
         self.decoders = metadata['decoders']
         # read images and parameters
         data = []
-        for image_name in os.listdir(self.images_folder):
-            image_path = os.path.join(self.images_folder, image_name)
-            param_path = os.path.join(self.params_folder, os.path.splitext(image_name)[0] + ".yml")
-            with open(param_path, 'r') as file:
-                param = yaml.safe_load(file)
-            # normalize
-            param = self.preprocess(param)
-            param = self.format_target_to_decoders(param)
-            data.append((image_path, param))
+        image_files = os.listdir(self.images_folder)
+        with tqdm(total=len(image_files), desc='Loading Data') as pbar:
+            for image_name in image_files:
+                image_path = os.path.join(self.images_folder, image_name)
+                param_path = os.path.join(self.params_folder, os.path.splitext(image_name)[0] + ".yml")
+                with open(param_path, 'r') as file:
+                    param = yaml.safe_load(file)
+                # normalize
+                param = self.preprocess(param)
+                param = self.format_target_to_decoders(param)
+                data.append((image_path, param))
+                pbar.update(1)
         return data
 
     def format_target_to_decoders(self, target):

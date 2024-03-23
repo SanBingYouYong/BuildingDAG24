@@ -7,26 +7,28 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torchvision import models, transforms
+import torch.nn.functional as F
 
 
 class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
         self.features = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=3, padding=1),  # size: 512x512
+            nn.Conv2d(1, 32, kernel_size=3, padding=1),  # size: 512x512
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),  # size: 256x256
 
-            nn.Conv2d(16, 32, kernel_size=3, padding=1),  # size: 256x256
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),  # size: 256x256
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),  # size: 128x128
 
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),  # size: 128x128
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2, stride=2),  # size: 64x64
+            # nn.Conv2d(32, 32, kernel_size=3, padding=1),  # size: 128x128
+            # nn.ReLU(inplace=True),
+            # nn.MaxPool2d(kernel_size=2, stride=2),  # size: 64x64
 
             nn.Flatten(),
-            nn.Linear(32 * 64 * 64, 4096),  # size: 1024
+            nn.Linear(64 * 128 * 128, 1024),  # size: 1024
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
@@ -37,20 +39,25 @@ class Encoder(nn.Module):
 class ParamAwareMultiTailDecoder(nn.Module):
     def __init__(self, input_size, classification_params=None, regression_params=None, dropout_prob=0.5):
         super(ParamAwareMultiTailDecoder, self).__init__()
-        self.fc1 = nn.Linear(input_size, 1024)
-        self.relu1 = nn.ReLU()
-        self.dropout1 = nn.Dropout(p=dropout_prob)
+        # self.fc1 = nn.Linear(input_size, 1024)
+        # self.relu1 = nn.ReLU()
+        # self.dropout1 = nn.Dropout(p=dropout_prob)
         # self.fc2 = nn.Linear(1024, 1024)
         # self.relu2 = nn.ReLU()
         # self.dropout2 = nn.Dropout(p=dropout_prob)
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
-                    nn.Linear(1024, size),
+                    nn.Linear(1024, 512),
+                    nn.ReLU(),
+                    nn.Dropout(p=dropout_prob),
+                    # nn.Linear(512, 256),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    # nn.Linear(512, size),
-                    # nn.Softmax(dim=1),
+                    # nn.Linear(256, 128),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
+                    nn.Linear(512, size),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -65,25 +72,25 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     nn.Linear(1024, 512),
                     nn.ReLU(),
                     nn.Dropout(p=dropout_prob),
-                    nn.Linear(512, 512), #
-                    nn.ReLU(), #
-                    nn.Dropout(p=dropout_prob), #
-                    nn.Linear(512, 256), #
-                    nn.ReLU(), #
-                    nn.Dropout(p=dropout_prob), #
-                    nn.Linear(256, 128), #
-                    nn.ReLU(), #
-                    nn.Dropout(p=dropout_prob), #
-                    nn.Linear(128, size), #
+                    # nn.Linear(512, 512), #
+                    # nn.ReLU(), #
+                    # nn.Dropout(p=dropout_prob), #
+                    # nn.Linear(512, 256), #
+                    # nn.ReLU(), #
+                    # nn.Dropout(p=dropout_prob), #
+                    # nn.Linear(256, 128), #
+                    # nn.ReLU(), #
+                    # nn.Dropout(p=dropout_prob), #
+                    nn.Linear(512, size), #
                 )
                 for param_name, size in regression_params.items()
             }
         ) if regression_params else {}
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu1(x)
-        x = self.dropout1(x)
+        # x = self.fc1(x)
+        # x = self.relu1(x)
+        # x = self.dropout1(x)
         # x = self.fc2(x)
         # x = self.relu2(x)
         # x = self.dropout2(x)
@@ -124,7 +131,7 @@ class EncDecsLoss(nn.Module):
     def forward(self, outputs, targets):
         loss = 0.0
         for decoder_name, decoder_output in outputs.items():
-            loss += self.decoder_loss(decoder_output, targets[decoder_name], print_in_val=False)
+            loss += self.decoder_loss(decoder_output, targets[decoder_name])
         # if print_in_val:
         #     print(f"Total Loss: {loss}")
         loss /= len(outputs)
@@ -145,17 +152,20 @@ class EncDecsLoss(nn.Module):
         return loss
 
     def classification_loss(self, output, target):
-        loss = nn.CrossEntropyLoss()(output, target)
+        # loss = nn.CrossEntropyLoss()(output, target)
+        loss = F.cross_entropy(output, target)
         return loss
 
     def regression_loss(self, output, target):
         # return nn.MSELoss()(output, target)
         # check for shape [x, 1] and [x]
-        if len(output.size()) == 2 and len(target.size()) == 1:
+        if len(output.size()) == 2 and len(target.size()) == 1 and output.size(1) == 1:
             target = target.unsqueeze(1)
-        return nn.L1Loss()(output, target)
+        # return nn.L1Loss()(output, target)
+        # return nn.MSELoss()(output, target)
+        return F.mse_loss(output, target)
 
-    def decoder_loss(self, decoder_output, target, print_in_val=False):
+    def decoder_loss_0(self, decoder_output, target, print_in_val=False):
         classification_outputs = decoder_output[0]  # note that model outputs a tuple of list instead of dict of list
         regression_output = decoder_output[1]
         total_classification_loss = 0.0
@@ -184,4 +194,23 @@ class EncDecsLoss(nn.Module):
         # if print_in_val:
         #     print(f"Classification Loss: {averaged_classification_loss}, Regression Loss: {averaged_regression_loss}")
         loss = averaged_classification_loss + averaged_regression_loss
+        return loss
+
+    def decoder_loss(self, decoder_output, target, cls_weight=1.0, reg_weight=1.0):        
+        classification_outputs = decoder_output[0]
+        regression_output = decoder_output[1]
+        classification_targets = target["classification_targets"]
+        regression_targets = target["regression_target"]
+
+        total_classification_loss = 0.0
+        total_regression_loss = 0.0
+
+        for param_name, pred in classification_outputs.items():
+            total_classification_loss += self.classification_loss(pred, classification_targets[param_name])
+        
+        for param_name, pred in regression_output.items():
+            total_regression_loss += self.regression_loss(pred, regression_targets[param_name])
+        
+        loss = cls_weight * total_classification_loss + reg_weight * total_regression_loss
+
         return loss
