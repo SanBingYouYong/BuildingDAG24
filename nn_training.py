@@ -103,10 +103,6 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
 
         for i, data in progress_bar:
             inputs, targets = data
-
-            # print(targets)
-            # raise
-
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
@@ -128,7 +124,6 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
                 inputs, targets = data
 
                 outputs = model(inputs)
-                # loss = criterion(outputs, targets, print_in_val=False)
                 loss = criterion(outputs, targets)
                 val_loss += loss.item()
 

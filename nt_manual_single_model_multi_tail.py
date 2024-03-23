@@ -10,11 +10,6 @@ import yaml
 from PIL import Image
 from tqdm import tqdm
 
-
-
-import torch.nn as nn
-import torch.nn.functional as F
-
 class SingleEncoderDecoderModel(nn.Module):
     def __init__(self):
         super(SingleEncoderDecoderModel, self).__init__()
@@ -55,13 +50,6 @@ class SingleEncoderDecoderModel(nn.Module):
         
         return x_class, x_reg
 
-
-
-import os
-import yaml
-import torch
-from PIL import Image
-from torchvision import transforms
 
 class SingleTaskDataset(torch.utils.data.Dataset):
     def __init__(self, task_param_names: list, dataset_name: str, datasets_folder: str="./datasets", transform=None, device=None):

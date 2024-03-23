@@ -1,19 +1,14 @@
-import yaml
 import os
-from tqdm import tqdm
 import datetime
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
-from torchvision import models, transforms
 
 from nn_models import *
 from nn_dataset import *
 from nn_training import train, test, load_metadata
 from nn_visualize import visualize_loss
-from nn_acc import DISCRETE_VARIABLES, acc_discrete
+from nn_acc import acc_discrete
 
 
 
@@ -81,5 +76,8 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
 if __name__ == "__main__":
     dataset_name = "DAGDataset100_100_5"
-    single_decoder = "Building Mass Decoder"
-    pipeline(dataset_name, single_decoder)
+    # single_decoder = "Building Mass Decoder"
+    single_decoder = None
+
+    epochs = 25
+    pipeline(dataset_name, single_decoder, epochs=epochs)

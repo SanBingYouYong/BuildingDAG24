@@ -15,11 +15,11 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(1, 32, kernel_size=3, padding=1),  # size: 512x512
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),  # size: 256x256
 
             nn.Conv2d(32, 64, kernel_size=3, padding=1),  # size: 256x256
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),  # size: 128x128
 
             # nn.Conv2d(32, 32, kernel_size=3, padding=1),  # size: 128x128
@@ -28,7 +28,7 @@ class Encoder(nn.Module):
 
             nn.Flatten(),
             nn.Linear(64 * 128 * 128, 1024),  # size: 1024
-            nn.ReLU(inplace=True),
+            nn.ReLU(),
         )
 
     def forward(self, x):
@@ -48,16 +48,16 @@ class ParamAwareMultiTailDecoder(nn.Module):
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
-                    nn.Linear(1024, 512),
+                    nn.Linear(input_size, 512),
                     nn.ReLU(),
                     nn.Dropout(p=dropout_prob),
-                    # nn.Linear(512, 256),
-                    # nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
-                    # nn.Linear(256, 128),
-                    # nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
-                    nn.Linear(512, size),
+                    nn.Linear(512, 256),
+                    nn.ReLU(),
+                    nn.Dropout(p=dropout_prob),
+                    nn.Linear(256, 128),
+                    nn.ReLU(),
+                    nn.Dropout(p=dropout_prob),
+                    nn.Linear(128, size),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -69,7 +69,7 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Linear(1024, 1024),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    nn.Linear(1024, 512),
+                    nn.Linear(input_size, 512),
                     nn.ReLU(),
                     nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 512), #
@@ -111,8 +111,6 @@ class EncoderDecoderModel(nn.Module):
 
     def forward(self, x):
         x = self.encoder(x)
-        batch_size = x.size(0)  # Get the batch size
-        x = x.view(batch_size, -1)  # Flatten the feature tensor, considering the batch size
         decoder_outputs = {decoder_name: decoder(x) for decoder_name, decoder in self.decoders.items()}
         return decoder_outputs  # note that the multi-tail decoder returns a list of outputs
 
@@ -132,22 +130,9 @@ class EncDecsLoss(nn.Module):
         loss = 0.0
         for decoder_name, decoder_output in outputs.items():
             loss += self.decoder_loss(decoder_output, targets[decoder_name])
-        # if print_in_val:
-        #     print(f"Total Loss: {loss}")
-        loss /= len(outputs)
-        # if print_in_val:
-        #     print(f"Average Loss: {loss}")
-         # L1 Regularization update: l_x
-        lx_reg = None
-        total_params = 0
+        lx_reg = 0
         for param in self.parameters():
-            total_params += param.numel()
-            if lx_reg is None:
-                lx_reg = param.norm(self.lx)
-            else:
-                lx_reg = lx_reg + param.norm(self.lx)
-        # Average the L1 regularization term
-        lx_reg /= total_params
+            lx_reg += param.norm(self.lx)
         loss += self.lx_lambda * lx_reg
         return loss
 
