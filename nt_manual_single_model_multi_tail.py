@@ -10,6 +10,11 @@ import yaml
 from PIL import Image
 from tqdm import tqdm
 
+
+
+import torch.nn as nn
+import torch.nn.functional as F
+
 class SingleEncoderDecoderModel(nn.Module):
     def __init__(self):
         super(SingleEncoderDecoderModel, self).__init__()
@@ -19,33 +24,14 @@ class SingleEncoderDecoderModel(nn.Module):
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         # self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
         self.flatten = nn.Flatten()
-        self.linear1 = nn.Linear(64*128*128, 1024)  # TODO: relu or not? 
         
         # Decoder layers for classification
-        self.fc_class1 = nn.Linear(1024, 512)
+        self.fc_class1 = nn.Linear(64*128*128, 512)
         self.fc_class2 = nn.Linear(512, 2)  # Bm Base Shape
-        # self.class_tail = nn.ModuleDict(
-        #     {
-        #         "Bm Base Shape": nn.Sequential(
-        #             nn.Linear(1024, 512),
-        #             nn.ReLU(),
-        #             nn.Linear(512, 2),
-        #         )
-        #     }
-        # )
         
         # Decoder layers for regression
-        self.fc_reg1 = nn.Linear(1024, 512)
+        self.fc_reg1 = nn.Linear(64*128*128, 512)
         self.fc_reg2 = nn.Linear(512, 3)  # Bm Size
-        # self.regression_tail = nn.ModuleDict(
-        #     {
-        #         "Bm Size": nn.Sequential(
-        #             nn.Linear(1024, 512),
-        #             nn.ReLU(),
-        #             nn.Linear(512, 3)
-        #         )
-        #     }
-        # )
         
     def forward(self, x):
         # Encoder
@@ -55,37 +41,24 @@ class SingleEncoderDecoderModel(nn.Module):
         x = F.max_pool2d(x, kernel_size=2, stride=2)
         # x = F.relu(self.conv3(x))
         x = self.flatten(x)
-        x = F.relu(self.linear1(x))
-        # x = self.linear1(x)  # test without relu: results: overfits without relu
         
         # Decoder for classification
         x_class = F.relu(self.fc_class1(x))
         x_class = self.fc_class2(x_class)
-        # x_class = self.class_tail["Bm Base Shape"](x)
-        # x_class = {
-        #     param_name: tail(x) for param_name, tail in self.class_tail.items()
-        # }
         
         # Decoder for regression
         x_reg = F.relu(self.fc_reg1(x))
         x_reg = self.fc_reg2(x_reg)
-        # x_reg = self.regression_tail["Bm Size"](x)
-        # x_reg = {
-        #     param_name: tail(x) for param_name, tail in self.regression_tail.items()
-        # }
         
-        # classification_outs = nn.ModuleDict({
-        #     param_name: tail(x) for param_name, tail in self.class_tail.items()
-        # })
-        # regression_outs = nn.ModuleDict({
-        #     param_name: tail(x) for param_name, tail in self.regression_tail.items()
-        # })
-
         return x_class, x_reg
-        # return {
-        #     "Building Mass Decoder": [x_class, x_reg]
-        # }
 
+
+
+import os
+import yaml
+import torch
+from PIL import Image
+from torchvision import transforms
 
 class SingleTaskDataset(torch.utils.data.Dataset):
     def __init__(self, task_param_names: list, dataset_name: str, datasets_folder: str="./datasets", transform=None, device=None):
@@ -152,16 +125,12 @@ def train(model, train_dataloader, val_dataloader, optimizer, criterion, device,
             inputs = inputs.to(device)
             classification_labels = classification_labels.to(device)
             regression_labels = regression_labels.to(device)
-            # classification_labels = targets["Building Mass Decoder"]["classification_targets"]["Bm Base Shape"]
-            # regression_labels = targets["Building Mass Decoder"]["regression_target"]["Bm Size"]
 
             optimizer.zero_grad()
-            # classification_outputs, regression_outputs = model(inputs)
-            outputs = model(inputs)
-
+            classification_outputs, regression_outputs = model(inputs)
+            
             # Calculate custom loss
-            # loss = criterion(classification_outputs, regression_outputs, classification_labels, regression_labels)
-            loss = criterion(outputs, classification_labels, regression_labels)
+            loss = criterion(classification_outputs, regression_outputs, classification_labels, regression_labels)
             
             loss.backward()
             optimizer.step()
@@ -169,40 +138,16 @@ def train(model, train_dataloader, val_dataloader, optimizer, criterion, device,
             running_loss += loss.item()
             progress_bar.set_description(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss / (i+1):.4f}")
 
-        # # Validation
-        # val_loss = validate(model, val_dataloader, device)  # Implement validate method separately
-        # unified_val_loss = (val_loss[0] + val_loss[1]) / 2
         # Validation
-        model.eval()
-        val_loss = 0.0
-        num_batches_val = len(val_dataloader)
-
-        with torch.no_grad():
-            for inputs, classification_labels, regression_labels in val_dataloader:
-                inputs = inputs.to(device)
-                classification_labels = classification_labels.to(device)
-                regression_labels = regression_labels.to(device)
-
-                # Forward pass
-                # classification_outputs, regression_outputs = model(inputs)
-                outputs = model(inputs)
-
-                # outputs = model(inputs)
-                # loss = criterion(outputs, targets)
-                loss = criterion(outputs, classification_labels, regression_labels)
-                val_loss += loss.item()
-
-        val_loss /= num_batches_val
-        # val_losses.append(val_loss)
+        val_loss = validate(model, val_dataloader, device)  # Implement validate method separately
+        unified_val_loss = (val_loss[0] + val_loss[1]) / 2
         
         # Logging
-        # print(f"Epoch {epoch+1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: classification: {val_loss[0]:.4f}, regression: {val_loss[1]:.4f}; average val loss: {unified_val_loss:.4f}")
-        print(f"Epoch {epoch + 1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: {val_loss}")
+        print(f"Epoch {epoch+1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: classification: {val_loss[0]:.4f}, regression: {val_loss[1]:.4f}; average val loss: {unified_val_loss:.4f}")
         
-
         # Save best model
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
+        if unified_val_loss < best_val_loss:
+            best_val_loss = unified_val_loss
             best_epoch = epoch
             torch.save(model.state_dict(), save_path)
 
@@ -248,11 +193,7 @@ def test(model, test_dataloader, device, save_path='./models/single_encdec_mt_te
             inputs = inputs.to(device)
             classification_labels = classification_labels.to(device)
             regression_labels = regression_labels.to(device)
-            # classification_outputs, regression_outputs = model(inputs)
-            outputs = model(inputs)
-
-            classification_outputs = outputs["Building Mass Decoder"][0]["Bm Base Shape"]
-            regression_outputs = outputs["Building Mass Decoder"][1]["Bm Size"]
+            classification_outputs, regression_outputs = model(inputs)
             
             # Classification predictions
             _, classification_predicted = torch.max(classification_outputs, 1)
@@ -277,7 +218,7 @@ def test(model, test_dataloader, device, save_path='./models/single_encdec_mt_te
 
 
 
-def custom_loss_0(classification_output, regression_output, classification_target, regression_target, classification_weight=1.0, regression_weight=1.0):
+def custom_loss(classification_output, regression_output, classification_target, regression_target, classification_weight=1.0, regression_weight=1.0):
     """
     Custom loss function to handle both classification and regression tasks.
 
@@ -296,37 +237,21 @@ def custom_loss_0(classification_output, regression_output, classification_targe
     classification_loss = F.cross_entropy(classification_output, classification_target)
     
     # Regression loss
-    # regression_loss = F.mse_loss(regression_output, regression_target)
-    regression_loss = F.l1_loss(regression_output, regression_target)
+    regression_loss = F.mse_loss(regression_output, regression_target)
     
     # Combine the losses
     loss = classification_weight * classification_loss + regression_weight * regression_loss
     
     return loss
 
-def custom_loss(outputs, classification_target, regression_target):
-    # classification: 
-    classification_loss = F.cross_entropy(
-        outputs[0], classification_target
-    )
-    # regression:
-    regression_loss = F.l1_loss(
-        outputs[1], regression_target
-    )
-    return 1 * classification_loss + 1 * regression_loss
-
 
 
 if __name__ == "__main__":
-    torch.manual_seed(0)
-    # dataset_name = "DAGDataset10_10_5"
-    dataset_name = "DAGDataset100_100_5"
     # Instantiate model, dataset, dataloader, optimizer, and criterion
+
     # Assuming you have defined your model, dataset, optimizer, and criterion
     model = SingleEncoderDecoderModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-    dataset = SingleTaskDataset(task_param_names=['Bm Base Shape', 'Bm Size'], dataset_name=dataset_name)
-    # from nn_dataset import DAGDatasetSingleDecoder
-    # dataset = DAGDatasetSingleDecoder(decoder_name="Building Mass Decoder", dataset_name="DAGDataset10_10_5")
+    dataset = SingleTaskDataset(task_param_names=['Bm Base Shape', 'Bm Size'], dataset_name='DAGDataset100_100_5')
 
     # Split the dataset into training, validation, and test subsets
     train_size = int(0.8 * len(dataset))  # 80% for training
@@ -336,8 +261,8 @@ if __name__ == "__main__":
 
     # Create data loaders for training, validation, and test
     train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=True)
-    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
@@ -347,4 +272,3 @@ if __name__ == "__main__":
 
     # Test the model
     test(model, test_dataloader, torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-
