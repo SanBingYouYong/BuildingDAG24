@@ -103,7 +103,7 @@ class DAGDataset(torch.utils.data.Dataset):
         if param_spec['type'] == 'states':
             return param_spec['values'].index(value)
         elif param_spec['type'] == 'bool':
-            return 1 if value else 0
+            return 1 if value else 0  # 1 for True, 0 for False, so the one-hot logits is [0, 1] for True, [1, 0] for False
         else:
             raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
 
@@ -204,7 +204,9 @@ def denormalize(normalized_value, param_spec, is_target=False):
     elif param_spec['type'] == 'states':
         return int(torch.argmax(normalized_value)) if not is_target else int(normalized_value)
     elif param_spec['type'] == 'bool':
-        return bool(torch.argmax(normalized_value) == 0) if not is_target else bool(normalized_value)
+        # [False, True] -> [0, 1]
+        # return bool(torch.argmax(normalized_value) == 0) if not is_target else bool(normalized_value)
+        return bool(torch.argmax(normalized_value) == 1) if not is_target else bool(normalized_value)
     elif param_spec['type'] == 'vector':
         denorm_value = []
         for i, dim in enumerate(['x', 'y', 'z']):

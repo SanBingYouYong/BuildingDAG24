@@ -50,7 +50,7 @@ class ParamAwareMultiTailDecoder(nn.Module):
                 param_name: nn.Sequential(
                     nn.Linear(input_size, 512),
                     nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 256),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
@@ -71,7 +71,7 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Dropout(p=dropout_prob),
                     nn.Linear(input_size, 512),
                     nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 512), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
@@ -211,7 +211,7 @@ class EncDecsLoss(nn.Module):
         loss = F.l1_loss(output, target)
         return loss
 
-    def decoder_loss_0(self, decoder_output, target, print_in_val=False):
+    def decoder_loss(self, decoder_output, target, cls_weight=1.0, reg_weight=1.0):
         classification_outputs = decoder_output[0]  # note that model outputs a tuple of list instead of dict of list
         regression_output = decoder_output[1]
         total_classification_loss = 0.0
@@ -232,31 +232,8 @@ class EncDecsLoss(nn.Module):
                 # make regression_loss same shape as switch_index
                 regression_loss = torch.stack([regression_loss] * switch_index.size(0))
                 regression_loss *= switch_index
-                # average again
+                # average again  # TODO: should we take average here? or just sum?
                 regression_loss = torch.mean(regression_loss)
             total_regression_loss += regression_loss
-        averaged_classification_loss = total_classification_loss / len(classification_outputs) if len(classification_outputs) > 0 else 0
-        averaged_regression_loss = total_regression_loss / len(regression_output) if len(regression_output) > 0 else 0
-        # if print_in_val:
-        #     print(f"Classification Loss: {averaged_classification_loss}, Regression Loss: {averaged_regression_loss}")
-        loss = averaged_classification_loss + averaged_regression_loss
-        return loss
-
-    def decoder_loss(self, decoder_output, target, cls_weight=1.0, reg_weight=1.0):        
-        classification_outputs = decoder_output[0]
-        regression_output = decoder_output[1]
-        classification_targets = target["classification_targets"]
-        regression_targets = target["regression_target"]
-
-        total_classification_loss = 0.0
-        total_regression_loss = 0.0
-
-        for param_name, pred in classification_outputs.items():
-            total_classification_loss += self.classification_loss(pred, classification_targets[param_name])
-        
-        for param_name, pred in regression_output.items():
-            total_regression_loss += self.regression_loss(pred, regression_targets[param_name])
-        
         loss = cls_weight * total_classification_loss + reg_weight * total_regression_loss
-
         return loss
