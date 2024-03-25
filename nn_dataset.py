@@ -193,15 +193,18 @@ def overfit_dataloaders(train_dataset, val_dataset, batch_size=32):
     # test_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     return train_loader, val_loader
 
-def denormalize(normalized_value, param_spec):
+def denormalize(normalized_value, param_spec, is_target=False):
+    '''
+    If is_target, discrete labels (class indices) don't need to be denormalized.
+    '''
     # print(normalized_value)
     if param_spec['type'] == 'float' or param_spec['type'] == 'int':
         converter = float if param_spec['type'] == 'float' else lambda x: round(float(x))
         return converter(normalized_value * (param_spec['max'] - param_spec['min']) + param_spec['min'])
     elif param_spec['type'] == 'states':
-        return int(torch.argmax(normalized_value))
+        return int(torch.argmax(normalized_value)) if not is_target else int(normalized_value)
     elif param_spec['type'] == 'bool':
-        return bool(torch.argmax(normalized_value) == 0)
+        return bool(torch.argmax(normalized_value) == 0) if not is_target else bool(normalized_value)
     elif param_spec['type'] == 'vector':
         denorm_value = []
         for i, dim in enumerate(['x', 'y', 'z']):
@@ -212,6 +215,9 @@ def denormalize(normalized_value, param_spec):
         raise ValueError(f"Unsupported parameter type: {param_spec['type']}")
 
 def de_tensor(value):
+    '''
+    deprecated. only used in nn_overfit_training for testing purposes. 
+    '''
     if torch.is_tensor(value):
         if value.dim() == 0:
             return value.item()

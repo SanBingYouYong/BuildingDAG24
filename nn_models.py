@@ -94,12 +94,12 @@ class ParamAwareMultiTailDecoder(nn.Module):
         # x = self.fc2(x)
         # x = self.relu2(x)
         # x = self.dropout2(x)
-        classification_outputs = nn.ModuleDict({
+        classification_outputs = {
             param_name: tail(x) for param_name, tail in self.classification_tails.items()
-        }) if self.classification_tails else {}
-        regression_output = nn.ModuleDict({
+        } if self.classification_tails else {}
+        regression_output = {
             param_name: tail(x) for param_name, tail in self.regression_tail.items()
-        }) if self.regression_tail else {}
+        } if self.regression_tail else {}
         return classification_outputs, regression_output
 
 

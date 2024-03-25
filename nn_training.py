@@ -163,6 +163,13 @@ def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
             for i in range(len(pred)):
                 p = denormalize(pred[i], ranges[param_name])
                 t = denormalize(tar[i], ranges[param_name])
+                # if param_name == "Bm Base Shape":
+                #     print(f"{param_name} Param Type: {ranges[param_name]['type']}")
+                #     print(f"Model Output: {pred[i]}")
+                #     print(f"Target: {tar[i]}")
+                #     print(f"deNormalized Model Output: {p}")
+                #     print(f"deNormalized Target: {t}")
+                #     raise
                 parsed_pred.append([p, t])
             parsed_outputs[param_name] = parsed_pred
         for param_name, pred in regression_output.items():
@@ -171,6 +178,13 @@ def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
             for i in range(len(pred)):
                 p = denormalize(pred[i], ranges[param_name])
                 t = denormalize(reg[i], ranges[param_name])
+                # if param_name == "Bm Size":
+                #     print(f"{param_name} Param Type: {ranges[param_name]['type']}")
+                #     print(f"Model Output: {pred[i]}")
+                #     print(f"Target: {reg[i]}")
+                #     print(f"deNormalized Model Output: {p}")
+                #     print(f"deNormalized Target: {t}")
+                #     raise
                 parsed_pred.append([p, t])
             parsed_outputs[param_name] = parsed_pred
     return parsed_outputs

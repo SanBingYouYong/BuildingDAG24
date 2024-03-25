@@ -139,11 +139,12 @@ def train(model, train_dataloader, val_dataloader, optimizer, criterion, device,
             progress_bar.set_description(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss / (i+1):.4f}")
 
         # Validation
-        val_loss = validate(model, val_dataloader, device)  # Implement validate method separately
-        unified_val_loss = (val_loss[0] + val_loss[1]) / 2
+        val_loss = validate(model, val_dataloader, device, criterion)  # Implement validate method separately
+        # unified_val_loss = (val_loss[0] + val_loss[1])
+        unified_val_loss = val_loss
         
         # Logging
-        print(f"Epoch {epoch+1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: classification: {val_loss[0]:.4f}, regression: {val_loss[1]:.4f}; average val loss: {unified_val_loss:.4f}")
+        print(f"Epoch {epoch+1}/{epochs}, Training Loss: {running_loss / len(train_dataloader):.4f}, Validation Loss: {unified_val_loss:.4f}")
         
         # Save best model
         if unified_val_loss < best_val_loss:
@@ -155,10 +156,12 @@ def train(model, train_dataloader, val_dataloader, optimizer, criterion, device,
 
 
 
-def validate(model, dataloader, device):
+def validate(model, dataloader, device, criterion):
     model.eval()
     classification_val_loss = 0.0
     regression_val_loss = 0.0
+
+    val_loss = 0
 
     with torch.no_grad():
         for inputs, classification_labels, regression_labels in dataloader:
@@ -168,17 +171,23 @@ def validate(model, dataloader, device):
 
             # Forward pass
             classification_outputs, regression_outputs = model(inputs)
+
+            val_loss += criterion(classification_outputs, regression_outputs, classification_labels, regression_labels)
             
             # Calculate losses separately
             classification_val_loss += F.cross_entropy(classification_outputs, classification_labels).item()
-            regression_val_loss += F.mse_loss(regression_outputs, regression_labels).item()
+            regression_val_loss += F.l1_loss(regression_outputs, regression_labels).item()
 
-    # Average the losses
-    classification_val_loss /= len(dataloader)
-    regression_val_loss /= len(dataloader)
+    print(f"Classification Validation Loss: {classification_val_loss / len(dataloader):.4f}, Regression Validation Loss: {regression_val_loss / len(dataloader):.4f}")
+
+    return val_loss / len(dataloader)
+
+    # # Average the losses
+    # classification_val_loss /= len(dataloader)
+    # regression_val_loss /= len(dataloader)
     
-    # You can return both losses or any other aggregated metric you're interested in
-    return classification_val_loss, regression_val_loss
+    # # You can return both losses or any other aggregated metric you're interested in
+    # return classification_val_loss, regression_val_loss
 
 
 def test(model, test_dataloader, device, save_path='./models/single_encdec_mt_test_results.yml'):
@@ -237,7 +246,7 @@ def custom_loss(classification_output, regression_output, classification_target,
     classification_loss = F.cross_entropy(classification_output, classification_target)
     
     # Regression loss
-    regression_loss = F.mse_loss(regression_output, regression_target)
+    regression_loss = F.l1_loss(regression_output, regression_target)
     
     # Combine the losses
     loss = classification_weight * classification_loss + regression_weight * regression_loss
@@ -248,6 +257,7 @@ def custom_loss(classification_output, regression_output, classification_target,
 
 if __name__ == "__main__":
     # Instantiate model, dataset, dataloader, optimizer, and criterion
+    torch.manual_seed(0)
 
     # Assuming you have defined your model, dataset, optimizer, and criterion
     model = SingleEncoderDecoderModel().to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))

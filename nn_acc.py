@@ -37,7 +37,7 @@ def acc_discrete(results_path: str="results.yml"):
 if __name__ == "__main__":
     results_path = "results.yml"
     with open(results_path, "r") as file:
-        results = yaml.safe_load(file)["outputs"]
+        results = yaml.safe_load(file)["results"]
 
 
     categories = [
