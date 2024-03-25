@@ -162,7 +162,7 @@ def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
             parsed_pred = []
             for i in range(len(pred)):
                 p = denormalize(pred[i], ranges[param_name])
-                t = denormalize(tar[i], ranges[param_name])
+                t = denormalize(tar[i], ranges[param_name], is_target=True)
                 # if param_name == "Bm Base Shape":
                 #     print(f"{param_name} Param Type: {ranges[param_name]['type']}")
                 #     print(f"Model Output: {pred[i]}")
@@ -177,7 +177,7 @@ def parse_outputs(outputs: dict, ranges: dict, targets: dict, idx=0):
             parsed_pred = []
             for i in range(len(pred)):
                 p = denormalize(pred[i], ranges[param_name])
-                t = denormalize(reg[i], ranges[param_name])
+                t = denormalize(reg[i], ranges[param_name], is_target=True)  # although no diff for reg targets
                 # if param_name == "Bm Size":
                 #     print(f"{param_name} Param Type: {ranges[param_name]['type']}")
                 #     print(f"Model Output: {pred[i]}")

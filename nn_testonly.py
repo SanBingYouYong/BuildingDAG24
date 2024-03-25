@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     torch.manual_seed(0)
 
-    dataset_name = "DAGDataset100_100_5"
+    dataset_name = "DAGDataset10_10_5"
     if not os.path.exists(f"./datasets/{dataset_name}"):
         raise FileNotFoundError(f"Dataset {dataset_name} not found")
 
