@@ -45,8 +45,8 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     # model = EncoderDecoderModel(encoder, decoders)
     model = ManualEncoderDecoderModelBM()
 
-    # criterion = EncDecsLoss(decoders, switches, lx_regularizor=lx_regularizor)
-    criterion = custom_loss
+    criterion = EncDecsLoss(decoders, switches, lx_regularizor=lx_regularizor)
+    # criterion = custom_loss
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
