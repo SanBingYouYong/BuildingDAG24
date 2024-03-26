@@ -20,7 +20,8 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
              lr: float=0.001,
              lx_regularizor: int=2,
              seed: int=0, 
-             results_num: int=5):
+             results_num: int=5,
+             additional_notes: str=None):
     '''
     Train, test with best weights, visualize curves, print out results pairs, calcuulate acc for discrete.
     '''
@@ -70,6 +71,12 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
     # calculate acc for discrete variables
     acc_discrete()
+
+    # record some optional notes
+    if additional_notes:
+        notes_path = model_name.replace(".pth", "_notes.txt")
+        with open(notes_path, "w") as file:
+            file.write(additional_notes)
         
     return model_name, loss_name, f"results.yml"
 
@@ -80,5 +87,8 @@ if __name__ == "__main__":
     # single_decoder = "Building Mass Decoder"
     single_decoder = None
 
+
     epochs = 10
-    pipeline(dataset_name, single_decoder, epochs=epochs)
+    batch_size = 32
+    notes = f"larger batch size: {batch_size}"
+    pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, additional_notes=notes)
