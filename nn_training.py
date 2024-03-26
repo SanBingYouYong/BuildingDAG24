@@ -95,6 +95,9 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
     if seed != -1:
         torch.manual_seed(seed)
 
+    validation_interval = 10  # Run validation every 10 batches
+    validation_counter = 0
+
     for epoch in range(epochs):
         model.train()
         train_loss = 0.0
@@ -105,11 +108,6 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
             inputs, targets = data
             optimizer.zero_grad()
             outputs = model(inputs)
-            # print(outputs["Building Mass Decoder"][0]["Bm Base Shape"][0])
-            # print(outputs["Building Mass Decoder"][1]["Bm Size"][0])
-            # print(targets["Building Mass Decoder"]["classification_targets"]["Bm Base Shape"][0])
-            # print(targets["Building Mass Decoder"]["regression_target"]["Bm Size"][0])
-            # raise
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
@@ -117,33 +115,37 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
             train_loss += loss.item()
             progress_bar.set_postfix({"training_loss": train_loss / (i + 1)})
 
-        train_losses.append(train_loss / num_batches)
+            validation_counter += 1
+            if validation_counter == validation_interval:
+                validation_counter = 0
+                
+                # Validation
+                model.eval()
+                val_loss = 0.0
+                num_batches_val = len(val_loader)
 
-        # Validation
-        model.eval()
-        val_loss = 0.0
-        num_batches_val = len(val_loader)
+                with torch.no_grad():
+                    for j, val_data in enumerate(val_loader):
+                        val_inputs, val_targets = val_data
+                        val_outputs = model(val_inputs)
+                        val_loss += criterion(val_outputs, val_targets).item()
 
-        with torch.no_grad():
-            for i, data in enumerate(val_loader):
-                inputs, targets = data
+                val_loss /= num_batches_val
+                val_losses.append(val_loss)
 
-                outputs = model(inputs)
-                loss = criterion(outputs, targets)
-                val_loss += loss.item()
+                cur_train_loss = train_loss / (i + 1)
+                train_losses.append(cur_train_loss)
 
-        val_loss /= num_batches_val
-        val_losses.append(val_loss)
+                print(f"Epoch {epoch + 1}/{epochs}, Batch {i + 1}/{num_batches}, Training Loss: {train_loss / (i + 1)}, Validation Loss: {val_loss}")
 
-        print(f"Epoch {epoch + 1}/{epochs}, Training Loss: {train_losses[-1]}, Validation Loss: {val_losses[-1]}")
+                # Save the model if validation loss improves
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    torch.save(model.state_dict(), model_save_path)
 
-        # Save the model if validation loss improves
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            torch.save(model.state_dict(), model_save_path)
-
+                model.train()
     print("Finished Training")
-    print(f"Best Validation Loss: {best_val_loss}; at epoch {val_losses.index(best_val_loss) + 1}")
+    print(f"Best Validation Loss: {best_val_loss}; at iteration {val_losses.index(best_val_loss) + 1}")
 
     # Save the loss
     with open(loss_save_path, "w") as f:
