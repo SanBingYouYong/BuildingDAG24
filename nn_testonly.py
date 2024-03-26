@@ -29,8 +29,8 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"Dataset {dataset_name} not found")
 
     decoder = "Building Mass Decoder"
-    model_name = "model_DAGDataset100_100_5_20240326141027"
-    weights_path = f"./archive/{model_name}.pth"
+    model_name = "model_DAGDataset100_100_5_20240325150615"
+    weights_path = f"./models/{model_name}.pth"
     # Load metadata
     # ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata_for_inference(f"./models/{model_name}_meta.yml", need_full=True, decoder=decoder)
     ranges, parameter_output_mapping, decoders, switches, batch_cam_angles = load_metadata_for_inference(f"./models/{model_name}_meta.yml", need_full=True)
@@ -45,12 +45,10 @@ if __name__ == "__main__":
     encoder = Encoder()
     model = EncoderDecoderModel(encoder, decoders)
     # model = ManualEncoderDecoderModelBM()
-    model.load_state_dict(torch.load(f"./archive/{model_name}.pth", map_location=device
+    model.load_state_dict(torch.load(f"./models/{model_name}.pth", map_location=device
     ))
     model.eval()
     model.to(device)
-
-    raise
 
     # Loss function
     criterion = EncDecsLoss(decoders, switches)
