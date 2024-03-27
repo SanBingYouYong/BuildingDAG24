@@ -1,39 +1,39 @@
 Bm Base Shape: 1
 Bm Size:
-- 0.5783610343933105
-- 0.864544153213501
-- 0.7093026638031006
-Floor Ledge Extrusion X: 0.5735090970993042
-Floor Ledge Extrusion Z: 0.40354016423225403
-Floor Ledge Size X: 0.7340905666351318
-Floor Ledge Size Z: 0.7896925210952759
-Has Floor Ledge: false
-Has Window Ledge: true
+- 0.7531721591949463
+- 0.5992482304573059
+- 0.8955714106559753
+Floor Ledge Extrusion X: 0.5659946799278259
+Floor Ledge Extrusion Z: 0.40660393238067627
+Floor Ledge Size X: 0.7171615958213806
+Floor Ledge Size Z: 0.7814568281173706
+Has Floor Ledge: true
+Has Window Ledge: false
 Num Floors: 1
 Num Windows Each Side: 1
-Rf Base Shape: 2
+Rf Base Shape: 1
 Rf Size:
-- 0.781444787979126
-- 0.607485294342041
-- 0.7142324447631836
-Window Divided Horizontal: true
+- 0.7352445721626282
+- 0.7135717868804932
+- 0.7004749774932861
+Window Divided Horizontal: false
 Window Divided Vertical: false
-Window Interpanel Offset Percentage Y: 0.3526626527309418
-Window Interpanel Offset Percentage Z: 0.3630026578903198
-Window Ledge Extrusion X: 0.5457876324653625
-Window Ledge Extrusion Z: 0.5042877793312073
+Window Interpanel Offset Percentage Y: 0.4802086055278778
+Window Interpanel Offset Percentage Z: 0.5171196460723877
+Window Ledge Extrusion X: 0.5741792917251587
+Window Ledge Extrusion Z: 0.4409523904323578
 Window Ledge Shape Size:
-- 0.6751654148101807
-- 0.7406348586082458
-- 0.6750349402427673
-Window Ledges Height Offset: 0.1832444667816162
+- 0.7285044193267822
+- 0.7262981534004211
+- 0.7322836518287659
+Window Ledges Height Offset: 0.6625815033912659
 Window Panel Area:
-- 0.7457928657531738
-- 0.694778561592102
-- 0.6492570638656616
+- 0.766364574432373
+- 0.755383312702179
+- 0.7204225063323975
 Window Shape Size:
-- 0.6913672685623169
-- 0.6777936220169067
-- 0.6194998025894165
-Windows Height Offset: 0.02308976650238037
-Windows Left Right Offset: 0.0032317638397216797
+- 0.7870461940765381
+- 0.7161651849746704
+- 0.7412627935409546
+Windows Height Offset: 0.10250747203826904
+Windows Left Right Offset: 0.15466320514678955

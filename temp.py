@@ -1,13 +1,13 @@
-import yaml
+import os
 
-# Read the YAML file
-with open('./models/single_encdec_test_results.yml', 'r') as file:
-    results = yaml.safe_load(file)
 
-# Parse the contents
-predictions = results['predictions']
-ground_truth = results['ground_truth']
+path = "./datasets/DAGDataset5_5_5/images"
 
-# Now you have access to predictions and ground_truth as Python lists
-for i in range(5):
-    print(f"Prediction: {predictions[i]}, Ground Truth: {ground_truth[i]}")
+# removes any file in the folder if it is not a .png file
+for file in os.listdir(path):
+    if file == "pred":
+        continue
+    if not file.endswith(".png"):
+        os.remove(os.path.join(path, file))
+
+
