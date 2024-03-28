@@ -473,8 +473,8 @@ class DRUtils():
         new_edges = [e for e in bm.edges if not e.select]
         for e in new_edges:
             v0, v1 = e.verts
-            v0.co += Vector((0, -0.01, 0))
-            v1.co += Vector((0, -0.01, 0))
+            v0.co += Vector((0, -0.001, 0))
+            v1.co += Vector((0, -0.001, 0))
         # mark freestyle edge on original edge
         bpy.ops.mesh.select_mode(type='EDGE')
         bpy.ops.mesh.select_all(action='DESELECT')

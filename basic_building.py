@@ -596,5 +596,23 @@ def basic_building(
     final = final.transform(
         translation=gs.combine_xyz(x=0, y=0, z=-z_center)
     )
-
-    return final
+    bm_final = bm_final.transform(
+        translation=gs.combine_xyz(x=0, y=0, z=-z_center)
+    )
+    rf_final = rf_final.transform(
+        translation=gs.combine_xyz(x=0, y=0, z=-z_center)
+    )
+    all_floor_windows = all_floor_windows.transform(
+        translation=gs.combine_xyz(x=0, y=0, z=-z_center)
+    )
+    all_floor_fledges = all_floor_fledges.transform(
+        translation=gs.combine_xyz(x=0, y=0, z=-z_center)
+    )
+    return final, bm_final, rf_final, all_floor_windows, all_floor_fledges
+    # return {  # causes wrapper method to not work
+    #     "Final Building": final,
+    #     "Building Mass": bm_final,
+    #     "Roof": rf_final,
+    #     "Windows": all_floor_windows,
+    #     "Floor Ledges": all_floor_fledges,
+    # }
