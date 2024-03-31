@@ -40,6 +40,8 @@ if __name__ == "__main__":
     with open(results_path, "r") as file:
         results = yaml.safe_load(file)["results"]
 
+    f1scores = {}
+    maes = {}
 
     categories = [
         "Bm Base Shape",
@@ -63,6 +65,7 @@ if __name__ == "__main__":
             # F1
             f1 = f1_score([target for _, target in results[cat]], [pred for pred, _ in results[cat]], average="weighted")
             print(f"F1: {f1:.2f}")
+            f1scores[cat] = float(f1)
         else:
             # for continuous var, we calculate MAE
             print(f"Category: {cat}")
@@ -73,6 +76,10 @@ if __name__ == "__main__":
             else:
                 mae = sum([abs(target - pred) for pred, target in results[cat]]) / len(results[cat])
             print(f"MAE: {mae:.2f}")
+            maes[cat] = float(mae)
+    
+    with open("performance.yml", "w") as file:
+        yaml.dump({"f1": f1scores, "mae": maes}, file)
 
 
 
