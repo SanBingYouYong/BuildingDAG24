@@ -51,21 +51,29 @@ if __name__ == "__main__":
         "Window Divided Horizontal",
         "Window Divided Vertical"
     ]
-    for category in categories:
-        print(f"Category: {category}")
-        # # calculate accuracy
-        # correct = 0
-        # total = 0
-        # for i, (pred, target) in enumerate(results[category]):
-        #     pred = pred
-        #     target = target
-        #     if pred == target:
-        #         correct += 1
-        #     total += 1
-        # print(f"Accuracy: {100 * correct / total:.2f}%")
-        # F1
-        f1 = f1_score([target for _, target in results[category]], [pred for pred, _ in results[category]], average="weighted")
-        print(f"F1: {f1:.2f}")
+    # for category in categories:
+    #     print(f"Category: {category}")
+    #     # F1
+    #     f1 = f1_score([target for _, target in results[category]], [pred for pred, _ in results[category]], average="weighted")
+    #     print(f"F1: {f1:.2f}")
+    
+    for cat in results.keys():
+        if cat in categories: # discrete var
+            print(f"Category: {cat}")
+            # F1
+            f1 = f1_score([target for _, target in results[cat]], [pred for pred, _ in results[cat]], average="weighted")
+            print(f"F1: {f1:.2f}")
+        else:
+            # for continuous var, we calculate MAE
+            print(f"Category: {cat}")
+            # mae = sum([abs(target - pred) for pred, target in results[cat]]) / len(results[cat])
+            # check for vector outputs
+            if isinstance(results[cat][0][0], list):
+                mae = sum([sum([abs(target - pred) for pred, target in zip(preds, targets)]) / len(preds) for preds, targets in results[cat]]) / len(results[cat])
+            else:
+                mae = sum([abs(target - pred) for pred, target in results[cat]]) / len(results[cat])
+            print(f"MAE: {mae:.2f}")
+
 
 
 
