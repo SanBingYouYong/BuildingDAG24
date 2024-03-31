@@ -1,13 +1,12 @@
 import yaml
+import os
 
-# Read the YAML file
-with open('./models/single_encdec_test_results.yml', 'r') as file:
-    results = yaml.safe_load(file)
+path = "./datasets/DAGDataset10_10_5/images"
 
-# Parse the contents
-predictions = results['predictions']
-ground_truth = results['ground_truth']
-
-# Now you have access to predictions and ground_truth as Python lists
-for i in range(5):
-    print(f"Prediction: {predictions[i]}, Ground Truth: {ground_truth[i]}")
+# count images
+count = 0
+for root, dirs, files in os.walk(path):
+    for file in files:
+        if file.endswith(".png"):
+            count += 1
+print(count)

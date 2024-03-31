@@ -83,12 +83,12 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
 
 if __name__ == "__main__":
-    dataset_name = "DAGDataset100_100_5"
+    dataset_name = "DAGDataset300_100_5"
     # single_decoder = "Building Mass Decoder"
     single_decoder = None
 
 
     epochs = 10
-    batch_size = 32
-    notes = f"larger batch size: {batch_size}"
+    batch_size = 16
+    notes = f"batch size: {batch_size}"
     pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, additional_notes=notes)
