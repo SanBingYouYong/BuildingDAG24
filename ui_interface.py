@@ -29,7 +29,7 @@ from render import DAGRenderer
 from tqdm import tqdm
 
 from nn_models import EncoderDecoderModel
-from ui_external_inference import inference
+from ui_external_inference import inference, batch_inference
 
 
 def resize_and_convert(img_path: str, invert=True) -> None:
@@ -48,9 +48,10 @@ def resize_and_convert(img_path: str, invert=True) -> None:
     print(f"PIL saved img to {img_path}")
 
 
-def load_param_to_shape():
+def load_param_to_shape(yml_path: str=None):
     loader = DAGParamLoader()
-    loader.load_dag_params("./inference/output.yml")
+    path = yml_path if yml_path else "./inference/output.yml"
+    loader.load_dag_params(path)
 
 class CaptureAnnotationOperator(bpy.types.Operator):
     bl_idname = "object.capture_annotation_operator"
@@ -61,7 +62,7 @@ class CaptureAnnotationOperator(bpy.types.Operator):
 
         # get domain
         scene = context.scene
-        img_path = "./inference/sketch.png"
+        img_path = "./inference/sketch.png"  # TODO: extract this to a global variable
         obj = bpy.data.objects["Building"]
 
         # hide "procedural shape"
@@ -134,6 +135,52 @@ class ImageInferenceOperator(bpy.types.Operator):
         load_param_to_shape()
         return {"FINISHED"}
 
+class BatchRenderOperator(bpy.types.Operator):
+    bl_idname = "object.batch_render_operator"
+    bl_label = "Batch Render"
+
+    def execute(self, context: Context):
+        print("You've called Batch Render.")
+        # get domain
+        scene = context.scene
+        obj = bpy.data.objects["Building"]
+        old_alpha = scene.background_image_opacity
+        old_background = scene.background_image_path
+        scene.background_image_opacity = 0.1
+        # get images folder
+        images_folder = bpy.path.abspath(scene.batch_render_images_folder)
+        if not os.path.exists(images_folder):
+            print(f"Folder {images_folder} does not exist")
+            return {"CANCELLED"}
+        # attempt to make the "pred" dir inside the folder
+        pred_folder = os.path.join(images_folder, "pred")
+        if not os.path.exists(pred_folder):
+            os.makedirs(pred_folder)
+        # set inference image path
+        inference_image_path = "./inference/sketch.png"
+
+        print(f"Batch rendering images in {images_folder}")
+        
+        imgs = os.listdir(images_folder)
+
+        params = batch_inference(imgs, images_folder, pred_folder)
+
+        for (img_path, param_path) in params:
+            # param2obj_entrypoint(domain, obj)
+            load_param_to_shape(param_path)
+            scene.background_image_path = img_path
+            # render viewport
+            img_name = param_path.replace(".yml", ".png")
+            bpy.context.scene.render.filepath = os.path.join(pred_folder, img_name)
+            bpy.ops.render.opengl(write_still=True)
+            print(f"Rendered {img_name}")
+        
+        # clean up
+        scene.background_image_opacity = old_alpha
+        scene.background_image_path = old_background
+        load_param_to_shape()  # load back original shape params
+        return {"FINISHED"}
+
 
 class GeoCodeInterfacePanel(bpy.types.Panel):
     bl_label = "GeoCode Interface Panel"
@@ -175,6 +222,9 @@ class GeoCodeInterfacePanel(bpy.types.Panel):
         box.prop(scene, "proper_background_image", text="Image is Processed Already")
         # Inference button
         box.operator("object.image_inference_operator", text="Image Inference")
+        # Batch render button
+        box.prop(scene, "batch_render_images_folder", text="Batch Render Images Folder")
+        box.operator("object.batch_render_operator", text="Batch Render")
 
 
 def update_slider_value(self, context):
@@ -293,6 +343,12 @@ def register():
         default=True,
         description="Whether the background image is a properly processed image or a sketch straight from datasets",
     )
+    bpy.types.Scene.batch_render_images_folder = bpy.props.StringProperty(
+        name="Batch Render Images Folder",
+        subtype='DIR_PATH',
+        default="",
+        description="Folder containing images to batch render",
+    )
 
 
 
@@ -303,6 +359,7 @@ def register():
     bpy.utils.register_class(ClearBackgroundImageOperator)
     bpy.utils.register_class(ToggleCameraViewOperator)
     bpy.utils.register_class(ImageInferenceOperator)
+    bpy.utils.register_class(BatchRenderOperator)
 
 
 def unregister():
@@ -314,6 +371,7 @@ def unregister():
     bpy.utils.unregister_class(ClearBackgroundImageOperator)
     bpy.utils.unregister_class(ToggleCameraViewOperator)
     bpy.utils.unregister_class(ImageInferenceOperator)
+    bpy.utils.unregister_class(BatchRenderOperator)
 
 
 if __name__ == "__main__":
