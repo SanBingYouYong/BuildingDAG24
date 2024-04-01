@@ -59,6 +59,7 @@ def merge_datasets(merged_dataset_name: str, datasets_to_merge: list, datasets_f
         batch_count += total_batches
         new_meta["batch_cam_angles"].update(accum_batch_cam_angles)
     # write new meta
+    new_meta["dataset"] = merged_dataset_name
     with open(f"{datasets_folder}/{merged_dataset_name}/meta.yml", "w") as f:
         yaml.dump(new_meta, f)
 
@@ -66,8 +67,8 @@ def merge_datasets(merged_dataset_name: str, datasets_to_merge: list, datasets_f
 
 if __name__ == "__main__":
         
-    datasets_to_merge = ["DAGDataset10_10_5", "DAGDataset10_10_5_0"]
+    datasets_to_merge = ["DAGDataset100_100_5", "DAGDataset100_100_5_0", "DAGDataset300_100_5"]
     datasets_folder = "./datasets"
 
-    merge_datasets("DAGDataset20_10_5", datasets_to_merge, datasets_folder)
+    merge_datasets("DAGDataset500_100_5", datasets_to_merge, datasets_folder)
     print("Datasets merged successfully.")
