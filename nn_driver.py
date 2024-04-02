@@ -50,12 +50,14 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
+    results_name = f"results_sharedlayer.yml"
+
     os.makedirs("./models", exist_ok=True)
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     model_name = f"./models/model_{dataset_name}_{timestamp}.pth"
     loss_name = f"./models/model_{dataset_name}_{timestamp}_loss.yml"
     train(model, criterion, optimizer, train_loader, val_loader, epochs=epochs, seed=-1, model_save_path=model_name, loss_save_path=loss_name)
-    test_res = test(model, model_name, test_loader, criterion, ranges, results_save_path="results.yml")
+    test_res = test(model, model_name, test_loader, criterion, ranges, results_save_path=results_name)
     # copy the meta.yml from dataset to models
     os.system(f"cp ./datasets/{dataset_name}/meta.yml ./models/model_{dataset_name}_{timestamp}_meta.yml")
 
@@ -70,7 +72,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
             print(f" - Prediction: {pred}, Target: {target}")
 
     # calculate acc for discrete variables
-    acc_discrete("results_sharedlayer.yml")
+    acc_discrete(results_name)
 
     # record some optional notes
     if additional_notes:
@@ -92,7 +94,7 @@ if __name__ == "__main__":
 
     epochs = 5
     batch_size = 32
-    notes = f"batch size: {batch_size}; dataset: {dataset_name}; shared layers 1+[1, 1] on 10k; "
+    notes = f"batch size: {batch_size}; dataset: {dataset_name}; no layer sharing [2, 2] on 10k; "
     pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, additional_notes=notes)
 
     # unset the env var
