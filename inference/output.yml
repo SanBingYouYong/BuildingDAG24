@@ -1,39 +1,39 @@
 Bm Base Shape: 1
 Bm Size:
-- 0.7531721591949463
-- 0.5992482304573059
-- 0.8955714106559753
-Floor Ledge Extrusion X: 0.5659946799278259
-Floor Ledge Extrusion Z: 0.40660393238067627
-Floor Ledge Size X: 0.7171615958213806
-Floor Ledge Size Z: 0.7814568281173706
-Has Floor Ledge: true
-Has Window Ledge: false
-Num Floors: 1
+- 0.6793705821037292
+- 0.8982207179069519
+- 0.7188743948936462
+Floor Ledge Extrusion X: 0.5260894298553467
+Floor Ledge Extrusion Z: 0.5532958507537842
+Floor Ledge Size X: 0.7673199772834778
+Floor Ledge Size Z: 0.8117818832397461
+Has Floor Ledge: false
+Has Window Ledge: true
+Num Floors: 2
 Num Windows Each Side: 1
 Rf Base Shape: 1
 Rf Size:
-- 0.7352445721626282
-- 0.7135717868804932
-- 0.7004749774932861
-Window Divided Horizontal: false
+- 0.8581947088241577
+- 0.8214095830917358
+- 0.7963449954986572
+Window Divided Horizontal: true
 Window Divided Vertical: false
-Window Interpanel Offset Percentage Y: 0.4802086055278778
-Window Interpanel Offset Percentage Z: 0.5171196460723877
-Window Ledge Extrusion X: 0.5741792917251587
-Window Ledge Extrusion Z: 0.4409523904323578
+Window Interpanel Offset Percentage Y: 0.507086992263794
+Window Interpanel Offset Percentage Z: 0.33342334628105164
+Window Ledge Extrusion X: 0.6411113739013672
+Window Ledge Extrusion Z: 0.4403361976146698
 Window Ledge Shape Size:
-- 0.7285044193267822
-- 0.7262981534004211
-- 0.7322836518287659
-Window Ledges Height Offset: 0.6625815033912659
+- 0.6822648048400879
+- 0.8042384386062622
+- 0.6769599914550781
+Window Ledges Height Offset: 0.3838353455066681
 Window Panel Area:
-- 0.766364574432373
-- 0.755383312702179
-- 0.7204225063323975
+- 0.8030546307563782
+- 0.6763824224472046
+- 0.7394967079162598
 Window Shape Size:
-- 0.7870461940765381
-- 0.7161651849746704
-- 0.7412627935409546
-Windows Height Offset: 0.10250747203826904
-Windows Left Right Offset: 0.15466320514678955
+- 0.6562099456787109
+- 0.6441351771354675
+- 0.6775498390197754
+Windows Height Offset: 0.0631629228591919
+Windows Left Right Offset: -0.270429790019989

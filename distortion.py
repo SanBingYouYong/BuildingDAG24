@@ -141,6 +141,7 @@ class DRUtils():
                 for region in area.regions:
                     if region.type == "WINDOW":
                         return area, region
+        print(f"Cannot find view3d area and region in context: {context}")
 
     @staticmethod
     def _select_border(context, view3dAreaAndRegion=None, extend=True):
@@ -379,6 +380,8 @@ class DRUtils():
         Find the start and end vertices (verts with only one visharp edge)
         use vert.link_edges to determine the right outgoing edge at each step. 
         Returns list of vertices index and Vector coords, in order. 
+        Note: this breaks when the curve is occluded by other geometries. 
+        TODO: fix this so that we can freely generalize to any curve.
         '''
         # print(f"received curve edges: {curve_edges}")
         curve_verts = DRUtils._verts_from_edges(curve_edges, bm) # extract verts from edges.verts. index
@@ -649,10 +652,12 @@ class DRStraight(Dedicated_Renderer):
             edge.select_set(True)  # TODO: either select it here or examine the output of subdivide_edges
             obj.update_from_editmode()
             bmesh.ops.subdivide_edges(bm, edges=[edge], cuts=10) # leaves the edges selected
+            bm.edges.ensure_lookup_table()
             bmesh.update_edit_mesh(me)
             # get edges and sort
             sub_edges = [e for e in bm.edges if e.select]
             sorted_subedges = self._sort_subedges(sub_edges, bm)
+            bm.edges.ensure_lookup_table()
             # one more edges visibility check
             _, new_vis_edges, _ = DRUtils.get_visibles(obj, mode='VERT', bm=bm)
             # intersection with subedges to get visible subedges
@@ -700,6 +705,12 @@ class DRStraight(Dedicated_Renderer):
         self.render_image_and_save_as(obj, img_path)
         # self.clean_up(obj, extruded_curves)
     
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> List[Object]:
+        edges = self.edge_filtering(obj)
+        disturbed_coords = DRUtils.disturb_edges(edges, obj, de_reg)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords)
+        return spawned_curves
+    
     def _render_obj_debug(self, obj: Object, img_title: str):
         # take plain shot
         bpy.context.scene.render.filepath = img_title + "_obj.png"
@@ -727,6 +738,8 @@ class DRCylindrical(Dedicated_Renderer):
         # prep
         sharp_verts, sharp_edges, sharp_faces = DRUtils.get_sharps(obj)
         visible_verts, visible_edges, visible_faces = DRUtils.get_visibles(obj)
+        # print(f"sharp edges: {sharp_edges}")
+        # print(f"visible edges: {visible_edges}")
         contour_edges = DRUtils.get_visible_contour_edges(obj)
         # sharp - invisible = upper circle and bottom ring
         visharp_edges = [e for e in sharp_edges if e in visible_edges]
@@ -765,6 +778,13 @@ class DRCylindrical(Dedicated_Renderer):
         extruded_curves = DRUtils.mark_curves_as_freestyle(spawned_curves)
         self.render_image_and_save_as(obj, img_path)
         self.clean_up(obj, extruded_curves)
+
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> List[Object]:
+        vertical_contour_edges, curves = self.edge_filtering(obj)
+        disturbed_edges = DRUtils.disturb_edges(vertical_contour_edges, obj, de_reg)
+        disturbed_curves = DRUtils.disturb_curves(curves, obj)
+        spawned_curves = DRUtils.spawn_curves(disturbed_edges + disturbed_curves)
+        return spawned_curves
     
     def _render_obj_debug(self, obj: Object, img_title: str):
         # take plain shot
@@ -885,6 +905,12 @@ class DRSphered(Dedicated_Renderer):
         extruded_curves = DRUtils.mark_curves_as_freestyle(spawned_curves)
         self.render_image_and_save_as(obj, img_path)
         self.clean_up(obj, extruded_curves)
+
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> List[Object]:
+        curves = self.edge_filtering(obj)
+        disturbed_coords = DRUtils.disturb_curves(curves, obj, de_reg)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords)
+        return spawned_curves
     
     def _render_obj_debug(self, obj: Object, img_title: str):
         # take plain shot

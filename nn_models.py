@@ -232,7 +232,7 @@ class EncDecsLoss(nn.Module):
                 # make regression_loss same shape as switch_index
                 regression_loss = torch.stack([regression_loss] * switch_index.size(0))
                 regression_loss *= switch_index
-                # average again  # TODO: should we take average here? or just sum?
+                # average again  # TODO: should we take average here? or just sum? update: average; we are repeating the loss beforehand to switch off corresponding entries. 
                 regression_loss = torch.mean(regression_loss)
             total_regression_loss += regression_loss
         loss = cls_weight * total_classification_loss + reg_weight * total_regression_loss

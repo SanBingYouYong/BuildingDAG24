@@ -31,7 +31,7 @@ class DAGDatasetGenerator():
         self.dataset_path = os.path.join(self.dataset_root_path, self.dataset_name)
         self.dataset_images_folder = os.path.join(self.dataset_path, "images")
         self.dataset_params_folder = os.path.join(self.dataset_path, "params")
-        self.dataset_realtime_folder = os.path.join(self.dataset_path, "realtime")
+        # self.dataset_realtime_folder = os.path.join(self.dataset_path, "realtime")
         if mkdir:
             self._mkdirs()
         self.param_generator = DAGParamGenerator()
@@ -42,9 +42,9 @@ class DAGDatasetGenerator():
         os.makedirs(self.dataset_path, exist_ok=True)
         os.makedirs(self.dataset_images_folder, exist_ok=True)
         os.makedirs(self.dataset_params_folder, exist_ok=True)
-        os.makedirs(self.dataset_realtime_folder, exist_ok=True)
+        # os.makedirs(self.dataset_realtime_folder, exist_ok=True)
 
-    def populate_dataset_wrt_batches(self, num_batches: int, batch_size: int=10, num_varying_params: int=5, render: bool=True):
+    def populate_dataset_wrt_batches(self, num_batches: int, batch_size: int=10, num_varying_params: int=5, render: bool=True, distortion: bool=True):
         batch_cam_angles = {}
         for i in tqdm(range(num_batches)):
             batch = self.param_generator.generate_batch_params(
@@ -62,11 +62,14 @@ class DAGDatasetGenerator():
                 sample_param.save_params(sample_params_path)
                 if render:
                     # load shape params into blender
-                    self.param_loader.load_dag_params(sample_params_path)
+                    self.param_loader.load_dag_params_with_return_part(sample_param, 0)
                     # render image
                     sample_image_path = os.path.join(self.dataset_images_folder, f"{sample_id}.png")
-                    self.param_renderer.render(sample_image_path)
-        self.write_metadata(batch_cam_angles)
+                    if distortion:
+                        self.param_renderer.render(sample_image_path, distortion=True)
+                    else:
+                        self.param_renderer.render(sample_image_path)
+        self.write_metadata(batch_cam_angles)  # write meta after whole process to ensure all entries are generated
     
     def write_metadata(self, batch_cam_angles):
         '''
@@ -98,7 +101,7 @@ class DAGDatasetGenerator():
         decoders_path = os.path.join(self.dataset_path, "decoders.yml")
         with open(decoders_path, "w") as f:
             yaml.dump(decoders, f)
-# TODO: refactor these to one yml file maybe
+# TODO: refactor these to one yml file maybe (DONE)
     def write_switches(self):
         switches = self.param_generator.save_switches()
         switches_path = os.path.join(self.dataset_path, "switches.yml")
@@ -122,17 +125,21 @@ if __name__ == "__main__":
     # TODO: check for mysterious "Error: Cannot read file '/mnt/c/ZSY/BuildingDAG/1': No such file or directory"
     # check for args
     args = sys.argv[5:]
-    if len(args) == 4:
+    print(args)
+    if len(args) == 5:
         num_batches = int(args[0])
         batch_size = int(args[1])
         num_varying_params = int(args[2])
         device = int(args[3])
-        generator = DAGDatasetGenerator(f"DAGDataset{num_batches}_{batch_size}_{num_varying_params}")
+        distortion = bool(args[4])
+        prefix = "DAGDataset" if not distortion else "DAGDatasetDistorted"
+        generator = DAGDatasetGenerator(f"{prefix}{num_batches}_{batch_size}_{num_varying_params}")
         generator.use_device(device)
         print(f"Using {num_batches} batches, {batch_size} samples per batch, {num_varying_params} varying params")
         print(f"Using device: {device}")
+        print(f"Using distortion: {distortion}")
         generator.param_renderer.check_devices()
-        generator.populate_dataset_wrt_batches(num_batches, batch_size, num_varying_params)
+        generator.populate_dataset_wrt_batches(num_batches, batch_size, num_varying_params, distortion=distortion)
     elif len(args) == 0:
         print("No args received, using default values and CPU")
         generator = DAGDatasetGenerator("DAGDataset_10_10_5")
