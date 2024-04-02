@@ -1,5 +1,6 @@
 import os
 import datetime
+import shutil
 
 import torch
 import torch.optim as optim
@@ -9,7 +10,7 @@ from nn_dataset import *
 from nn_training import train, test, load_metadata
 from nn_visualize import visualize_loss
 from nn_acc import acc_discrete
-
+from performance import calculate_performance
 
 
 
@@ -50,7 +51,8 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
-    results_name = f"results_sharedlayer.yml"
+    tag = "nosharedefault"
+    results_name = f"results_{tag}.yml"
 
     os.makedirs("./models", exist_ok=True)
     timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -73,6 +75,13 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
     # calculate acc for discrete variables
     acc_discrete(results_name)
+    # back up performance.yml
+    shutil.copyfile(results_name, f"./performance_{tag}.yml")
+
+    # calculate performance
+    calculate_performance()
+    # backup pdf
+    shutil.copyfile("performance.pdf", f"./performance_{tag}.pdf")
 
     # record some optional notes
     if additional_notes:

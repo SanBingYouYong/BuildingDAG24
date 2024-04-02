@@ -39,18 +39,18 @@ class Encoder(nn.Module):
 class ParamAwareMultiTailDecoder(nn.Module):
     def __init__(self, input_size, classification_params=None, regression_params=None, dropout_prob=0.5):
         super(ParamAwareMultiTailDecoder, self).__init__()
-        self.fc1 = nn.Linear(input_size, 512)
-        self.relu1 = nn.ReLU()
-        self.dropout1 = nn.Dropout(p=dropout_prob)
+        # self.fc1 = nn.Linear(input_size, 512)
+        # self.relu1 = nn.ReLU()
+        # self.dropout1 = nn.Dropout(p=dropout_prob)
         # self.fc2 = nn.Linear(1024, 1024)
         # self.relu2 = nn.ReLU()
         # self.dropout2 = nn.Dropout(p=dropout_prob)
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
-                    # nn.Linear(input_size, 512),
-                    # nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Linear(input_size, 512),
+                    nn.ReLU(),
+                    nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 256),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
@@ -69,9 +69,9 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Linear(1024, 1024),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    # nn.Linear(input_size, 512),
-                    # nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Linear(input_size, 512),
+                    nn.ReLU(),
+                    nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 512), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
@@ -88,9 +88,9 @@ class ParamAwareMultiTailDecoder(nn.Module):
         ) if regression_params else {}
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = self.relu1(x)
-        x = self.dropout1(x)
+        # x = self.fc1(x)
+        # x = self.relu1(x)
+        # x = self.dropout1(x)
         # x = self.fc2(x)
         # x = self.relu2(x)
         # x = self.dropout2(x)
