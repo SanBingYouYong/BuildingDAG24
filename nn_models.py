@@ -42,22 +42,22 @@ class ParamAwareMultiTailDecoder(nn.Module):
         self.fc1 = nn.Linear(input_size, 512)
         self.relu1 = nn.ReLU()
         self.dropout1 = nn.Dropout(p=dropout_prob)
-        # self.fc2 = nn.Linear(512, 512)
-        # self.relu2 = nn.ReLU()
-        # self.dropout2 = nn.Dropout(p=dropout_prob)
+        self.fc2 = nn.Linear(512, 512)
+        self.relu2 = nn.ReLU()
+        self.dropout2 = nn.Dropout(p=dropout_prob)
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
                     # nn.Linear(input_size, 512),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    # nn.Linear(512, 256),
-                    # nn.ReLU(),
-                    # nn.Dropout(p=dropout_prob),
+                    nn.Linear(512, 256),
+                    nn.ReLU(),
+                    nn.Dropout(p=dropout_prob),
                     # nn.Linear(256, 128),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    nn.Linear(512, size),
+                    nn.Linear(256, size),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -75,13 +75,13 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Linear(512, 512), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
-                    # nn.Linear(512, 256), #
-                    # nn.ReLU(), #
-                    # nn.Dropout(p=dropout_prob), #
+                    nn.Linear(512, 256), #
+                    nn.ReLU(), #
+                    nn.Dropout(p=dropout_prob), #
                     # nn.Linear(256, 128), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
-                    nn.Linear(512, size), #
+                    nn.Linear(256, size), #
                 )
                 for param_name, size in regression_params.items()
             }

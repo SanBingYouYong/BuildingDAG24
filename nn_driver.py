@@ -51,7 +51,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
-    tag = "ovf_dropout_l2"
+    tag = "ovf_dropout_l2_larger"
     results_name = f"results_{tag}.yml"
 
     os.makedirs("./models", exist_ok=True)
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     epochs = 5
     batch_size = 32
     lx = 2
-    notes = f"batch size: {batch_size}; dataset: {dataset_name}; 1+[1, 1] model with 0.5 dropout and l2 regularization on 10k"
+    notes = f"batch size: {batch_size}; dataset: {dataset_name}; 1+[1, 1] model but larger, with 0.5 dropout and l2 regularization on 10k"
     pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, lx_regularizor=lx, additional_notes=notes)
 
     # unset the env var
