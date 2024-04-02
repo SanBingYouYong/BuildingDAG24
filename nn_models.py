@@ -39,8 +39,8 @@ class Encoder(nn.Module):
 class ParamAwareMultiTailDecoder(nn.Module):
     def __init__(self, input_size, classification_params=None, regression_params=None, dropout_prob=0.5):
         super(ParamAwareMultiTailDecoder, self).__init__()
-        # self.fc1 = nn.Linear(input_size, 512)
-        # self.relu1 = nn.ReLU()
+        self.fc1 = nn.Linear(input_size, 512)
+        self.relu1 = nn.ReLU()
         # self.dropout1 = nn.Dropout(p=dropout_prob)
         # self.fc2 = nn.Linear(1024, 1024)
         # self.relu2 = nn.ReLU()
@@ -48,9 +48,9 @@ class ParamAwareMultiTailDecoder(nn.Module):
         self.classification_tails = nn.ModuleDict(
             {
                 param_name: nn.Sequential(
-                    nn.Linear(input_size, 512),
-                    nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
+                    # nn.Linear(input_size, 512),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 256),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
@@ -69,9 +69,9 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Linear(1024, 1024),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    nn.Linear(input_size, 512),
-                    nn.ReLU(),
-                    nn.Dropout(p=dropout_prob),
+                    # nn.Linear(input_size, 512),
+                    # nn.ReLU(),
+                    # nn.Dropout(p=dropout_prob),
                     # nn.Linear(512, 512), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
