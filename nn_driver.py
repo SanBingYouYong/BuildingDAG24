@@ -90,7 +90,7 @@ if __name__ == "__main__":
     single_decoder = None
 
 
-    epochs = 10
+    epochs = 5
     batch_size = 32
     notes = f"batch size: {batch_size}; dataset: {dataset_name}; shared layers 1+[1, 1] on 10k; "
     pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, additional_notes=notes)
