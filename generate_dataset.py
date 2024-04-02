@@ -11,15 +11,16 @@ import datetime
 BLENDER32 = os.environ.get("BLENDER32")
 
 # Path to dataset.blend and dataset_gen.py
-dataset_blend = "./dataset.blend"
+# dataset_blend = "./dataset.blend"
+dataset_blend = "./dataset_distortion.blend"
 dataset_gen_py = "./dataset_gen.py"
 
 # Args
 args = sys.argv[1:]
-if len(args) == 4:
-    num_batches, batch_size, num_varying_params, device = map(int, args)
+if len(args) == 5:
+    num_batches, batch_size, num_varying_params, device, distortion = map(int, args)
 else:
-    print("Usage: blender -b -P dataset_gen.py <num_batches> <batch_size> <num_varying_params> <device>")
+    print("Usage: blender <blendfile> -b -P dataset_gen.py <num_batches> <batch_size> <num_varying_params> <device> <distortion")
     sys.exit(1)
 
 if not os.path.exists("./logs"):
@@ -48,7 +49,7 @@ signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
 # Command to execute
-command = [BLENDER32, dataset_blend, "-b", "-P", dataset_gen_py, str(num_batches), str(batch_size), str(num_varying_params), str(device)]
+command = [BLENDER32, dataset_blend, "-b", "-P", dataset_gen_py, str(num_batches), str(batch_size), str(num_varying_params), str(device), str(distortion)]
 
 # Start timer
 start_time = time.time()

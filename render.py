@@ -1,10 +1,24 @@
 import bpy
+import bmesh
 import cv2
 import numpy as np
+import random
+
+# import local modules
+import sys
+from pathlib import Path
+
+file = Path(__file__).resolve()
+parent = file.parents[1]
+sys.path.append(str(parent))
 
 from distortion import DRStraight, DRCylindrical, DRSphered, DRUtils, Dedicated_Renderer
 from building4distortion import building_for_distortion_render
-import bmesh
+from paramload import DAGParamLoader
+
+COMPONENTS = ["Building Mass", "Roof", "Windows", "Ledges"]
+TYPE_PARAMS = ["Bm Base Shape", "Rf Base Shape"]
+
 
 
 class DAGRenderer():
@@ -66,6 +80,9 @@ class DAGRenderer():
     def render_with_distortion(self):
         # check if the distortion renderer node is present
         building = bpy.data.objects[self.building_name]
+        # set building as active
+        bpy.context.view_layer.objects.active = building
+        building.select_set(True)
         node = None
         for mod in building.modifiers:
             if mod.type == "NODES" and mod.node_group.name == self.node_name:
@@ -73,10 +90,81 @@ class DAGRenderer():
                 break
         if not node:
             raise ValueError(f"Distortion renderer node '{self.node_name}' not found")
-        # get visible edges on full building
-        fb_verts, fb_edges, fb_faces = self._get_visibles(building)
-        print(f"Visible edges on full building: {len(fb_edges)}")
+        # get component shape types
+        shape_types = DAGParamLoader.get_param_vals(TYPE_PARAMS)
+        # choose de-reg level for this shot
+        de_reg = random.choice(list(DRUtils.DeRegLevels)[1:])  # perfect and light too similar
+        # manual: 
+        # rf
+        DAGParamLoader.change_return_part_static(2)
+        renderer = self._get_renderer("Roof", shape_types)
+        rf_dup = self._get_actual_mesh(building, reset_active=False)  # leave the active mesh "selected"
+        rf_curves = renderer.obj_to_curves_only(rf_dup, de_reg)
+        # bm
+        DAGParamLoader.change_return_part_static(1)
+        renderer = self._get_renderer("Building Mass", shape_types)
+        bm_dup = self._get_actual_mesh(building, reset_active=False)
+        # rf_dup.select_set(True)  # breaks for cylindrical shapes
+        bm_curves = renderer.obj_to_curves_only(bm_dup, de_reg)
+        # windows
+        DAGParamLoader.change_return_part_static(3)
+        renderer = self._get_renderer("Windows", shape_types)
+        windows_dup = self._get_actual_mesh(building, reset_active=False)
+        bm_dup.select_set(True)  # block invisible windows
+        windows_curves = renderer.obj_to_curves_only(windows_dup, de_reg)
+        bm_dup.select_set(False)
+        # ledges
+        DAGParamLoader.change_return_part_static(4)
+        renderer = self._get_renderer("Ledges", shape_types)
+        ledges_dup = self._get_actual_mesh(building, reset_active=False)
+        ledges_curves = renderer.obj_to_curves_only(ledges_dup, de_reg)
+        # # reset building as active
+        # self._set_as_active(building)
+        # combine and mark
+        curves = rf_curves + bm_curves + windows_curves + ledges_curves
+        extruded_curves = DRUtils.mark_curves_as_freestyle(curves)
+        # render
+        bpy.data.objects.remove(windows_dup)  # rf and bm mesh can block some invisible curves
+        bpy.data.objects.remove(ledges_dup)
+        # shrink bm and rf by scaling
+        bm_dup.scale = (0.99, 0.99, 0.99)
+        rf_dup.scale = (0.99, 0.99, 0.99)
+        # update: no shink. select visible objects and exclude bm and rf, delete invisible curves
         
+        building.hide_render = True
+        bpy.ops.render.render(write_still=True)
+        # clean up
+        bpy.data.objects.remove(rf_dup)
+        bpy.data.objects.remove(bm_dup)
+        for curve in extruded_curves:
+            bpy.data.objects.remove(curve)
+        building.hide_render = False
+        # set back to full model display
+        DAGParamLoader.change_return_part_static(0)
+
+    def _get_renderer(self, component_name, shape_types):
+        if component_name == "Building Mass":
+            if shape_types["Bm Base Shape"] == 0:
+                return DRStraight()
+            elif shape_types["Bm Base Shape"] == 1:
+                return DRCylindrical()
+        elif component_name == "Roof":
+            if shape_types["Rf Base Shape"] == 0:
+                return DRStraight()
+            elif shape_types["Rf Base Shape"] == 1:
+                return DRCylindrical()
+            elif shape_types["Rf Base Shape"] == 2:
+                return DRSphered()
+        elif component_name == "Windows":
+            return DRStraight()
+        elif component_name == "Ledges":
+            # if shape_types["Bm Base Shape"] == 0:
+            #     return DRStraight()
+            # elif shape_types["Bm Base Shape"] == 1:
+            #     return DRCylindrical()
+            return DRStraight()  # cylinders mess up everything... 
+        else:
+            raise ValueError(f"Unexpected component name: {component_name}")
 
     
     def _get_visibles(self, obj, mode="EDGE", hide_mesh=True):
@@ -85,7 +173,9 @@ class DAGRenderer():
         '''
         dup = self._get_actual_mesh(obj)
         self._set_as_active(dup)
+        obj.hide_viewport = True
         verts, edges, faces = DRUtils.get_visibles(dup, mode)
+        obj.hide_viewport = False
         if hide_mesh:
             dup.hide_viewport = True
         self._set_as_active(obj)
@@ -99,7 +189,7 @@ class DAGRenderer():
         bpy.context.view_layer.objects.active = obj
         bpy.context.object.select_set(True)
 
-    def _get_actual_mesh(self, building):
+    def _get_actual_mesh(self, building, reset_active=True):
         '''
         Copy paste a building from dag node and convert the duplicate to actual mesh, then return the mesh.
         '''
@@ -107,7 +197,8 @@ class DAGRenderer():
         bpy.ops.object.duplicate()
         dup = bpy.context.active_object
         bpy.ops.object.convert(target='MESH')
-        self._set_as_active(building)
+        if reset_active:
+            self._set_as_active(building)
         return dup
     
     def update_lr_angle(self, lr_angle: float):
