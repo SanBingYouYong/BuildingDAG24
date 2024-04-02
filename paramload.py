@@ -22,6 +22,10 @@ class DAGParamLoader():
 
     def _load_single_input(self, dag_mod, id, val):
         dag_mod[id] = val
+    
+    @staticmethod
+    def load_single_input(dag_mod, id, val):
+        dag_mod[id] = val
 
     def _load_vector_input(self, dag_mod, id, val):
         for i in range(len(dag_mod[id])):
@@ -106,10 +110,65 @@ class DAGParamLoader():
                 break
         # update obj
         building.data.update()
+    
+    @staticmethod
+    def change_return_part_static(return_part: int,
+                                  return_part_label: str="Return Part",
+                                  dag_node_name: str="Building For Distortion Render",
+                                  building_name: str="Building",
+                                  ):
+        # get the building object
+        building = bpy.data.objects[building_name]
+        # get the building's dag node modifier reference
+        for mod in building.modifiers:
+            if mod.type == "NODES" and mod.node_group.name == dag_node_name:
+                dag_mod = mod
+                break
+        # iterate through inputs and load values
+        inputs = dag_mod.node_group.inputs
+        for input_key, input_val in inputs.items():
+            if input_key == return_part_label:
+                DAGParamLoader.load_single_input(dag_mod, input_val.identifier, return_part)
+                break
+        # update obj
+        building.data.update()
+    
+    @staticmethod
+    def get_param_vals(param_names: list, dag_node_name: str="Building For Distortion Render",
+                      building_name: str="Building",
+                      ):
+        # get the building object
+        building = bpy.data.objects[building_name]
+        # get the building's dag node modifier reference
+        for mod in building.modifiers:
+            if mod.type == "NODES" and mod.node_group.name == dag_node_name:
+                dag_mod = mod
+                break
+        param_values = {}
+        # iterate through inputs and get values
+        inputs = dag_mod.node_group.inputs
+        for input_key, input_val in inputs.items():
+            if input_key in param_names:
+                val = dag_mod[input_val.identifier]
+                val_type = input_val.type
+                if val_type == "VECTOR":
+                    val = list(val)
+                elif val_type == "BOOLEAN":
+                    val = bool(val)
+                elif val_type == "INT":
+                    val = int(val)
+                elif val_type == "VALUE":
+                    val = float(val)
+                else:
+                    raise ValueError(f"Unexpected input type: {val_type}")
+                param_values[input_key] = val
+        return param_values
 
 
 if __name__ == "__main__":
-    loader = DAGParamLoader()
-    # loader.load_dag_params("./inference/output.yml")
-    loader.load_dag_params_with_return_part(DAGParams("./datasets/sample.yml"), 3)
-    loader.change_return_part(4)
+    params = DAGParamLoader.get_param_vals(["Return Part", "Bm Size", "Has Window Ledge"])
+    print(params)
+    # loader = DAGParamLoader()
+    # # loader.load_dag_params("./inference/output.yml")
+    # loader.load_dag_params_with_return_part(DAGParams("./datasets/sample.yml"), 3)
+    # loader.change_return_part(4)
