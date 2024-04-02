@@ -1,0 +1,26 @@
+f1:
+  Bm Base Shape: 0.973009265085903
+  Has Floor Ledge: 0.9590019274730875
+  Has Window Ledge: 0.7997783428235568
+  Num Floors: 0.8438711148937359
+  Num Windows Each Side: 0.7334039112965532
+  Rf Base Shape: 0.873297504434671
+  Window Divided Horizontal: 0.7011705522203915
+  Window Divided Vertical: 0.6723610902764136
+mae:
+  Bm Size: 0.10041272929641921
+  Floor Ledge Extrusion X: 0.2350314005697146
+  Floor Ledge Extrusion Z: 0.2574315195794164
+  Floor Ledge Size X: 0.12220184854666392
+  Floor Ledge Size Z: 0.1254173128604889
+  Rf Size: 0.12006845444440811
+  Window Interpanel Offset Percentage Y: 0.25942947314417203
+  Window Interpanel Offset Percentage Z: 0.251404906917344
+  Window Ledge Extrusion X: 0.24455627618859338
+  Window Ledge Extrusion Z: 0.2619283104861
+  Window Ledge Shape Size: 0.12613454773690963
+  Window Ledges Height Offset: 0.2433080955123878
+  Window Panel Area: 0.12321532613039007
+  Window Shape Size: 0.11999332117372112
+  Windows Height Offset: 0.4614626094897588
+  Windows Left Right Offset: 0.5004803334275881
