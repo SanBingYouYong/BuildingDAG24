@@ -41,9 +41,9 @@ class ParamAwareMultiTailDecoder(nn.Module):
         super(ParamAwareMultiTailDecoder, self).__init__()
         self.fc1 = nn.Linear(input_size, 512)
         self.relu1 = nn.ReLU()
-        # self.dropout1 = nn.Dropout(p=dropout_prob)
-        self.fc2 = nn.Linear(512, 512)
-        self.relu2 = nn.ReLU()
+        self.dropout1 = nn.Dropout(p=dropout_prob)
+        # self.fc2 = nn.Linear(512, 512)
+        # self.relu2 = nn.ReLU()
         # self.dropout2 = nn.Dropout(p=dropout_prob)
         self.classification_tails = nn.ModuleDict(
             {
@@ -51,13 +51,13 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Linear(input_size, 512),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    nn.Linear(512, 256),
-                    nn.ReLU(),
+                    # nn.Linear(512, 256),
+                    # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
                     # nn.Linear(256, 128),
                     # nn.ReLU(),
                     # nn.Dropout(p=dropout_prob),
-                    nn.Linear(256, size),
+                    nn.Linear(512, size),
                 )
                 for param_name, size in classification_params.items()
             }
@@ -75,13 +75,13 @@ class ParamAwareMultiTailDecoder(nn.Module):
                     # nn.Linear(512, 512), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
-                    nn.Linear(512, 256), #
-                    nn.ReLU(), #
+                    # nn.Linear(512, 256), #
+                    # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
                     # nn.Linear(256, 128), #
                     # nn.ReLU(), #
                     # nn.Dropout(p=dropout_prob), #
-                    nn.Linear(256, size), #
+                    nn.Linear(512, size), #
                 )
                 for param_name, size in regression_params.items()
             }
@@ -91,8 +91,8 @@ class ParamAwareMultiTailDecoder(nn.Module):
         x = self.fc1(x)
         x = self.relu1(x)
         # x = self.dropout1(x)
-        x = self.fc2(x)
-        x = self.relu2(x)
+        # x = self.fc2(x)
+        # x = self.relu2(x)
         # x = self.dropout2(x)
         classification_outputs = {
             param_name: tail(x) for param_name, tail in self.classification_tails.items()
