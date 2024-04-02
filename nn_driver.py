@@ -70,7 +70,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
             print(f" - Prediction: {pred}, Target: {target}")
 
     # calculate acc for discrete variables
-    acc_discrete()
+    acc_discrete("results_sharedlayer.yml")
 
     # record some optional notes
     if additional_notes:
@@ -84,16 +84,16 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 
 if __name__ == "__main__":
     # avoid unnecessary OOM
-    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    dataset_name = "DAGDataset500_100_5"
+    # os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+    dataset_name = "DAGDataset100_100_5"
     # single_decoder = "Building Mass Decoder"
     single_decoder = None
 
 
     epochs = 10
     batch_size = 32
-    notes = f"batch size: {batch_size}; dataset: {dataset_name}"
+    notes = f"batch size: {batch_size}; dataset: {dataset_name}; shared layers 1+[1, 1] on 10k; "
     pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, additional_notes=notes)
 
     # unset the env var
-    os.environ.pop("PYTORCH_CUDA_ALLOC_CONF", None)
+    # os.environ.pop("PYTORCH_CUDA_ALLOC_CONF", None)
