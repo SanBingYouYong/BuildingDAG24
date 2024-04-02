@@ -13,7 +13,7 @@ parent = file.parents[1]
 sys.path.append(str(parent))
 
 from distortion import DRStraight, DRCylindrical, DRSphered, DRUtils, Dedicated_Renderer
-from building4distortion import building_for_distortion_render
+# from building4distortion import building_for_distortion_render
 from paramload import DAGParamLoader
 
 COMPONENTS = ["Building Mass", "Roof", "Windows", "Ledges"]
