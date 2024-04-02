@@ -51,7 +51,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
-    tag = "plain_larger_dropout"
+    tag = "plain_larger_with_dropout_30k"
     results_name = f"results_{tag}.yml"
 
     os.makedirs("./models", exist_ok=True)
@@ -96,7 +96,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
 if __name__ == "__main__":
     # avoid unnecessary OOM
     # os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-    dataset_name = "DAGDataset100_100_5"
+    dataset_name = "DAGDataset300_100_5"
     # single_decoder = "Building Mass Decoder"
     single_decoder = None
 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     epochs = 5
     batch_size = 32
     lx = -1
-    notes = f"batch size: {batch_size}; dataset: {dataset_name}; 1+[1, 1] model but larger, with 0.5 dropout but no lx regularization on 10k"
+    notes = f"batch size: {batch_size}; dataset: {dataset_name}; 1+[1, 1] model but larger, with 0.5 dropout but no lx regularization on 30k"
     pipeline(dataset_name, single_decoder, epochs=epochs, batch_size=batch_size, lx_regularizor=lx, additional_notes=notes)
 
     # unset the env var

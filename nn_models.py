@@ -90,10 +90,10 @@ class ParamAwareMultiTailDecoder(nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = self.relu1(x)
-        # x = self.dropout1(x)
-        # x = self.fc2(x)
-        # x = self.relu2(x)
-        # x = self.dropout2(x)
+        x = self.dropout1(x)
+        x = self.fc2(x)
+        x = self.relu2(x)
+        x = self.dropout2(x)
         classification_outputs = {
             param_name: tail(x) for param_name, tail in self.classification_tails.items()
         } if self.classification_tails else {}
