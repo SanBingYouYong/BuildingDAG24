@@ -1,12 +1,4 @@
-import yaml
-import os
+import bpy
 
-path = "./datasets/DAGDataset500_100_5/params"
-
-# count images
-count = 0
-for root, dirs, files in os.walk(path):
-    for file in files:
-        if file.endswith(".yml"):
-            count += 1
-print(count)
+obj = bpy.context.active_object
+print(f"{obj.visible_get()}")

@@ -172,7 +172,11 @@ class BatchRenderOperator(bpy.types.Operator):
             # render viewport
             img_name = param_path.replace(".yml", ".png")
             bpy.context.scene.render.filepath = os.path.join(pred_folder, img_name)
-            bpy.ops.render.opengl(write_still=True)
+            # bpy.ops.render.opengl(write_still=True)
+            if scene.batch_render_use_cycles:
+                bpy.ops.render.render(write_still=True)
+            else:
+                bpy.ops.render.opengl(write_still=True)
             print(f"Rendered {img_name}")
         
         # clean up
@@ -224,6 +228,7 @@ class GeoCodeInterfacePanel(bpy.types.Panel):
         box.operator("object.image_inference_operator", text="Image Inference")
         # Batch render button
         box.prop(scene, "batch_render_images_folder", text="Batch Render Images Folder")
+        box.prop(scene, "batch_render_use_cycles", text="Use Cycles Renderer")
         box.operator("object.batch_render_operator", text="Batch Render")
 
 
@@ -348,6 +353,11 @@ def register():
         subtype='DIR_PATH',
         default="",
         description="Folder containing images to batch render",
+    )
+    bpy.types.Scene.batch_render_use_cycles = bpy.props.BoolProperty(
+        name="Use Cycles",
+        default=False,
+        description="Use Cycles renderer for batch rendering",
     )
 
 
