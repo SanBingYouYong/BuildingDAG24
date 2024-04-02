@@ -1,26 +1,26 @@
 f1:
-  Bm Base Shape: 0.9769916710537928
-  Has Floor Ledge: 0.9668958790504001
-  Has Window Ledge: 0.8080779456666405
-  Num Floors: 0.9003892903519024
-  Num Windows Each Side: 0.7866024923770469
-  Rf Base Shape: 0.8547571321664513
-  Window Divided Horizontal: 0.7368219619408637
-  Window Divided Vertical: 0.77
+  Bm Base Shape: 0.9740117959686306
+  Has Floor Ledge: 0.9710371766613464
+  Has Window Ledge: 0.8182977099236641
+  Num Floors: 0.8745865938117376
+  Num Windows Each Side: 0.7198578713377216
+  Rf Base Shape: 0.8541796192891884
+  Window Divided Horizontal: 0.7317296379020284
+  Window Divided Vertical: 0.7251561989412457
 mae:
-  Bm Size: 0.06788515883684146
-  Floor Ledge Extrusion X: 0.21659702470165212
-  Floor Ledge Extrusion Z: 0.2038203418685589
-  Floor Ledge Size X: 0.09187076571583748
-  Floor Ledge Size Z: 0.08993067649006843
-  Rf Size: 0.09403165315588327
-  Window Interpanel Offset Percentage Y: 0.21629185161646455
-  Window Interpanel Offset Percentage Z: 0.22194881932146382
-  Window Ledge Extrusion X: 0.20940109239629237
-  Window Ledge Extrusion Z: 0.2152069984548725
-  Window Ledge Shape Size: 0.1084873101214568
-  Window Ledges Height Offset: 0.23037429795815842
-  Window Panel Area: 0.10084195702274647
-  Window Shape Size: 0.10157065684596693
-  Windows Height Offset: 0.3947097508907318
-  Windows Left Right Offset: 0.38181537997722625
+  Bm Size: 0.07263141376773526
+  Floor Ledge Extrusion X: 0.21562021709990223
+  Floor Ledge Extrusion Z: 0.20661666378215887
+  Floor Ledge Size X: 0.10546607965230942
+  Floor Ledge Size Z: 0.10326147675514222
+  Rf Size: 0.09557335044940309
+  Window Interpanel Offset Percentage Y: 0.22150645268615335
+  Window Interpanel Offset Percentage Z: 0.2228748048307607
+  Window Ledge Extrusion X: 0.21387787652871337
+  Window Ledge Extrusion Z: 0.21744738714629785
+  Window Ledge Shape Size: 0.10936185830831531
+  Window Ledges Height Offset: 0.23121821818436727
+  Window Panel Area: 0.1066796692411104
+  Window Shape Size: 0.10263157026966417
+  Windows Height Offset: 0.4105448779463768
+  Windows Left Right Offset: 0.36808756041526797
