@@ -111,4 +111,5 @@ class DAGParamLoader():
 if __name__ == "__main__":
     loader = DAGParamLoader()
     # loader.load_dag_params("./inference/output.yml")
-    loader.load_dag_params_with_return_part(DAGParams("./datasets/r55_22_gt_sample.yml"), 3)
+    loader.load_dag_params_with_return_part(DAGParams("./datasets/sample.yml"), 3)
+    loader.change_return_part(4)
