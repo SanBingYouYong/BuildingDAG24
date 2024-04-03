@@ -2,6 +2,7 @@ Project material and documentation on usage.
 
 Preliminary: 
  - install conda environment from environment.yml
+ - install [Geometry Scripts](https://carson-katri.github.io/geometry-script/setup/installation.html) if wish to experiment with node tree generation from Python
 
 Shape program code: 
  - basic_building.py, building_mass.py, building4distortion.py, ledge.py, roof.py, shape_primitives.py, window_with_ledge.py
