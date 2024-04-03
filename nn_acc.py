@@ -13,7 +13,11 @@ DISCRETE_VARIABLES = [
     "Window Divided Vertical",
 ]
 
+# TODO: rename
 def acc_discrete(results_path: str="results.yml"):
+    '''
+    Now also supports continuous variables.
+    '''
     print(f"Calculating accuracies for discrete variables in {results_path}")
     with open(results_path, "r") as file:
         results = yaml.safe_load(file)["results"]
@@ -60,7 +64,7 @@ def acc_discrete(results_path: str="results.yml"):
 
 if __name__ == "__main__":
     # results_path = "results.yml"
-    results_path = "performance_nosharedefault.yml"
+    results_path = "performance_plain_larger_with_dropout_30k.yml"
     with open(results_path, "r") as file:
         results = yaml.safe_load(file)["results"]
 

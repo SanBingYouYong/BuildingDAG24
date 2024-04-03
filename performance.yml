@@ -1,26 +1,26 @@
 f1:
-  Bm Base Shape: 0.9659469061097014
-  Has Floor Ledge: 0.9429926423281102
-  Has Window Ledge: 0.8139355392482803
-  Num Floors: 0.7913946053974302
-  Num Windows Each Side: 0.7005945899988417
-  Rf Base Shape: 0.8108157840758207
-  Window Divided Horizontal: 0.6680774931245174
-  Window Divided Vertical: 0.6712232041996147
+  Bm Base Shape: 0.9836706172112969
+  Has Floor Ledge: 0.9629933520075816
+  Has Window Ledge: 0.7876623330970096
+  Num Floors: 0.8671720535415187
+  Num Windows Each Side: 0.7482063747971309
+  Rf Base Shape: 0.8777722246653669
+  Window Divided Horizontal: 0.6762981142559967
+  Window Divided Vertical: 0.6994399587321044
 mae:
-  Bm Size: 0.09359660700956977
-  Floor Ledge Extrusion X: 0.24237328920525034
-  Floor Ledge Extrusion Z: 0.22586224122554996
-  Floor Ledge Size X: 0.11312767672538758
-  Floor Ledge Size Z: 0.10327927231788635
-  Rf Size: 0.10919278339544933
-  Window Interpanel Offset Percentage Y: 0.24065590876992793
-  Window Interpanel Offset Percentage Z: 0.24856576100050007
-  Window Ledge Extrusion X: 0.23057008851802674
-  Window Ledge Extrusion Z: 0.24764035722101108
-  Window Ledge Shape Size: 0.1230446495811145
-  Window Ledges Height Offset: 0.24889933448220836
-  Window Panel Area: 0.11408161121606822
-  Window Shape Size: 0.11340497167905167
-  Windows Height Offset: 0.4609740812182426
-  Windows Left Right Offset: 0.4218613067269325
+  Bm Size: 0.09380779915385788
+  Floor Ledge Extrusion X: 0.2350577738219872
+  Floor Ledge Extrusion Z: 0.2463281899507104
+  Floor Ledge Size X: 0.11759805053472519
+  Floor Ledge Size Z: 0.1232701557079951
+  Rf Size: 0.12367881270911975
+  Window Interpanel Offset Percentage Y: 0.25134090232089995
+  Window Interpanel Offset Percentage Z: 0.24528946545097277
+  Window Ledge Extrusion X: 0.24109675735861189
+  Window Ledge Extrusion Z: 0.25645611075304137
+  Window Ledge Shape Size: 0.12473303423987486
+  Window Ledges Height Offset: 0.24642552127698825
+  Window Panel Area: 0.1218065220051341
+  Window Shape Size: 0.11847733708884986
+  Windows Height Offset: 0.4407716301679611
+  Windows Left Right Offset: 0.46331556781133015

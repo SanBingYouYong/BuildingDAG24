@@ -95,7 +95,7 @@ def train(model: nn.Module, criterion: nn.Module, optimizer, train_loader, val_l
     if seed != -1:
         torch.manual_seed(seed)
 
-    validation_interval = 100  # Run validation every 10(now 100) batches
+    validation_interval = 100  # Run validation every 10(or 100) batches
     validation_counter = 0
 
     for epoch in range(epochs):

@@ -1,3 +1,30 @@
+performance_distortion_model_on_normal:
+  f1:
+    avg: 0.5231863813469256
+    max: 0.7774463361366846
+    min: 0.32316469514212576
+  mae:
+    avg: 0.2521547491451587
+    max: 0.5257520576119423
+    min: 0.13429037849108375
+performance_normal_model_on_distortion:
+  f1:
+    avg: 0.6214579465898062
+    max: 0.9370940723762772
+    min: 0.36449690312025246
+  mae:
+    avg: 0.25407143662426795
+    max: 0.4956779990663481
+    min: 0.10063779176878974
+performance_normal_model_with_dropout_on_distortion:
+  f1:
+    avg: 0.6353157953267377
+    max: 0.8833170633698697
+    min: 0.4853322263768502
+  mae:
+    avg: 0.25302775612159206
+    max: 0.5434238208298707
+    min: 0.10628239683170415
 performance_nosharedefault:
   f1:
     avg: 0.7956225955602897
@@ -70,6 +97,24 @@ performance_plain_larger_dropout:
     avg: 0.18970334175630701
     max: 0.4126229871511459
     min: 0.07211301317811018
+performance_plain_larger_no_dropout_30k:
+  f1:
+    avg: 0.8691058171161765
+    max: 0.9843342658158512
+    min: 0.7392869961366205
+  mae:
+    avg: 0.1904110161820364
+    max: 0.4147486505508423
+    min: 0.07350854699810333
+performance_plain_larger_with_dropout_30k:
+  f1:
+    avg: 0.8266285233097023
+    max: 0.9796674064210026
+    min: 0.6727836402717559
+  mae:
+    avg: 0.21547158283454923
+    max: 0.47197412757078805
+    min: 0.09430389853980811
 performance_sharedlayer:
   f1:
     avg: 0.8159675458924116
