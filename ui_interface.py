@@ -29,8 +29,8 @@ from paramload import DAGParamLoader
 # from tqdm import tqdm
 
 # from nn_models import EncoderDecoderModel
-# from ui_external_inference import inference, batch_inference
-from ui_mock_inference import inference, batch_inference
+from ui_external_inference import inference, batch_inference
+# from ui_mock_inference import inference, batch_inference
 
 
 def resize_and_convert(img_path: str, invert=True) -> None:

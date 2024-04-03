@@ -45,7 +45,7 @@ class DAGParamLoader():
                 dag_mod = mod
                 break
         # iterate through inputs and load values
-        inputs = dag_mod.node_group.inputs
+        inputs = dag_mod.node_group.inputs  # if dag_mod unassigned, check which node you are using! change dag_node_name as appropriate
         for input_key, input_val in inputs.items():
             id = input_val.identifier
             val = params.params[input_key]
