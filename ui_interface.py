@@ -59,7 +59,7 @@ class CaptureAnnotationOperator(bpy.types.Operator):
     bl_label = "Capture Annotation & Run Inference"
 
     def execute(self, context: Context):
-        print("You've called Capture Annotation & GeoCode Inference.")
+        print("You've called Capture Annotation & Inference.")
 
         # get domain
         scene = context.scene
@@ -187,9 +187,9 @@ class BatchRenderOperator(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class GeoCodeInterfacePanel(bpy.types.Panel):
+class InterfacePanel(bpy.types.Panel):
     bl_label = "Interface Panel"
-    bl_idname = "SIUI_PT_GeoCodeInterfacePanel"
+    bl_idname = "SIUI_PT_InterfacePanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Tool"
@@ -200,7 +200,6 @@ class GeoCodeInterfacePanel(bpy.types.Panel):
 
         box = layout.box()
         box.label(text="Inference")
-        # box.prop(scene, "geocode_domain_options", text="GeoCode Domain")
         box.operator("object.capture_annotation_operator")
 
         box = layout.box()
@@ -369,7 +368,7 @@ def register():
 
     bpy.utils.register_class(CaptureAnnotationOperator)
     bpy.utils.register_class(ClearAllAnnotationOperator)
-    bpy.utils.register_class(GeoCodeInterfacePanel)
+    bpy.utils.register_class(InterfacePanel)
     bpy.utils.register_class(ClearBackgroundImageOperator)
     bpy.utils.register_class(ToggleCameraViewOperator)
     bpy.utils.register_class(ImageInferenceOperator)
@@ -381,7 +380,7 @@ def unregister():
 
     bpy.utils.unregister_class(CaptureAnnotationOperator)
     bpy.utils.unregister_class(ClearAllAnnotationOperator)
-    bpy.utils.unregister_class(GeoCodeInterfacePanel)
+    bpy.utils.unregister_class(InterfacePanel)
     bpy.utils.unregister_class(ClearBackgroundImageOperator)
     bpy.utils.unregister_class(ToggleCameraViewOperator)
     bpy.utils.unregister_class(ImageInferenceOperator)
