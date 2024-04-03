@@ -1,19 +1,19 @@
 import bpy
 from bpy.types import Context
 
-import typing
+# import typing
 import os
 import sys
 from pathlib import Path
 import shutil
-from subprocess import Popen, PIPE
-import logging
+# from subprocess import Popen, PIPE
+# import logging
 import numpy as np
-import yaml
+# import yaml
 from PIL import Image
 
-import torch
-from torch.utils.data import DataLoader
+# import torch
+# from torch.utils.data import DataLoader
 
 # sys.path.append("/media/Work/itx_ubuntu_work/BuildingDAG24")
 
@@ -22,14 +22,15 @@ file = Path(__file__).resolve()
 parent = file.parents[1]
 sys.path.append(str(parent))
 
-from params import DAGParams
-from paramgen import DAGParamGenerator
+# from params import DAGParams
+# from paramgen import DAGParamGenerator
 from paramload import DAGParamLoader
-from render import DAGRenderer
-from tqdm import tqdm
+# from render import DAGRenderer
+# from tqdm import tqdm
 
-from nn_models import EncoderDecoderModel
-from ui_external_inference import inference, batch_inference
+# from nn_models import EncoderDecoderModel
+# from ui_external_inference import inference, batch_inference
+from ui_mock_inference import inference, batch_inference
 
 
 def resize_and_convert(img_path: str, invert=True) -> None:
@@ -55,7 +56,7 @@ def load_param_to_shape(yml_path: str=None):
 
 class CaptureAnnotationOperator(bpy.types.Operator):
     bl_idname = "object.capture_annotation_operator"
-    bl_label = "Capture Annotation & GeoCode"
+    bl_label = "Capture Annotation & Run Inference"
 
     def execute(self, context: Context):
         print("You've called Capture Annotation & GeoCode Inference.")
@@ -187,7 +188,7 @@ class BatchRenderOperator(bpy.types.Operator):
 
 
 class GeoCodeInterfacePanel(bpy.types.Panel):
-    bl_label = "GeoCode Interface Panel"
+    bl_label = "Interface Panel"
     bl_idname = "SIUI_PT_GeoCodeInterfacePanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -198,7 +199,7 @@ class GeoCodeInterfacePanel(bpy.types.Panel):
         scene = context.scene
 
         box = layout.box()
-        box.label(text="GeoCode")
+        box.label(text="Inference")
         # box.prop(scene, "geocode_domain_options", text="GeoCode Domain")
         box.operator("object.capture_annotation_operator")
 
@@ -226,6 +227,9 @@ class GeoCodeInterfacePanel(bpy.types.Panel):
         box.prop(scene, "proper_background_image", text="Image is Processed Already")
         # Inference button
         box.operator("object.image_inference_operator", text="Image Inference")
+
+        box = layout.box()
+        box.label(text="Batch Render")
         # Batch render button
         box.prop(scene, "batch_render_images_folder", text="Batch Render Images Folder")
         box.prop(scene, "batch_render_use_cycles", text="Use Cycles Renderer")

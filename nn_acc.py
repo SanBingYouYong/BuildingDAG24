@@ -59,7 +59,8 @@ def acc_discrete(results_path: str="results.yml"):
 
 
 if __name__ == "__main__":
-    results_path = "results.yml"
+    # results_path = "results.yml"
+    results_path = "performance_nosharedefault.yml"
     with open(results_path, "r") as file:
         results = yaml.safe_load(file)["results"]
 

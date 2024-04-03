@@ -76,7 +76,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     # calculate acc for discrete variables
     acc_discrete(results_name)
     # back up performance.yml
-    shutil.copyfile(results_name, f"./performance_{tag}.yml")
+    shutil.copyfile("./performance.yml", f"./performance_{tag}.yml")
 
     # calculate performance
     calculate_performance()
