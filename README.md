@@ -30,5 +30,5 @@ Output files:
 Pipelines: 
  - Generating dataset: run dataset_gen.py or generate_dataset.py with commandline args. Grammar: python generate_dataset.py batch_num sample_num varying_params_num device distortion;  e.g. python generate_dataset.py 10 10 5 0 0
  - Neural network training: run nn_driver.py; modify config in code as needed. 
- - User Interface: open interface.blend with Blender 3.2, go to Scripts and run ui_interface.py, the panel should appear under tool section; for testing without PyTorch installation and model weight files, switch the import from using ui_external_inference.py to use ui_mock_inference.py; create ./inference folder if it does not automatically create it. Click the pencil icon to use Blender's annotation tool to draw. Toggle and adjust camera view as needed. 
+ - User Interface: open interface.blend with Blender 3.2, go to Scripts and run ui_interface.py, the panel should appear under tool section; for testing without PyTorch installation and model weight files, switch the import from using ui_external_inference.py to use ui_mock_inference.py; Click the pencil icon to use Blender's annotation tool to draw. Toggle and adjust camera view as needed. To run inference, make sure to have proper model weights in ./models/EncDecModel.pth and a corresponding meta file in ./models/meta.yml and to have created the ./inference folder. 
 
