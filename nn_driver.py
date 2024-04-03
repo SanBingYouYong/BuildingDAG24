@@ -51,7 +51,7 @@ def pipeline(dataset_name: str="DAGDataset100_100_5",
     optimizer = optim.Adam(model.parameters(), lr=lr)
     model.to(device)
 
-    tag = "plain_larger_dropout_30k"
+    tag = "final_plain_large_dropout_30k"
     results_name = f"results_{tag}.yml"
 
     os.makedirs("./models", exist_ok=True)

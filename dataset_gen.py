@@ -124,10 +124,10 @@ class DAGDatasetGenerator():
 if __name__ == "__main__":
     # TODO: check for mysterious "Error: Cannot read file '/mnt/c/ZSY/BuildingDAG/1': No such file or directory"
     # check for args
-    # args = sys.argv[5:]
+    args = sys.argv[5:]
     # print(args)
-    args = [5, 5, 5, 1, 1]
-    print(f"ignoring commandline args and using settings in code: {args}")
+    # args = [5, 5, 5, 1, 1]
+    # print(f"ignoring commandline args and using settings in code: {args}")
     if len(args) == 5:
         num_batches = int(args[0])
         batch_size = int(args[1])
