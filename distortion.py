@@ -180,7 +180,7 @@ class DRUtils():
         return coord
     
     @staticmethod
-    def spawn_bezier_curve_through(points: Iterable[Vector]) -> Object:
+    def spawn_bezier_curve_through(points: Iterable[Vector], obj_name: str=None) -> Object:
         '''
         Spawn a bezier curve passing input Vector coordinates. Returns the spawned curve object. 
         '''
@@ -194,16 +194,17 @@ class DRUtils():
             # type auto will align handles together
             bezier_point.handle_left_type = "AUTO"
             bezier_point.handle_right_type = "AUTO"
-        obj = bpy.data.objects.new("BezierCurveObj", curve)
+        curve_name = f"BezierCurve_{obj_name}_" if obj_name else "BezierCurve_Obj_"
+        obj = bpy.data.objects.new(curve_name, curve)
         bpy.context.collection.objects.link(obj)
         return obj
     
     @staticmethod
-    def spawn_curves(curves: List[Iterable[Vector]]) -> List[Object]:
+    def spawn_curves(curves: List[Iterable[Vector]], obj_name: str=None) -> List[Object]:
         spawned_curves = []
         for curve in curves: 
             spawned_curves.append(
-                DRUtils.spawn_bezier_curve_through(curve)
+                DRUtils.spawn_bezier_curve_through(curve, obj_name=obj_name)
             )
         return spawned_curves
     
@@ -697,18 +698,20 @@ class DRStraight(Dedicated_Renderer):
         return edge_as_vert_pairs
     
     def render_object(self, obj: Object, img_path: str, 
-                      de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> None:
+                      de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None) -> None:
+        obj_name = obj.name if not obj_name else obj_name
         edges = self.edge_filtering(obj)
         disturbed_coords = DRUtils.disturb_edges(edges, obj, de_reg)
-        spawned_curves = DRUtils.spawn_curves(disturbed_coords)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
         extruded_curves = DRUtils.mark_curves_as_freestyle(spawned_curves)
         self.render_image_and_save_as(obj, img_path)
         # self.clean_up(obj, extruded_curves)
     
-    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> List[Object]:
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None) -> List[Object]:
+        obj_name = obj.name if not obj_name else obj_name
         edges = self.edge_filtering(obj)
         disturbed_coords = DRUtils.disturb_edges(edges, obj, de_reg)
-        spawned_curves = DRUtils.spawn_curves(disturbed_coords)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
         return spawned_curves
     
     def _render_obj_debug(self, obj: Object, img_title: str):
@@ -770,20 +773,22 @@ class DRCylindrical(Dedicated_Renderer):
         bpy.ops.object.editmode_toggle()
         return vertical_contour_edges, circle_and_ring
     
-    def render_object(self, obj: Object, img_path: str, de_reg: DRUtils.DeRegLevels = DRUtils.DeRegLevels.MEDIUM):
+    def render_object(self, obj: Object, img_path: str, de_reg: DRUtils.DeRegLevels = DRUtils.DeRegLevels.MEDIUM, obj_name: str=None):
+        obj_name = obj.name if not obj_name else obj_name
         vertical_contour_edges, curves = self.edge_filtering(obj)
         disturbed_edges = DRUtils.disturb_edges(vertical_contour_edges, obj, de_reg)
         disturbed_curves = DRUtils.disturb_curves(curves, obj, de_reg)
-        spawned_curves = DRUtils.spawn_curves(disturbed_edges + disturbed_curves)
+        spawned_curves = DRUtils.spawn_curves(disturbed_edges + disturbed_curves, obj_name)
         extruded_curves = DRUtils.mark_curves_as_freestyle(spawned_curves)
         self.render_image_and_save_as(obj, img_path)
         self.clean_up(obj, extruded_curves)
 
-    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> List[Object]:
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None) -> List[Object]:
+        obj_name = obj.name if not obj_name else obj_name
         vertical_contour_edges, curves = self.edge_filtering(obj)
         disturbed_edges = DRUtils.disturb_edges(vertical_contour_edges, obj, de_reg)
         disturbed_curves = DRUtils.disturb_curves(curves, obj)
-        spawned_curves = DRUtils.spawn_curves(disturbed_edges + disturbed_curves)
+        spawned_curves = DRUtils.spawn_curves(disturbed_edges + disturbed_curves, obj_name)
         return spawned_curves
     
     def _render_obj_debug(self, obj: Object, img_title: str):
@@ -898,18 +903,20 @@ class DRSphered(Dedicated_Renderer):
         bpy.ops.object.editmode_toggle()
         return [upper_curve_coords, bottom_curve_coords]
 
-    def render_object(self, obj: Object, img_path: str, de_reg: DRUtils.DeRegLevels = DRUtils.DeRegLevels.MEDIUM):
+    def render_object(self, obj: Object, img_path: str, de_reg: DRUtils.DeRegLevels = DRUtils.DeRegLevels.MEDIUM, obj_name: str=None):
+        obj_name = obj.name if not obj_name else obj_name
         curves = self.edge_filtering(obj)
         disturbed_coords = DRUtils.disturb_curves(curves, obj, de_reg)
-        spawned_curves = DRUtils.spawn_curves(disturbed_coords)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
         extruded_curves = DRUtils.mark_curves_as_freestyle(spawned_curves)
         self.render_image_and_save_as(obj, img_path)
         self.clean_up(obj, extruded_curves)
 
-    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM) -> List[Object]:
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None) -> List[Object]:
+        obj_name = obj.name if not obj_name else obj_name
         curves = self.edge_filtering(obj)
         disturbed_coords = DRUtils.disturb_curves(curves, obj, de_reg)
-        spawned_curves = DRUtils.spawn_curves(disturbed_coords)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
         return spawned_curves
     
     def _render_obj_debug(self, obj: Object, img_title: str):

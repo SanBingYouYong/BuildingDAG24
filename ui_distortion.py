@@ -20,7 +20,19 @@ sys.path.append(str(parent))
 
 # from params import DAGParams
 # from paramgen import DAGParamGenerator
-from paramload import DAGParamLoader
+# from paramload import DAGParamLoader
+from distortion import Dedicated_Renderer, DRStraight, DRCylindrical, DRSphered, DRUtils
+
+
+def find_curves(obj_name: str):
+    '''
+    Find all curves related to the object with the given name
+    '''
+    curves = []
+    for obj in bpy.data.objects:
+        if obj.type == 'CURVE' and obj_name in obj.name and obj.name != obj_name and "BezierCurve_" in obj.name:
+            curves.append(obj)
+    return curves
 
 
 class DistortionOperator(bpy.types.Operator):
@@ -29,6 +41,33 @@ class DistortionOperator(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+        dr_type = context.scene.dr_type
+        dl = context.scene.distort_level
+        obj = bpy.context.active_object  # no need to hide, since editmode will take care of visibility on single obj
+        bpy.ops.object.duplicate()  # create duplicate to avoid affecting original object
+        dup = bpy.context.active_object
+        renderer = None
+        if dr_type == 'dr_straight':
+            renderer = DRStraight()
+        elif dr_type == 'dr_cylinder':
+            renderer = DRCylindrical()
+        elif dr_type == 'dr_sphere':
+            renderer = DRSphered()
+        else:
+            raise ValueError(f"Invalid DR type: {dr_type}")
+        de_reg = None
+        if dl == 'dl_perfect':
+            de_reg = DRUtils.DeRegLevels.PERFECT
+        elif dl == 'dl_light':
+            de_reg = DRUtils.DeRegLevels.LIGHT
+        elif dl == 'dl_medium':
+            de_reg = DRUtils.DeRegLevels.MEDIUM
+        elif dl == 'dl_heavy':
+            de_reg = DRUtils.DeRegLevels.HEAVY
+        else:
+            raise ValueError(f"Invalid distortion level: {dl}")
+        spawned_curves = renderer.obj_to_curves_only(dup, de_reg=de_reg, obj_name=obj.name)
+        bpy.data.objects.remove(dup)
         return {'FINISHED'}
 
 class RenderAsImage(bpy.types.Operator):
@@ -37,6 +76,29 @@ class RenderAsImage(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+        img_path = context.scene.image_path
+        bpy.context.scene.render.image_settings.file_format = 'PNG'
+        bpy.context.scene.render.filepath = img_path
+
+        freestyle = context.scene.use_freestyle
+        if freestyle:
+            bpy.context.scene.render.use_freestyle = True
+        else:
+            bpy.context.scene.render.use_freestyle = False
+        
+        viewport = context.scene.viewport_render
+        if viewport and freestyle:
+            self.report({'WARNING'}, "Freestyle is not supported in viewport render")
+        if viewport:
+            original_engine = bpy.context.scene.render.engine
+            bpy.context.scene.render.engine = 'BLENDER_EEVEE'
+            bpy.ops.render.opengl(write_still=True)
+            bpy.context.scene.render.engine = original_engine
+        else:
+            original_engine = bpy.context.scene.render.engine
+            bpy.context.scene.render.engine = 'CYCLES'
+            bpy.ops.render.render(write_still=True)
+            bpy.context.scene.render.engine = original_engine
         return {'FINISHED'}
     
 class DistortAndRender(bpy.types.Operator):
@@ -53,6 +115,12 @@ class DeleteCurrentCurves(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+        obj = context.active_object
+        if obj is None:
+            return {'CANCELLED'}
+        curves = find_curves(obj.name)
+        for curve in curves:
+            bpy.data.objects.remove(curve)
         return {'FINISHED'}
 
 class DeleteAllCurves(bpy.types.Operator):
@@ -96,11 +164,15 @@ class DistortionPanel(bpy.types.Panel):
         box = layout.box()
         box.label(text="Distort Into Curves", icon='OUTLINER_DATA_CURVES')
         box.prop(scene, "remove_obj_after_spawn", text="Remove Object After Spawn")
+        box.prop(scene, "dr_type", text="Object Type")
+        box.prop(scene, "distort_level", text="Distortion Level")
         box.operator("object.distortion_operator", text="Distort Into Curves")
 
         # Render as Image
         box = layout.box()
         box.label(text="Render as Image", icon='CAMERA_DATA')
+        box.prop(scene, "use_freestyle", text="Use Freestyle")
+        box.prop(scene, "viewport_render", text="Viewport Render")
         box.prop(scene, "image_path", text="Image Path")
         box.operator("object.render_as_image", text="Render as Image")
 
@@ -115,8 +187,16 @@ def register():
         items=[('dr_straight', 'Straight Line', "Dedicated Distortion Renderer for objects containing only straight edges", 'META_CUBE', 0),
                ('dr_cylinder', 'Cylindrical', "Dedicated Distortion Renderer for cylinders", 'MESH_CYLINDER', 1),
                ('dr_sphere', 'Half-spherical', "Dedicated Distortion Renderer for half-spheres", 'MATSPHERE', 2)],
-        name="DR Type",
+        name="Object Type",
         description="Select the type of DR to use"
+    )
+    bpy.types.Scene.distort_level = bpy.props.EnumProperty(
+        items=[ ('dl_perfect', 'Perfect', "No distortion", 'SEQUENCE_COLOR_04', 0),
+                ('dl_light', 'Light', "Low level of distortion", 'SEQUENCE_COLOR_03', 0),
+                ('dl_medium', 'Medium', "Medium level of distortion", 'SEQUENCE_COLOR_02', 1),
+                ('dl_heavy', 'Heavy', "High level of distortion", 'SEQUENCE_COLOR_01', 2)],
+        name="Distortion Level",
+        description="Select the level of distortion"
     )
     # TODO: show/hide both viewport and render? 
     bpy.types.Scene.show_current_shape = bpy.props.BoolProperty(
@@ -155,8 +235,19 @@ def register():
     )
     bpy.types.Scene.image_path = bpy.props.StringProperty(
         name="Image Path",
+        subtype='FILE_PATH',
         description="Set the image path",
         default=""
+    )
+    bpy.types.Scene.use_freestyle = bpy.props.BoolProperty(
+        name="Use Freestyle",
+        description="Use Freestyle",
+        default=True
+    )
+    bpy.types.Scene.viewport_render = bpy.props.BoolProperty(
+        name="Viewport Render",
+        description="Capture the viewport as an image",
+        default=False
     )
 
 
