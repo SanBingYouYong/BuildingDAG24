@@ -26,13 +26,32 @@ from distortion import Dedicated_Renderer, DRStraight, DRCylindrical, DRSphered,
 
 def find_curves(obj_name: str):
     '''
-    Find all curves related to the object with the given name
+    Find all curves' names related to the object with the given name
     '''
     curves = []
     for obj in bpy.data.objects:
         if obj.type == 'CURVE' and obj_name in obj.name and obj.name != obj_name and "BezierCurve_" in obj.name:
-            curves.append(obj)
+            curves.append(obj.name)
     return curves
+
+def find_all_curves():
+    '''
+    Find all curves' names
+    '''
+    curves = []
+    for obj in bpy.data.objects:
+        if obj.type == 'CURVE' and "BezierCurve_" in obj.name:
+            curves.append(obj.name)
+    return curves
+
+def delete_objects(obj_names: list):
+    '''
+    Delete all objects with the given names
+    '''
+    objects = bpy.data.objects
+    for obj_name in obj_names:
+        if obj_name in objects:
+            objects.remove(objects[obj_name])
 
 
 class DistortionOperator(bpy.types.Operator):
@@ -67,7 +86,10 @@ class DistortionOperator(bpy.types.Operator):
         else:
             raise ValueError(f"Invalid distortion level: {dl}")
         spawned_curves = renderer.obj_to_curves_only(dup, de_reg=de_reg, obj_name=obj.name)
-        bpy.data.objects.remove(dup)
+        context.scene.last_distorted_object_name = obj.name
+        delete_objects([dup.name])
+        if context.scene.remove_obj_after_spawn:
+            delete_objects([obj.name])
         return {'FINISHED'}
 
 class RenderAsImage(bpy.types.Operator):
@@ -115,12 +137,16 @@ class DeleteCurrentCurves(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+        if context.scene.last_distorted_object_name == "":
+            self.report({'ERROR'}, "No object has been distorted yet")
+            return {'CANCELLED'}
         obj = context.active_object
         if obj is None:
-            return {'CANCELLED'}
-        curves = find_curves(obj.name)
-        for curve in curves:
-            bpy.data.objects.remove(curve)
+            obj_name = context.scene.last_distorted_object_name
+        else:
+            obj_name = obj.name
+        curves = find_curves(obj_name)
+        delete_objects(curves)
         return {'FINISHED'}
 
 class DeleteAllCurves(bpy.types.Operator):
@@ -129,6 +155,8 @@ class DeleteAllCurves(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+        curves = find_all_curves()
+        delete_objects(curves)
         return {'FINISHED'}
 
 
@@ -232,6 +260,11 @@ def register():
         name="Remove Object After Spawn",
         description="Remove the object after spawning distorted curves",
         default=False
+    )
+    bpy.types.Scene.last_distorted_object_name = bpy.props.StringProperty(
+        name="Last Distorted Object Name",
+        description="Name of the last distorted object",
+        default=""
     )
     bpy.types.Scene.image_path = bpy.props.StringProperty(
         name="Image Path",
