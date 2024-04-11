@@ -307,9 +307,9 @@ def update_camera_viewing_angle(self, context):
     new_lr_angle = scene.cam_angle_hori
     new_down_angle = scene.cam_angle_vert
     # sin(h/2) = angle
-    height = 2 * np.arcsin(np.deg2rad(new_down_angle))
+    height = 2 * np.sin(np.deg2rad(new_down_angle))
     # cos(h/2) = radius
-    radius = 2 * np.arccos(np.deg2rad(new_down_angle))
+    radius = 2 * np.cos(np.deg2rad(new_down_angle))
     camera_track = bpy.data.objects["CameraTrack"]
     camera_track.rotation_euler[2] = np.deg2rad(new_lr_angle)
     camera_track.location[2] = height
