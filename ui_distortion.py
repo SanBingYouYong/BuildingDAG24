@@ -209,6 +209,25 @@ class DeleteAllCurves(bpy.types.Operator):
         delete_objects(curves)
         return {'FINISHED'}
 
+class ToggleCameraView(bpy.types.Operator):
+    bl_idname = "object.toggle_camera_view"
+    bl_label = "Toggle Camera View"
+
+    def execute(self, context):
+        print(f"You've called {self.bl_label}")
+        bpy.ops.view3d.view_camera()
+        return {'FINISHED'}
+
+class ShowAllObjects(bpy.types.Operator):
+    bl_idname = "object.show_all_objects"
+    bl_label = "Show All Objects"
+
+    def execute(self, context):
+        print(f"You've called {self.bl_label}")
+        for obj in bpy.data.objects:
+            obj.hide_set(False)
+        return {'FINISHED'}
+
 
 class DistortionPanel(bpy.types.Panel):
     bl_label = "Distortion Panel"
@@ -227,10 +246,11 @@ class DistortionPanel(bpy.types.Panel):
 
         box.prop(scene, "show_current_shape", text="Show Current Shape")
         box.prop(scene, "show_spawned_curves", text="Show Spawned Curves")
+        box.operator("object.show_all_objects", text="Show All Objects")
         
         box.prop(scene, "cam_angle_hori", text="Camera Horizontal Angle")
         box.prop(scene, "cam_angle_vert", text="Camera Vertical Angle")
-        box.prop(scene, "toggle_cam", text="Toggle Camera")
+        box.operator("object.toggle_camera_view", text="Toggle Camera View")
 
         # Manipulate
         box = layout.box()
@@ -253,6 +273,7 @@ class DistortionPanel(bpy.types.Panel):
         box.prop(scene, "viewport_render", text="Viewport Render")
         box.prop(scene, "image_path", text="Image Path")
         box.prop(scene, "render_all_curves", text="Render All Curves")
+        box.prop(scene, "render_curves_only", text="Render Curves Only")
         box.operator("object.render_as_image", text="Render as Image")
 
         # Combined
@@ -260,7 +281,43 @@ class DistortionPanel(bpy.types.Panel):
         box.label(text="Combined", icon='RNA_ADD')
         box.operator("object.distort_and_render", text="Distort and Render")
 
-    
+
+def update_current_shape_visibility(self, context):
+    obj = bpy.data.objects.get(context.scene.last_distorted_object_name) if context.scene.last_distorted_object_name != "" else None
+    if obj is None:
+        print("No object has been distorted yet or it has been removed")
+        return
+    if context.scene.show_current_shape:
+        obj.hide_set(False)
+    else:
+        obj.hide_set(True)
+
+def update_spawned_curves_visibility(self, context):
+    if context.scene.show_spawned_curves:
+        curves, _ = find_all_curves(name_only=False)
+        for curve in curves:
+            curve.hide_set(False)
+    else:
+        curves, _ = find_all_curves(name_only=False)
+        for curve in curves:
+            curve.hide_set(True)
+
+def update_camera_viewing_angle(self, context):
+    scene = context.scene
+    new_lr_angle = scene.cam_angle_hori
+    new_down_angle = scene.cam_angle_vert
+    # sin(h/2) = angle
+    height = 2 * np.arcsin(np.deg2rad(new_down_angle))
+    # cos(h/2) = radius
+    radius = 2 * np.arccos(np.deg2rad(new_down_angle))
+    camera_track = bpy.data.objects["CameraTrack"]
+    camera_track.rotation_euler[2] = np.deg2rad(new_lr_angle)
+    camera_track.location[2] = height
+    track_radius_scaler = radius / 2
+    camera_track.scale = (track_radius_scaler, track_radius_scaler, track_radius_scaler)
+
+
+
 def register():
     bpy.types.Scene.dr_type = bpy.props.EnumProperty(
         items=[('dr_straight', 'Straight Line', "Dedicated Distortion Renderer for objects containing only straight edges", 'META_CUBE', 0),
@@ -281,31 +338,30 @@ def register():
     bpy.types.Scene.show_current_shape = bpy.props.BoolProperty(
         name="Show Current Shape",
         description="Show the current shape",
-        default=False
+        default=False,
+        update=update_current_shape_visibility
     )
     bpy.types.Scene.show_spawned_curves = bpy.props.BoolProperty(
         name="Show Spawned Curves",
         description="Show the spawned curves",
-        default=False
+        default=False,
+        update=update_spawned_curves_visibility
     )
     bpy.types.Scene.cam_angle_hori = bpy.props.FloatProperty(
         name="Camera Horizontal Angle",
         description="Set the camera horizontal angle",
         default=45.0,
         min=0.0,
-        max=90.0
+        max=90.0,
+        update=update_camera_viewing_angle
     )
     bpy.types.Scene.cam_angle_vert = bpy.props.FloatProperty(
         name="Camera Vertical Angle",
         description="Set the camera vertical angle",
         default=30.0, 
         min=0.0,
-        max=90.0
-    )
-    bpy.types.Scene.toggle_cam = bpy.props.BoolProperty(
-        name="Toggle Camera",
-        description="Toggle the camera",
-        default=False
+        max=90.0,
+        update=update_camera_viewing_angle
     )
     bpy.types.Scene.remove_obj_after_spawn = bpy.props.BoolProperty(
         name="Remove Object After Spawn",
@@ -351,6 +407,8 @@ def register():
     bpy.utils.register_class(DistortAndRender)
     bpy.utils.register_class(DeleteCurrentCurves)
     bpy.utils.register_class(DeleteAllCurves)
+    bpy.utils.register_class(ToggleCameraView)
+    bpy.utils.register_class(ShowAllObjects)
 
 def unregister():
     bpy.utils.unregister_class(DistortionPanel)
@@ -359,6 +417,8 @@ def unregister():
     bpy.utils.unregister_class(DistortAndRender)
     bpy.utils.unregister_class(DeleteCurrentCurves)
     bpy.utils.unregister_class(DeleteAllCurves)
+    bpy.utils.unregister_class(ToggleCameraView)
+    bpy.utils.unregister_class(ShowAllObjects)
 
 
 if __name__ == "__main__":
