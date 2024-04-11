@@ -71,6 +71,52 @@ def delete_objects(obj_names: list):
         if obj_name in objects:
             objects.remove(objects[obj_name])
 
+def get_renderer(dr_type: str) -> Dedicated_Renderer:
+    '''
+    Get the renderer based on the given type
+
+    Parameters:
+    dr_type: str
+        The type of the renderer
+
+    Returns:
+    renderer: Dedicated_Renderer
+        The renderer object
+    '''
+    renderer = None
+    if dr_type == 'dr_straight':
+        renderer = DRStraight()
+    elif dr_type == 'dr_cylinder':
+        renderer = DRCylindrical()
+    elif dr_type == 'dr_sphere':
+        renderer = DRSphered()
+    else:
+        raise ValueError(f"Invalid DR type: {dr_type}")
+    return renderer
+
+def get_de_reg(de_reg: str) -> DRUtils.DeRegLevels:
+    '''
+    Get the DeReg level based on the given string
+
+    Parameters:
+    de_reg: str
+        The string representation of the DeReg level
+
+    Returns:
+    de_reg: DRUtils.DeRegLevels
+        The DeReg level
+    '''
+    if de_reg == 'dl_perfect':
+        return DRUtils.DeRegLevels.PERFECT
+    elif de_reg == 'dl_light':
+        return DRUtils.DeRegLevels.LIGHT
+    elif de_reg == 'dl_medium':
+        return DRUtils.DeRegLevels.MEDIUM
+    elif de_reg == 'dl_heavy':
+        return DRUtils.DeRegLevels.HEAVY
+    else:
+        raise ValueError(f"Invalid distortion level: {de_reg}")
+
 
 class DistortionOperator(bpy.types.Operator):
     bl_idname = "object.distortion_operator"
@@ -81,28 +127,13 @@ class DistortionOperator(bpy.types.Operator):
         dr_type = context.scene.dr_type
         dl = context.scene.distort_level
         obj = bpy.context.active_object  # no need to hide, since editmode will take care of visibility on single obj
+        if obj is None:
+            self.report({'ERROR'}, "No object selected")
+            return {'CANCELLED'}
         bpy.ops.object.duplicate()  # create duplicate to avoid affecting original object
         dup = bpy.context.active_object
-        renderer = None
-        if dr_type == 'dr_straight':
-            renderer = DRStraight()
-        elif dr_type == 'dr_cylinder':
-            renderer = DRCylindrical()
-        elif dr_type == 'dr_sphere':
-            renderer = DRSphered()
-        else:
-            raise ValueError(f"Invalid DR type: {dr_type}")
-        de_reg = None
-        if dl == 'dl_perfect':
-            de_reg = DRUtils.DeRegLevels.PERFECT
-        elif dl == 'dl_light':
-            de_reg = DRUtils.DeRegLevels.LIGHT
-        elif dl == 'dl_medium':
-            de_reg = DRUtils.DeRegLevels.MEDIUM
-        elif dl == 'dl_heavy':
-            de_reg = DRUtils.DeRegLevels.HEAVY
-        else:
-            raise ValueError(f"Invalid distortion level: {dl}")
+        renderer = get_renderer(dr_type)
+        de_reg = get_de_reg(dl)
         spawned_curves = renderer.obj_to_curves_only(dup, de_reg=de_reg, obj_name=obj.name)
         context.scene.last_distorted_object_name = obj.name
         delete_objects([dup.name])
@@ -177,8 +208,8 @@ class DistortAndRender(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
-        obj = bpy.context.active_object
-
+        bpy.ops.object.distortion_operator()
+        bpy.ops.object.render_as_image()  # should we lock this to default settings?
         return {'FINISHED'}
     
 class DeleteCurrentCurves(bpy.types.Operator):
@@ -258,6 +289,11 @@ class DistortionPanel(bpy.types.Panel):
         box.operator("object.delete_current_curves", text="Delete Current Curves")
         box.operator("object.delete_all_curves", text="Delete All Curves")
         
+        # Combined
+        box = layout.box()
+        box.label(text="Combined", icon='RNA_ADD')
+        box.operator("object.distort_and_render", text="Distort and Render")
+
         # Distort Into Curves
         box = layout.box()
         box.label(text="Distort Into Curves", icon='OUTLINER_DATA_CURVES')
@@ -275,11 +311,6 @@ class DistortionPanel(bpy.types.Panel):
         box.prop(scene, "render_all_curves", text="Render All Curves")
         box.prop(scene, "render_curves_only", text="Render Curves Only")
         box.operator("object.render_as_image", text="Render as Image")
-
-        # Combined
-        box = layout.box()
-        box.label(text="Combined", icon='RNA_ADD')
-        box.operator("object.distort_and_render", text="Distort and Render")
 
 
 def update_current_shape_visibility(self, context):
