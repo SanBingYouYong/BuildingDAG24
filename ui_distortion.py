@@ -24,25 +24,43 @@ sys.path.append(str(parent))
 from distortion import Dedicated_Renderer, DRStraight, DRCylindrical, DRSphered, DRUtils
 
 
-def find_curves(obj_name: str):
+def find_curves(obj_name: str, name_only: bool = True):
     '''
-    Find all curves' names related to the object with the given name
+    Find curves related to the object with the given name
+
+    Parameters:
+    obj_name: str
+        The name of the object
+    name_instead_of_obj: bool
+        If True, return the names of the curves; otherwise, return the curves themselves as Objects and their names
     '''
     curves = []
+    curve_names = []
     for obj in bpy.data.objects:
         if obj.type == 'CURVE' and obj_name in obj.name and obj.name != obj_name and "BezierCurve_" in obj.name:
-            curves.append(obj.name)
-    return curves
+            curves.append(obj)
+            curve_names.append(obj.name)
+    if name_only:
+        return curve_names
+    return curves, curve_names
 
-def find_all_curves():
+def find_all_curves(name_only: bool = True):
     '''
-    Find all curves' names
+    Find all curves. 
+
+    Parameters:
+    name_instead_of_obj: bool
+        If True, return the names of the curves; otherwise, return the curves themselves as Objects and their names
     '''
     curves = []
+    curve_names = []
     for obj in bpy.data.objects:
         if obj.type == 'CURVE' and "BezierCurve_" in obj.name:
-            curves.append(obj.name)
-    return curves
+            curves.append(obj)
+            curve_names.append(obj.name)
+    if name_only:
+        return curve_names
+    return curves, curve_names
 
 def delete_objects(obj_names: list):
     '''
@@ -98,16 +116,38 @@ class RenderAsImage(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+
+        # FIND CURVES
+        curves = []
+        if context.scene.render_all_curves:
+            curves, curve_names = find_all_curves(name_only=False)
+        else:
+            curves, curve_names = find_curves(context.scene.last_distorted_object_name, name_only=False)
+
+        # VISIBILITY
+        temp_hidden_objs = []
+        if context.scene.render_curves_only:
+            # hide all other objects
+            for obj in bpy.data.objects:
+                if obj.name not in curve_names:
+                    # obj.hide_set(True)
+                    obj.hide_render = True
+                    temp_hidden_objs.append(obj)
+
+        # PATH
         img_path = context.scene.image_path
         bpy.context.scene.render.image_settings.file_format = 'PNG'
         bpy.context.scene.render.filepath = img_path
 
+        # FREESTYLE
         freestyle = context.scene.use_freestyle
         if freestyle:
             bpy.context.scene.render.use_freestyle = True
+            curves = DRUtils.mark_curves_as_freestyle(curves)
         else:
             bpy.context.scene.render.use_freestyle = False
         
+        # RENDER
         viewport = context.scene.viewport_render
         if viewport and freestyle:
             self.report({'WARNING'}, "Freestyle is not supported in viewport render")
@@ -121,6 +161,14 @@ class RenderAsImage(bpy.types.Operator):
             bpy.context.scene.render.engine = 'CYCLES'
             bpy.ops.render.render(write_still=True)
             bpy.context.scene.render.engine = original_engine
+        
+        # CLEAN UP
+        if context.scene.render_curves_only:
+            for obj in temp_hidden_objs:
+                # obj.hide_set(False)
+                obj.hide_render = False
+        delete_objects(curve_names)
+
         return {'FINISHED'}
     
 class DistortAndRender(bpy.types.Operator):
@@ -129,6 +177,8 @@ class DistortAndRender(bpy.types.Operator):
 
     def execute(self, context):
         print(f"You've called {self.bl_label}")
+        obj = bpy.context.active_object
+
         return {'FINISHED'}
     
 class DeleteCurrentCurves(bpy.types.Operator):
@@ -202,6 +252,7 @@ class DistortionPanel(bpy.types.Panel):
         box.prop(scene, "use_freestyle", text="Use Freestyle")
         box.prop(scene, "viewport_render", text="Viewport Render")
         box.prop(scene, "image_path", text="Image Path")
+        box.prop(scene, "render_all_curves", text="Render All Curves")
         box.operator("object.render_as_image", text="Render as Image")
 
         # Combined
@@ -271,6 +322,16 @@ def register():
         subtype='FILE_PATH',
         description="Set the image path",
         default=""
+    )
+    bpy.types.Scene.render_all_curves = bpy.props.BoolProperty(
+        name="Render All Curves",
+        description="Render all curves or only last distorted curves",
+        default=False
+    )
+    bpy.types.Scene.render_curves_only = bpy.props.BoolProperty(
+        name="Render Curves Only",
+        description="Render curves only",
+        default=True
     )
     bpy.types.Scene.use_freestyle = bpy.props.BoolProperty(
         name="Use Freestyle",
