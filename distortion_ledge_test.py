@@ -26,10 +26,16 @@ def get_sharps(obj: Object, threshold: float=0.523599) -> List[List[Tuple[float,
     sharp_edges = []
     for e in bm.edges:
         if e.select:
+            # check for vertical edges to exclude
+            if e.verts[0].co.x == e.verts[1].co.x and e.verts[0].co.y == e.verts[1].co.y:
+                print('Vertical edge found, skipping')
+                continue
             sharp_edges.append((e.verts[0].index, e.verts[1].index))
     
     # find connected edges
     connected_edges = find_connected_edges(sharp_edges)
+    print(connected_edges)
+    # raise
 
     ce_as_vert_coords = []
     bm.verts.ensure_lookup_table()
@@ -44,38 +50,14 @@ def get_sharps(obj: Object, threshold: float=0.523599) -> List[List[Tuple[float,
     bpy.ops.object.editmode_toggle()
     return ce_as_vert_coords
 
-def find_connected_edges_0(edges: List[Tuple[int, int]]) -> List[List[Tuple[int, int]]]:
-    '''
-    Copilot autofilled this. It's not correct.
-    '''
-    connected_edges = []
-    for edge in edges:
-        found = False
-        for edge_seq in connected_edges:
-            if edge[0] in edge_seq:
-                edge_seq.append(edge[1])
-                found = True
-                break
-            elif edge[1] in edge_seq:
-                edge_seq.append(edge[0])
-                found = True
-                break
-        if not found:
-            connected_edges.append(list(edge))
-    return connected_edges
-
-
 def find_connected_edges(edges: List[Tuple[int, int]]) -> List[List[Tuple[int, int]]]:
-    '''
-    GPT 3.5 nailed it. 
-    '''
     def dfs(node, visited, connected_edges):
         visited[node] = True
         connected_edges.append(node)
         for edge in edges:
             if node in edge:
                 neighbor = edge[0] if edge[1] == node else edge[1]
-                if not visited[neighbor]:
+                if neighbor < len(visited) and not visited[neighbor]:
                     dfs(neighbor, visited, connected_edges)
     
     visited = [False] * len(edges)  # Keep track of visited vertices
