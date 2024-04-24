@@ -34,8 +34,6 @@ def get_sharps(obj: Object, threshold: float=0.523599) -> List[List[Tuple[float,
     
     # find connected edges
     connected_edges = find_connected_edges(sharp_edges)
-    print(connected_edges)
-    # raise
 
     ce_as_vert_coords = []
     bm.verts.ensure_lookup_table()
