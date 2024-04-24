@@ -927,6 +927,61 @@ class DRSphered(Dedicated_Renderer):
         self.render_object(obj, img_title + "_edges.png")
 
 
+class DRFloorLedgeCurved(Dedicated_Renderer):
+    '''
+    Dedicated renderer pipeline for curved floor ledges. 
+    '''
+    def __init__(self) -> None:
+        super().__init__()
+
+    def find_connected_edges(self, edges: List[Tuple[int, int]]) -> List[List[Tuple[int, int]]]:
+        '''
+        GPT 3.5 nailed it. 
+        '''
+        def dfs(node, visited, connected_edges):
+            visited[node] = True
+            connected_edges.append(node)
+            for edge in edges:
+                if node in edge:
+                    neighbor = edge[0] if edge[1] == node else edge[1]
+                    if not visited[neighbor]:
+                        dfs(neighbor, visited, connected_edges)
+        
+        visited = [False] * len(edges)  # Keep track of visited vertices
+        connected_edge_sequences = []
+        for i in range(len(edges)):
+            if not visited[i]:
+                connected_edges = []
+                dfs(i, visited, connected_edges)
+                connected_edge_sequences.append(connected_edges)
+        
+        return connected_edge_sequences
+
+    def get_sharps(self, obj: Object, threshold: float=0.523599) -> Tuple[List[int], List[int], List[int]]:
+        bpy.ops.object.editmode_toggle()
+        me = obj.data
+        bm = bmesh.from_edit_mesh(me)
+        bpy.ops.mesh.select_mode(type='EDGE')
+        bpy.ops.mesh.select_all(action='DESELECT')
+        # select sharp edges
+        bpy.ops.mesh.edges_select_sharp(sharpness=threshold)
+        obj.update_from_editmode()
+        
+        sharp_edges = []
+        for e in bm.edges:
+            if e.select:
+                sharp_edges.append((e.verts[0].index, e.verts[1].index))
+        
+        # find connected edges
+        connected_edges = self.find_connected_edges(sharp_edges)
+        
+        bpy.ops.object.editmode_toggle()
+        return connected_edges
+
+    def edge_filtering(self, obj: Object) -> List[List[Vector]]:
+        return self.get_sharps(obj)
+
+
 # class DRController():
 #     def __init__(self, dataset_name: str, paramcsv_name: str=None, override_path: str=None) -> None:
 #         self._dataset_name = dataset_name
