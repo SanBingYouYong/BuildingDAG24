@@ -11,6 +11,7 @@ import shutil
 import numpy as np
 # import yaml
 from PIL import Image
+import cv2
 
 # import torch
 # from torch.utils.data import DataLoader
@@ -19,7 +20,7 @@ from PIL import Image
 
 # import local modules
 file = Path(__file__).resolve()
-parent = file.parents[0]
+parent = file.parents[1]
 print(f"parent: {parent}")
 sys.path.append(str(parent))
 
@@ -30,24 +31,21 @@ from paramload import DAGParamLoader
 # from tqdm import tqdm
 
 # from nn_models import EncoderDecoderModel
-# from ui_external_inference import inference, batch_inference
-from ui_mock_inference import inference, batch_inference
+from ui_external_inference import inference, batch_inference
+# from ui_mock_inference import inference, batch_inference
 
 
 def resize_and_convert(img_path: str, invert=True) -> None:
-    # Open an image
-    image = Image.open(img_path)
-    # Resize the image (e.g., to 300x300 pixels)
-    resized_image = image.resize((512, 512))
-    # convert to grayscale and save as RGB
-    binarized_image = resized_image.convert("L")
+    # Load the image
+    image = cv2.imread(img_path)
+    # Convert the image to greyscale
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Use adaptive thresholding to make background black and lines white
+    _, thresholded_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     if invert:
-        # invert the image
-        binarized_image = Image.eval(binarized_image, lambda x: 255 - x)
-    # convert back to RGB
-    binarized_image = binarized_image.convert("RGB")
-    binarized_image.save(img_path)
-    print(f"PIL saved img to {img_path}")
+        thresholded_image = cv2.bitwise_not(thresholded_image)
+    # save image
+    cv2.imwrite(img_path, thresholded_image)
 
 
 def load_param_to_shape(yml_path: str=None):
