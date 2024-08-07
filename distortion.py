@@ -35,10 +35,14 @@ class DRUtils():
     sphered_comps = [(1, 3)]
 
     class DeRegLevels(Enum):
+        # PERFECT = 0
+        # LIGHT = 0.01
+        # MEDIUM = 0.025
+        # HEAVY = 0.05
         PERFECT = 0
-        LIGHT = 0.01
-        MEDIUM = 0.025
-        HEAVY = 0.05
+        LIGHT = 0.005
+        MEDIUM = 0.0125
+        HEAVY = 0.025
 
     # @staticmethod
     # def read_dataset(dataset_name: str, paramcsv_name: str=None, override_path: str=None):
@@ -927,6 +931,97 @@ class DRSphered(Dedicated_Renderer):
         self.render_object(obj, img_title + "_edges.png")
 
 
+class DRFloorLedgeCurved(Dedicated_Renderer):
+    '''
+    Dedicated renderer pipeline for curved floor ledges. 
+    '''
+    def __init__(self) -> None:
+        super().__init__()
+
+    def find_connected_edges(self, edges: List[Tuple[int, int]]) -> List[List[Tuple[int, int]]]:
+        def dfs(node, visited, connected_edges):
+            visited[node] = True
+            connected_edges.append(node)
+            for edge in edges:
+                if node in edge:
+                    neighbor = edge[0] if edge[1] == node else edge[1]
+                    if neighbor < len(visited) and not visited[neighbor]:
+                        dfs(neighbor, visited, connected_edges)
+        
+        visited = [False] * len(edges)  # Keep track of visited vertices
+        connected_edge_sequences = []
+        for i in range(len(edges)):
+            if not visited[i]:
+                connected_edges = []
+                dfs(i, visited, connected_edges)
+                connected_edge_sequences.append(connected_edges)
+        
+        return connected_edge_sequences
+
+    def get_sharps(self, obj: Object, threshold: float=0.523599) -> List[List[Tuple[float, float, float]]]:
+        bpy.ops.object.editmode_toggle()
+        me = obj.data
+        bm = bmesh.from_edit_mesh(me)
+        bpy.ops.mesh.select_mode(type='EDGE')
+        bpy.ops.mesh.select_all(action='DESELECT')
+        # select sharp edges
+        bpy.ops.mesh.edges_select_sharp(sharpness=threshold)
+        obj.update_from_editmode()
+        
+        sharp_edges = []
+        for e in bm.edges:
+            if e.select:
+                # check for vertical edges to exclude
+                if e.verts[0].co.x == e.verts[1].co.x and e.verts[0].co.y == e.verts[1].co.y:
+                    # print('Vertical edge found, skipping')
+                    continue
+                sharp_edges.append((e.verts[0].index, e.verts[1].index))
+        
+        # find connected edges
+        connected_edges = self.find_connected_edges(sharp_edges)
+
+        ce_as_vert_coords = []
+        bm.verts.ensure_lookup_table()
+        for edge_seq in connected_edges:
+            if len(edge_seq) == 1:  # single edge (not on a curve), skip
+                continue
+            vert_coords = []
+            for edge in edge_seq:
+                vert_coords.append(bm.verts[edge].co)
+            ce_as_vert_coords.append(vert_coords)
+        
+        bpy.ops.object.editmode_toggle()
+        return ce_as_vert_coords
+
+    def edge_filtering(self, obj: Object) -> List[List[Vector]]:
+        return self.get_sharps(obj)
+    
+    # not tested, autofilled
+    def render_object(self, obj: Object, img_path: str, de_reg: DRUtils.DeRegLevels = DRUtils.DeRegLevels.MEDIUM, obj_name: str=None):
+        obj_name = obj.name if not obj_name else obj_name
+        curves = self.edge_filtering(obj)
+        disturbed_coords = DRUtils.disturb_curves(curves, obj, de_reg)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
+        extruded_curves = DRUtils.mark_curves_as_freestyle(spawned_curves)
+        self.render_image_and_save_as(obj, img_path)
+        self.clean_up(obj, extruded_curves)
+    
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None) -> List[Object]:
+        obj_name = obj.name if not obj_name else obj_name
+        curves = self.edge_filtering(obj)
+        disturbed_coords = DRUtils.disturb_curves(curves, obj, de_reg)
+        spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
+        return spawned_curves
+
+    # not tested, autofilled
+    def _render_obj_debug(self, obj: Object, img_title: str):
+        # take plain shot
+        bpy.context.scene.render.filepath = img_title + "_obj.png"
+        bpy.ops.render.opengl(write_still=True)
+        # edges version
+        self.render_object(obj, img_title + "_edges.png")
+
+
 # class DRController():
 #     def __init__(self, dataset_name: str, paramcsv_name: str=None, override_path: str=None) -> None:
 #         self._dataset_name = dataset_name
@@ -1013,7 +1108,7 @@ class DRSphered(Dedicated_Renderer):
 
 
 if __name__ == "__main__":
-    renderer = DRStraight()
+    renderer = DRFloorLedgeCurved()
     obj = bpy.context.active_object
-    path = "./renders/straight_test.png"
+    path = "temp.png"
     renderer.render_object(obj, path)

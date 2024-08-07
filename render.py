@@ -12,7 +12,7 @@ file = Path(__file__).resolve()
 parent = file.parents[1]
 sys.path.append(str(parent))
 
-from distortion import DRStraight, DRCylindrical, DRSphered, DRUtils, Dedicated_Renderer
+from distortion import DRStraight, DRCylindrical, DRSphered, DRUtils, Dedicated_Renderer, DRFloorLedgeCurved
 # from building4distortion import building_for_distortion_render
 from paramload import DAGParamLoader
 
@@ -125,10 +125,11 @@ class DAGRenderer():
         extruded_curves = DRUtils.mark_curves_as_freestyle(curves)
         # render
         bpy.data.objects.remove(windows_dup)  # rf and bm mesh can block some invisible curves
-        bpy.data.objects.remove(ledges_dup)
+        # bpy.data.objects.remove(ledges_dup)  # maybe ledge too
         # shrink bm and rf by scaling
         bm_dup.scale = (0.99, 0.99, 0.99)
         rf_dup.scale = (0.99, 0.99, 0.99)
+        ledges_dup.scale = (0.99, 0.99, 0.99)
         # update: no shink. select visible objects and exclude bm and rf, delete invisible curves
         
         building.hide_render = True
@@ -136,6 +137,7 @@ class DAGRenderer():
         # clean up
         bpy.data.objects.remove(rf_dup)
         bpy.data.objects.remove(bm_dup)
+        bpy.data.objects.remove(ledges_dup)
         for curve in extruded_curves:
             bpy.data.objects.remove(curve)
         building.hide_render = False
@@ -158,11 +160,10 @@ class DAGRenderer():
         elif component_name == "Windows":
             return DRStraight()
         elif component_name == "Ledges":
-            # if shape_types["Bm Base Shape"] == 0:
-            #     return DRStraight()
-            # elif shape_types["Bm Base Shape"] == 1:
-            #     return DRCylindrical()
-            return DRStraight()  # cylinders mess up everything... 
+            if shape_types["Bm Base Shape"] == 0:
+                return DRStraight()
+            elif shape_types["Bm Base Shape"] == 1:
+                return DRFloorLedgeCurved()
         else:
             raise ValueError(f"Unexpected component name: {component_name}")
 
@@ -282,3 +283,4 @@ if __name__ == "__main__":
     renderer = DAGRenderer()
     # renderer.render("datasets/test_dataset/images/1.png")
     renderer.render_with_distortion()
+    renderer._post_process("./temp.png")
