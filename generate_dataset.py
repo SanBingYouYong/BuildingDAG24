@@ -9,6 +9,8 @@ import datetime
 
 # Path to Blender executable
 BLENDER32 = os.environ.get("BLENDER32")
+if not BLENDER32:
+    BLENDER32 = "../blender-3.2.2-windows-x64/blender-3.2.2-windows-x64/blender.exe"
 
 # Path to dataset.blend and dataset_gen.py
 # dataset_blend = "./dataset.blend"

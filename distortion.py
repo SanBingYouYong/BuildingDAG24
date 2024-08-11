@@ -40,9 +40,9 @@ class DRUtils():
         # MEDIUM = 0.025
         # HEAVY = 0.05
         PERFECT = 0
-        LIGHT = 0.005
-        MEDIUM = 0.0125
-        HEAVY = 0.025
+        LIGHT = 0.01
+        MEDIUM = 0.025
+        HEAVY = 0.05
 
     # @staticmethod
     # def read_dataset(dataset_name: str, paramcsv_name: str=None, override_path: str=None):
@@ -173,9 +173,9 @@ class DRUtils():
         disturb_axis: default not specified -> random axis xyz (0, 1, 2)  TODO: add multiple axis disturbance? 
         '''
         if isinstance(vert, BMVert):
-            coord = Vector(vert.co)
+            coord = Vector(vert.co)  # copy? 
         else:
-            coord = vert
+            coord = vert  # copy? 
         if not min_disturb:
             min_disturb = -max_disturb
         offset_amount = random.uniform(min_disturb, max_disturb)
@@ -277,12 +277,15 @@ class DRUtils():
 
     @staticmethod
     def disturb_edges(edges: List[Tuple[int, int]], obj: Object, 
-                      de_reg: DeRegLevels=DeRegLevels.MEDIUM) -> List[Tuple[Vector, Vector, Vector]]:
+                      de_reg: DeRegLevels=DeRegLevels.MEDIUM, dereg_modifier: float=1.0) -> List[Tuple[Vector, Vector, Vector]]:
         '''
         @params
         edges: [(vert 0 index, vert 1 index)...]. Note that it's not BMEdge or blender edge, but two endpoints representing
         that there should be a line between these two vertices. 
+
+        dereg_modifier: muitiplied with de_reg.value to optionally further control the dereg (e.g. for smaller elements, decrease this factor)
         '''
+        # TODO: maybe we can try adding more vibrations (e.g. adding more points in between) to make it more realistic.
         disturbed_coords: List[Tuple[Vector, Vector, Vector]] = []
         bpy.ops.object.editmode_toggle()
         bm = bmesh.from_edit_mesh(obj.data)
@@ -290,7 +293,7 @@ class DRUtils():
         for (v0, v1) in edges:
             vert0, vert1 = bm.verts[v0], bm.verts[v1]
             disturbed_coords.append(
-                DRUtils._disturb_edge(vert0.co, vert1.co, max_disturb_factor=de_reg.value)
+                DRUtils._disturb_edge(vert0.co, vert1.co, max_disturb_factor=de_reg.value * dereg_modifier)
             )
         bpy.ops.object.editmode_toggle()
         return disturbed_coords
@@ -711,10 +714,10 @@ class DRStraight(Dedicated_Renderer):
         self.render_image_and_save_as(obj, img_path)
         # self.clean_up(obj, extruded_curves)
     
-    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None) -> List[Object]:
+    def obj_to_curves_only(self, obj: Object, de_reg: DRUtils.DeRegLevels=DRUtils.DeRegLevels.MEDIUM, obj_name: str=None, dereg_modifier: float=1.0) -> List[Object]:
         obj_name = obj.name if not obj_name else obj_name
         edges = self.edge_filtering(obj)
-        disturbed_coords = DRUtils.disturb_edges(edges, obj, de_reg)
+        disturbed_coords = DRUtils.disturb_edges(edges, obj, de_reg, dereg_modifier)
         spawned_curves = DRUtils.spawn_curves(disturbed_coords, obj_name)
         return spawned_curves
     

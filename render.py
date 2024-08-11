@@ -111,7 +111,7 @@ class DAGRenderer():
         renderer = self._get_renderer("Windows", shape_types)
         windows_dup = self._get_actual_mesh(building, reset_active=False)
         bm_dup.select_set(True)  # block invisible windows
-        windows_curves = renderer.obj_to_curves_only(windows_dup, de_reg)
+        windows_curves = renderer.obj_to_curves_only(windows_dup, de_reg, dereg_modifier=0.5)  # DRStraight implements this
         bm_dup.select_set(False)
         # ledges
         DAGParamLoader.change_return_part_static(4)

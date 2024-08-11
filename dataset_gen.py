@@ -126,7 +126,7 @@ if __name__ == "__main__":
     # check for args
     args = sys.argv[5:]
     # print(args)
-    # args = [5, 5, 5, 1, 1]
+    args = [5, 5, 5, 0, 1]
     # print(f"ignoring commandline args and using settings in code: {args}")
     if len(args) == 5:
         num_batches = int(args[0])
@@ -135,7 +135,9 @@ if __name__ == "__main__":
         device = int(args[3])
         distortion = bool(args[4])
         prefix = "DAGDataset" if not distortion else "DAGDatasetDistorted"
-        generator = DAGDatasetGenerator(f"{prefix}{num_batches}_{batch_size}_{num_varying_params}")
+        cwd = os.getcwd()
+        print(f"Current working directory: {cwd}")
+        generator = DAGDatasetGenerator(f"{prefix}{num_batches}_{batch_size}_{num_varying_params}", dataset_root_path=os.path.join(cwd, "datasets"))
         generator.use_device(device)
         print(f"Using {num_batches} batches, {batch_size} samples per batch, {num_varying_params} varying params")
         print(f"Using device: {device}")
