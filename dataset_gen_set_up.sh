@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Step 1: Git clone the repository and change to the directory
-git clone https://github.com/SanBingYouYong/BuildingDAG24.git
-cd BuildingDAG24
+# git clone https://github.com/SanBingYouYong/BuildingDAG24.git
+# cd BuildingDAG24
 
 # Step 2: Download Blender and prepare it
 cd ./blender
