@@ -1,4 +1,24 @@
+# Dataset Generation
+
+### tl;dr: 
+ - clone repo
+ - inside repo dir: `bash dataset_gen_set_up.sh`
+ - activate conda environment if not already: `conda activate dag_distort`
+ - open blender with: `blender/blender-3.2.2-linux-x64/blender dataset_distortion.blend`
+ - run the script by pressing `alt+p` or click the run button on the script section
+ - optional: check the log on the terminal which you opened blender in (logs should be rolling now)
+
 ### Pre-requisite: 
+ - Git: 
+    ```
+    sudo apt-get update
+    sudo apt install git
+    ```
+ - wget: 
+    ```
+    sudo apt-get update
+    sudo apt install wget
+    ```
  - Conda: 
     ```
     mkdir -p ~/miniconda3
@@ -7,11 +27,7 @@
     rm -rf ~/miniconda3/miniconda.sh
     ~/miniconda3/bin/conda init bash
     ```
- - Git: 
-    ```
-    sudo apt-get update
-    sudo apt install git
-    ```
+    (reopen shell and conda init)
 
 ### Main Steps: 
 1. Clone the repo and `cd BuildingDAG`
@@ -39,13 +55,19 @@
      - and the logs should be rolling by now. 
     
 ### Optionally, using an `envs.tar` archive instead of configuring the environment
-**Known issue: opencv recursive import**
+ - **Known issue: opencv recursive import**
 Steps: 
      - download the `envs.tar` file to `./blender` and unzip it: 
          - `tar -xf envs.tar`
      - copy paste the content of `./envs` to `blender-3.2.2-linux-x64/3.2/python/lib/python3.10/site-packages/`
         - `cp -r envs/* blender-3.2.2-linux-x64/3.2/python/lib/python3.10/site-packages/`
      - run the blender file as usual, an opencv import error is expected, if not, nice.
+
+### Issues:
+ - libXi.so.6 missing when starting blender
+     - unlikely if you did not use a brand new server linux - and if so you need a GUI version of blender to generate distorted datasets 
+     - `sudo apt-get install libxi6`
+     - follow apt-file instruction [here](https://stackoverflow.com/questions/22924339/chromedriver-on-ubuntu-12-04-error-while-loading-shared-libraries-libxi-so-6)
 
 ### Install Script tasks: 
 If you wish to manually do it: 
