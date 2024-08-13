@@ -19,8 +19,8 @@ cd ../  # Go back to the project root directory
 
 # Step 3: Install dependencies using conda and pip
 conda create -n dag_distort python=3.10 -y
-conda activate dag_distort
-pip install opencv-python PyYAML tqdm numpy
+# conda activate dag_distort  # need conda init bash
+# pip install opencv-python PyYAML tqdm numpy
 
 # Optional: Check if conda installed its own `freestyle` package
 FREESTYLE_PATH=$(conda info --base)/envs/dag_distort/lib/python3.10/site-packages/freestyle

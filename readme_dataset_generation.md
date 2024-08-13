@@ -3,7 +3,7 @@
 ### tl;dr: 
  - clone repo
  - inside repo dir: `bash dataset_gen_set_up.sh`
- - activate conda environment if not already: `conda activate dag_distort`
+ - activate conda environment and pip install: `conda activate dag_distort` and `pip install opencv-python PyYAML tqdm numpy`
  - open blender with: `blender/blender-3.2.2-linux-x64/blender dataset_distortion.blend`
  - run the script by pressing `alt+p` or click the run button on the script section
  - optional: check the log on the terminal which you opened blender in (logs should be rolling now)
@@ -32,8 +32,11 @@
 ### Main Steps: 
 1. Clone the repo and `cd BuildingDAG`
 2. Run the install script `bash dataset_gen_set_up.sh`
-     - the tasks are outlined in the last section
-3. Run blender with conda env activated and execute the script
+     - the tasks are outlined in the last section\
+3. Install dependencies
+     - `conda activate dag_distort`
+     - `pip install opencv-python PyYAML tqdm numpy`
+4. Run blender with conda env activated and execute the script
      - if not already after running the install script (problematic then, best check the script's output log): `conda activate dag_distort`
      - ` blender/blender-3.2.2-linux-x64/blender dataset_distortion.blend` and the window should pop up
      - the script `dataset_gen.py` should be opened already and press `alt+p` or click the button to run it
@@ -81,9 +84,7 @@ If you wish to manually do it:
 2. Install dependencies: 
      - conda (pip, take the spirit): 
          - `conda create -n dag_distort python=3.10 -y`
-         - `conda activate dag_distort`
-         - `pip install opencv-python PyYAML tqdm numpy`
-         - optional: check if conda installed its own `freestyle` package: 
+         - check if conda installed its own `freestyle` package: 
              - check in `<conda_home_path>/envs/dag_distort/lib/python3.10/site-packages/freestyle`
                  - if exists, delete everything in it
                  - then copy paste `./blender/blender-3.2.2-linux-x64/3.2/scripts/freestyle/` into it
