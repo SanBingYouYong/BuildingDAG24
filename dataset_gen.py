@@ -126,7 +126,7 @@ if __name__ == "__main__":
     # check for args
     args = sys.argv[5:]
     # print(args)
-    args = [5, 5, 5, 0, 1]
+    args = [100, 100, 5, 0, 1]
     # print(f"ignoring commandline args and using settings in code: {args}")
     if len(args) == 5:
         num_batches = int(args[0])
