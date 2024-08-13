@@ -34,7 +34,7 @@
 2. Run the install script `bash dataset_gen_set_up.sh`
      - the tasks are outlined in the last section
 3. Run blender with conda env activated and execute the script
-     - if not already following install script: `conda activate dag_distort`
+     - if not already after running the install script (problematic then, best check the script's output log): `conda activate dag_distort`
      - ` blender/blender-3.2.2-linux-x64/blender dataset_distortion.blend` and the window should pop up
      - the script `dataset_gen.py` should be opened already and press `alt+p` or click the button to run it
          - optionally, check the `args` at `line 129`: 
