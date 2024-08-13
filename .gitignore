@@ -17,6 +17,3 @@ models/
 
 # ignore archived models
 archive/
-
-# ignore downloaded blender dir (things inside it, not the dir)
-blender/*
