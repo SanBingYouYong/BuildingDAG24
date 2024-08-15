@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 img_path = "./inference/sketch.png"
 model_path = "./models/EncDecModel.pth"
-meta_path = "./models/meta.yml"
+meta_path = "./models/EncDecModel_meta.yml"
 output_path = "./inference/output.yml"
 
 transform = transforms.Compose(
@@ -34,6 +34,7 @@ def inference():
     model = EncoderDecoderModel(encoder, decoders)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
+    model.to(device)  # move model to device!
 
     # Load the image
     img = Image.open(img_path).convert("L")
@@ -132,5 +133,5 @@ def batch_inference(imgs: list, image_folder: str, pred_folder: str) -> list:
     
     return inference_outs
 
-
-
+if __name__ == "__main__":
+    inference()
