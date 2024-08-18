@@ -30,7 +30,7 @@ distort = True
 path = "./inference/output.yml"
 img_path = path[:-4] + ".png"
 
-path = os.getcwd() + path
+path = os.path.join(os.getcwd(), path)
 img_path = os.getcwd() + img_path
 
 loader = DAGParamLoader()
