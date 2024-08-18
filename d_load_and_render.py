@@ -31,7 +31,7 @@ path = "./inference/output.yml"
 img_path = path[:-4] + ".png"
 
 path = os.path.join(os.getcwd(), path)
-img_path = os.getcwd() + img_path
+img_path = os.path.join(os.getcwd(), img_path)
 
 loader = DAGParamLoader()
 params = DAGParams(path)
