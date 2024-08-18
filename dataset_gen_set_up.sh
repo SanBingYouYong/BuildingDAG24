@@ -13,7 +13,7 @@ tar -xf blender-3.2.2-linux-x64.tar.xz
 tar -czf blender_python_backup.tar.gz -C blender-3.2.2-linux-x64/3.2 python/
 
 # Remove the Python directory after archiving
-rm -r blender-3.2.2-linux-x64/3.2/python/
+rm -rf blender-3.2.2-linux-x64/3.2/python/
 
 cd ../  # Go back to the project root directory
 
