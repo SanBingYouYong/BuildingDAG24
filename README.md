@@ -1,6 +1,20 @@
 # Dissertation Code Base
 "Inverse Procedural Modeling: from Sketches to Buildings"
 
+## Quick Start (docker)
+docker available! run inference, load paramter and render all in one button click:
+- `docker pull registry.cn-hangzhou.aliyuncs.com/sanbingyouyong/building_dag_st:1.0`
+    - 12 to 17G in size, may be able to shrink it in the future
+- `docker run --rm -d -p 5.8502:8502 building_dag_st` or corresponding docker image id
+- go to `http://localhost:8502/`
+    - upload sketch image (e.g. `./sample.png`)
+    - click `Inference & Load Param & Render`
+    - wait for rendered image and predicted params to show up, may consume about 10G RAM in the process (CPU currently, GPU version may come with nvidia container soon)
+
+- closing docker container: 
+    - `docker ps` to check container id
+    - `docker stop <container id>`
+
 ## Project material and documentation on usage: 
 ### Preliminary: 
  - install conda environment from `environment.yml`
