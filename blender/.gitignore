@@ -1,3 +1,4 @@
 # Ignore everything but not the folder itself since it has this ignore file lol
 *
 !.gitignore
+!setup_blender.sh
